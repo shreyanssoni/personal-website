@@ -152,12 +152,13 @@ font-family: 'Square Peg', cursive; */
   align-items: flex-start;
   justify-content: flex-end;
   background-image: url("/assets/img/header-img4.jpg");
+  z-index: 0;
   background-size: 100%;
   /* background-position: -10px 0px; */
   background-repeat: no-repeat;
   background-attachment: fixed;
   /* background-size: cover; */
-  background-size: 1500px 600px;
+  background-size: 1600px 600px;
   /* position: fixed; */
   /* background-color: #000; */
 }
