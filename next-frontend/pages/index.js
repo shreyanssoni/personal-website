@@ -29,7 +29,7 @@ export default function Home({ blogs, profile }) {
       <Head>
         <meta charSet="utf-8" />
 
-        <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+        <meta content="IE=edge,chrome=1" httpEquiv="X-UA-Compatible" />
 
         <meta
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -66,7 +66,7 @@ export default function Home({ blogs, profile }) {
         <div className=" mx-14 text-[16px]">an Avid Coder | Human</div>
         {/* style={{"font-family":"'Square Peg', cursive"}} */}
         <button className="mx-14 mt-5 mb-auto">
-          <a href={profile.link} target="_blank" rel="noreferrer">
+          <a href={profile.link} rel="noreferrer" target="_blank">
             Download CV
           </a>
         </button>

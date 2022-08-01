@@ -75,7 +75,7 @@ const Footer = () => {
         <div className={styles.footercontent}>
             THELAWSBENDER | SHREYANS SONI
         </div>
-        <p style={{'fontFamily': 'Josefin Sans, sans-serif'}} className='text-center mb-2 -mt-2 mr-3 text-[11px]'>Coded using <a rel="noreferrer" target="_blank" href="https://nextjs.org/">Next.js</a> and <a target="_blank" href="https://www.sanity.io/">Sanity.io</a></p>
+        <p style={{'fontFamily': 'Josefin Sans, sans-serif'}} className='text-center mb-2 -mt-2 mr-3 text-[11px]'>Coded using <a rel="noreferrer" target="_blank" href="https://nextjs.org/">Next.js</a> and <a rel="noreferrer" target="_blank" href="https://www.sanity.io/">Sanity.io</a></p>
     </div>
     </>
   )

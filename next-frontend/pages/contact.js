@@ -83,8 +83,8 @@ const Contact = () => {
             <h2 className="text-[24px] text-black">Let's Connect!</h2>
             <a
               href="mailto: soni21.shreyans@gmail.com"
-              target="_blank"
               rel="noreferrer"
+              target="_blank"
               className="mt-4 text-[15px]"
             >
               <span className="fa fa-envelope text-[14px] p-1 mr-1"></span>

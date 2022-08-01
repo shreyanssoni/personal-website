@@ -48,7 +48,7 @@ const Blog = ({ blog, author }) => {
           <div>
             {blog.tags.map((element) => {
               return (
-                <span
+                <span key={element}
                   style={{
                     fontFamily: "Montserrat, sans-serif",
                     background: "#dc7561",
