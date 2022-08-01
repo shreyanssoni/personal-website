@@ -66,7 +66,7 @@ export default function Home({ blogs, profile }) {
         <div className=" mx-14 text-[16px]">an Avid Coder | Human</div>
         {/* style={{"font-family":"'Square Peg', cursive"}} */}
         <button className="mx-14 mt-5 mb-auto">
-          <a href={profile.link} target="_blank">
+          <a href={profile.link} target="_blank" rel="noreferrer">
             Download CV
           </a>
         </button>

@@ -64,18 +64,18 @@ const Footer = () => {
         <p style={{'fontFamily': 'Montserrat, sans-serif', 'display': `${val[0]}` }} className={`px-2 pt-0.5 text-[16px] text-center ${val[1]} `}>{message}</p>
         <div className= {styles.footerblog}>
             <ul className='flex flex-row p-2'>
-                <li><a href="https://www.facebook.com/sonishreyans/" className='fa fa-facebook text-[20px] p-3 mx-4'  target="_blank"></a></li>
-                <li><a href="https://www.linkedin.com/in/shreyans-soni/" className='fa fa-linkedin' target="_blank"></a></li>
-                <li><a href="mailto: soni21.shreyans@gmail.com" className='fa fa-envelope' target="_blank"></a></li>
-                <li><a href="https://github.com/shreyanssoni" className='fa fa-github ' target="_blank"></a></li>
-                <li><a href="https://www.instagram.com/shreyans.not.h/" className='fa fa-instagram ' target="_blank"></a></li>
-                <li><a href="#" className='fa fa-twitter' target="_blank"></a></li>
+                <li><a href="https://www.facebook.com/sonishreyans/" className='fa fa-facebook text-[20px] p-3 mx-4' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="https://www.linkedin.com/in/shreyans-soni/" className='fa fa-linkedin' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="mailto: soni21.shreyans@gmail.com" className='fa fa-envelope' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="https://github.com/shreyanssoni" className='fa fa-github' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="https://www.instagram.com/shreyans.not.h/" className='fa fa-instagram' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="#" className='fa fa-twitter' rel="noreferrer" target="_blank"></a></li>
             </ul>
         </div>
         <div className={styles.footercontent}>
             THELAWSBENDER | SHREYANS SONI
         </div>
-        <p style={{'fontFamily': 'Josefin Sans, sans-serif'}} className='text-center mb-2 -mt-2 mr-3 text-[11px]'>Coded using <a target="_blank" href="https://nextjs.org/">Next.js</a> and <a target="_blank" href="https://www.sanity.io/">Sanity.io</a></p>
+        <p style={{'fontFamily': 'Josefin Sans, sans-serif'}} className='text-center mb-2 -mt-2 mr-3 text-[11px]'>Coded using <a rel="noreferrer" target="_blank" href="https://nextjs.org/">Next.js</a> and <a target="_blank" href="https://www.sanity.io/">Sanity.io</a></p>
     </div>
     </>
   )

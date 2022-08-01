@@ -45,9 +45,9 @@ const About = ({profile}) => {
             <p className='uppercase tracking-wide text-[16px]	'>{profile.title}</p>
             <div className={styles.aboutlinks}>
             <ul className='flex flex-row p-2'>
-                <li><a href="https://www.linkedin.com/in/shreyans-soni/" className='fa fa-linkedin text-[22px] p-2 mx-3' target="_blank"></a></li>
-                <li><a href="mailto: soni21.shreyans@gmail.com" className='fa fa-envelope text-[22px] p-2 mx-3' target="_blank"></a></li>
-                <li><a href="https://github.com/shreyanssoni" className='fa fa-github text-[22px] p-2 mx-3' target="_blank"></a></li>
+                <li><a href="https://www.linkedin.com/in/shreyans-soni/" className='fa fa-linkedin text-[22px] p-2 mx-3' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="mailto: soni21.shreyans@gmail.com" className='fa fa-envelope text-[22px] p-2 mx-3' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="https://github.com/shreyanssoni" className='fa fa-github text-[22px] p-2 mx-3' rel="noreferrer" target="_blank"></a></li>
             </ul>
             </div>
           </div>
@@ -55,8 +55,8 @@ const About = ({profile}) => {
           <h1 className='text-[60px] font-bold '>Hello</h1>
           <p className='font-semibold text-[18px]'>Here's who I am & what I do</p>
           <div className='my-5'>
-            <span className={styles.l1}><a href={profile.link} target='_blank'> Resume </a></span>
-            <span className={styles.l2}><a href={profile.projects} target='_blank'> Projects </a></span>
+            <span className={styles.l1}><a href={profile.link} rel="noreferrer" target='_blank'> Resume </a></span>
+            <span className={styles.l2}><a href={profile.projects} rel="noreferrer" target='_blank'> Projects </a></span>
           </div>
           <div className={styles.aboutinfo}>
           <PortableText

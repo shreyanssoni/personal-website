@@ -84,6 +84,7 @@ const Contact = () => {
             <a
               href="mailto: soni21.shreyans@gmail.com"
               target="_blank"
+              rel="noreferrer"
               className="mt-4 text-[15px]"
             >
               <span className="fa fa-envelope text-[14px] p-1 mr-1"></span>
