@@ -18,7 +18,7 @@ const About = ({profile}) => {
   const builder = imageUrlBuilder(client);
   const url = builder.image(profile.image).width(500).url();
   if(url == undefined || url == null){
-    url = '/assets/img/header-img2.webp';
+    url = '/assets/img/abouticon.jpg';
   } 
   return (
     <>
@@ -47,7 +47,7 @@ const About = ({profile}) => {
         <div className={styles.aboutcontainer}>
           <div className={styles.aboutname}>
             <div className={styles.aboutimage}>
-            <img src={url} alt="Avatar" loading='lazy'/>
+            <img src={url} alt="Avatar" loading="lazy"/>
             {/* <Image src={url} alt='Avatar'/> */}
             </div>
             <h2 className='text-[25px] font-bold'>{profile.name}</h2>
@@ -62,7 +62,7 @@ const About = ({profile}) => {
             </div>
           </div>
           <div className={styles.aboutcontent}>
-          <h1 className='text-[60px] font-bold '>Hello</h1>
+          <h1 className='text-[60px] font-bold'>Hello</h1>
           <p className='font-semibold text-[18px]'>Here's who I am & what I do</p>
           <div className='my-5'>
             <span className={styles.l1}><a href={profile.link} rel="noreferrer" target='_blank'> Resume </a></span>

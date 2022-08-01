@@ -168,6 +168,10 @@
     padding: 12px 18px;
   }
 
+  .aboutcontent {
+    margin-top: 5px !important;
+  }
+
   .aboutname {
     height: 25rem;
     width: 80%;
