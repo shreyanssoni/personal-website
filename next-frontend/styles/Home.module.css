@@ -151,7 +151,7 @@ font-family: 'Square Peg', cursive; */
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-end;
-  background-image: url("../public/assets/img/header-img4.jpg");
+  background-image: url("/assets/img/header-img4.jpg");
   background-size: 100%;
   /* background-position: -10px 0px; */
   background-repeat: no-repeat;
