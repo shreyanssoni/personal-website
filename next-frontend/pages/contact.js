@@ -78,6 +78,7 @@ const Contact = () => {
           rel="stylesheet"
         />
         <meta name="google-site-verification" content="zoIu_lrc5Gw-_uzNUiSMpRl088xH7AbdJoOKq7FDWlQ" />
+        <link rel="preload" as="font"/>
       </Head>
       <div id='alert' style={{'display': 'none'}} className={styles.alert}>{alert}</div>
          

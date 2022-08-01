@@ -65,6 +65,7 @@ export default function Home({ blogs, profile }) {
           rel="stylesheet"
         />
         <meta name="google-site-verification" content="zoIu_lrc5Gw-_uzNUiSMpRl088xH7AbdJoOKq7FDWlQ" />
+        <link rel="preload" as="font"/>
       </Head>
       <div className={styles.headercontainer}>
         <div className="text-[30px] font-bold mt-auto mx-14">

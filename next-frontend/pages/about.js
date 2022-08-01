@@ -41,6 +41,7 @@ const About = ({profile}) => {
           rel="stylesheet"
         />
         <meta name="google-site-verification" content="zoIu_lrc5Gw-_uzNUiSMpRl088xH7AbdJoOKq7FDWlQ" />
+        <link rel="preload" as="font"/>
       </Head>
       <div className={styles.maincontainer}>
         <div className={styles.aboutcontainer}>
