@@ -1,0 +1,178 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital@0;1&family=Montserrat:ital,wght@0,400;0,700;1,300&family=Source+Code+Pro:wght@400;600&family=Square+Peg&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Nunito:wght@300;400&display=swap");
+
+.maincontainer {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(90deg, #1e383b 40%, white 30%);
+  /* background: linear-gradient(90deg,  rgb(30 41 59) 40%,  white 30%) ; */
+}
+
+.aboutcontainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 450px;
+  width: 600px;
+  margin: auto;
+}
+
+.aboutname {
+  height: inherit;
+  position: relative;
+  width: 50%;
+  background-color: rgb(30 41 59);
+  background-color: #1e383b;
+  /* box-shadow: -1px 1px 10px 0.5px black; */
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), -1px 2px 10px rgba(0, 0, 0, 0.12),
+    -2px 4px 10px rgba(0, 0, 0, 0.12), -4px 8px 10px rgba(0, 0, 0, 0.12),
+    0px 16px 20px rgba(0, 0, 0, 0.12);
+
+  box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
+    0 2px 2px hsl(0deg 0% 0% / 0.075), -2px 4px 4px hsl(0deg 0% 0% / 0.075),
+    -4px 8px 10px hsl(0deg 0% 0% / 0.075),
+    -8px 16px 20px hsl(0deg 0% 0% / 0.075);
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  /* margin-top: 80px; */
+}
+
+.aboutimage {
+  background: #000;
+  height: 10em;
+  width: 10em;
+  overflow: hidden;
+  border-radius: 50%;
+  margin: 35px auto;
+  border: solid 2px white;
+}
+
+.aboutname img {
+  object-fit: cover;
+  object-position: 0px 20px;
+  /* height: 40%; */
+  /* height: 160%; */
+  transform: scale(1.5);
+  /* width: 50%; */
+  /* border-radius: 50%; */
+}
+
+.aboutlinks {
+  position: absolute;
+  background: white;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  margin-top: auto;
+}
+
+.aboutcontent {
+  height: inherit;
+  width: 55%;
+  padding: 12px 18px;
+  font-family: "Nunito", sans-serif;
+  /* font-family: 'Josefin Sans', sans-serif; */
+  overflow: hidden;
+  margin-top: -10px;
+  /* box-shadow: 0px 1px 3px rgba(0,0,0,0.12), 
+              1px 2px 10px rgba(0,0,0,0.12), 
+              2px 4px 10px rgba(0,0,0,0.12), 
+             4px 8px 10px rgba(0,0,0,0.12),
+             0px 16px 20px rgba(0,0,0,0.12); */
+}
+
+.aboutcontent a {
+  /* margin: 10px auto; */
+  border: solid 1px black;
+  padding: 6px 14px;
+  text-align: center;
+  border-radius: 15px;
+  font-size: 14px;
+}
+
+.l1 a {
+  background-color: #dc7561;
+  color: white;
+  border: none;
+  margin-right: 10px;
+  /* padding: 8px 16px; */
+  border: solid 1px white !important;
+}
+
+.aboutcontent a:hover {
+  background-color: #dc7561;
+  color: white;
+  border: none;
+  transition: 0.3s linear;
+  border: solid 1px white;
+}
+
+.l1 a:hover {
+  background-color: white !important;
+  border: solid 1px black !important;
+  color: black !important;
+  /* padding: 6px 14px !important; */
+}
+
+.aboutinfo {
+  font-size: 15px;
+  /* font-weight: 600; */
+  /* text-align: justify; */
+  /* hyphens: auto; */
+  /* text-justify:inter-word; */
+  /* overflow: hidden; */
+  font-family: "Josefin Sans", sans-serif;
+}
+
+@media (max-width: 900px) {
+  .aboutcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 430px;
+    width: 500px;
+    margin: auto;
+  }
+
+  .aboutinfo {
+    font-size: 14px;
+    overflow: hidden;
+    font-family: "Josefin Sans", sans-serif;
+  }
+}
+
+@media (max-width: 600px) {
+  .maincontainer {
+    display: flex;
+    height: 100%;
+    background: linear-gradient(180deg, #1e383b 40%, white 30%);
+    /* background: linear-gradient(90deg,  rgb(30 41 59) 40%,  white 30%) ; */
+  }
+
+  .aboutcontainer {
+    width: 90vw;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .aboutcontent {
+    height: 60%;
+    width: 100%;
+    padding: 12px 18px;
+  }
+
+  .aboutname {
+    height: 25rem;
+    width: 80%;
+    margin-top: 60px;
+    position: relative;
+    font-family: "Montserrat", sans-serif;
+  }
+}
