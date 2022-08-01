@@ -6,6 +6,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import PortableText from "react-portable-text";
 import Navbar from "../components/Navbar";
 import Footer from '../components/Footer'
+// import Image from 'next/image';
 
 const About = ({profile}) => {
   const client = createClient({
@@ -17,7 +18,7 @@ const About = ({profile}) => {
   const builder = imageUrlBuilder(client);
   const url = builder.image(profile.image).width(500).url();
   if(url == undefined || url == null){
-    url = '/assets/img/header-img1.jpg';
+    url = '/assets/img/header-img2.webp';
   } 
   return (
     <>
@@ -45,7 +46,8 @@ const About = ({profile}) => {
         <div className={styles.aboutcontainer}>
           <div className={styles.aboutname}>
             <div className={styles.aboutimage}>
-            <img src={url} alt="Avatar" />
+            <img src={url} alt="Avatar" loading='lazy'/>
+            {/* <Image src={url} alt='Avatar'/> */}
             </div>
             <h2 className='text-[25px] font-bold'>{profile.name}</h2>
             <hr className='w-12 m-auto my-5' />

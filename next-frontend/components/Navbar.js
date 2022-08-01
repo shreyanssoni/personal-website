@@ -60,6 +60,7 @@ const Navbar = (props) => {
               <img
                 src="/assets/img/shreyans1.png"
                 alt="Logo"
+                loading="lazy"
                 width="24px"
                 className="pb-1"
               />

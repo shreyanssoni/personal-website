@@ -20,7 +20,7 @@ const Blog = ({ blog, author }) => {
   const { slug } = router.query;
   const url = builder.image(blog.blogimage).width(1000).url();
   if (url == undefined || url == null) {
-    url = "/assets/img/header-img1.jpg";
+    url = "/assets/img/header-img2.webp";
   }
   return (
     <>

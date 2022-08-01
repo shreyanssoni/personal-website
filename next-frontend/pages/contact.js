@@ -97,7 +97,8 @@ const Contact = () => {
               <span className="fa fa-envelope text-[14px] p-1 mr-1"></span>
               soni21.shreyans@gmail.com
             </a>
-            <img src="/assets/img/mailicon.png" alt="icon" />
+            <img src="/assets/img/mailicon.png" alt="icon"loading="lazy" />
+            {/* <Image src="/assets/img/mailicon.png" alt='icon'/> */}
           </div>
           <div className={styles.form}>
             <label htmlFor="name">Name:</label>
