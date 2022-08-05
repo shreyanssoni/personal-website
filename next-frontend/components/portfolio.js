@@ -24,6 +24,11 @@ const Portfolio = ({ projects }) => {
             <div className={styles.projects}>
             {
                 projects.map((item)=>{
+                    if(!item.codelink){
+                        item.codelink = '/'
+                    }
+                    if(!item.websitelink)
+                        item.websitelink = '/'
                     return(
                     <div key={item._id} style={{'backgroundImage': `url(${
                         builder.image(item.projectimage).width(400).url()})`}} className={styles.card}>

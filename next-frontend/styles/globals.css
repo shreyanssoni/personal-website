@@ -6,6 +6,13 @@ html {
     scroll-behavior: smooth;
 }
 
+@font-face{
+  font-family: 'FontAwesome';
+  font-display: swap;
+  src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=#4.7.0') format('woff2'),
+    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=#4.7.0') format('woff');
+}
+
 
 ::-webkit-scrollbar-track {
     /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); */
