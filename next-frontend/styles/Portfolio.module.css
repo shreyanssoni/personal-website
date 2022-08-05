@@ -5,12 +5,12 @@
   /* background: #2F5050; */
   padding: 5px;
   min-height: 450px;
-  background-image: linear-gradient(rgba(11, 11, 11, 0.2), #203b3d52),
-    url("/assets/img/header-img-portfolio1.webp");
+  background-image: linear-gradient(rgba(11, 11, 11, 0.3), #203b3d52),
+    url("/assets/img/header-img-portfolio5.webp");
   background-repeat: no-repeat;
   background-attachment: fixed;
   /* background-size: cover; */
-  background-position: -100px 0px;
+  background-position: -50px 0px;
   background-size: 1600px 800px;
 }
 
@@ -36,7 +36,7 @@
   flex-wrap: wrap;
   margin: 10px auto;
   padding: 5px;
-  padding-bottom: 20px;
+  padding-bottom: 2.5rem;
 }
 
 .card {
@@ -145,11 +145,6 @@
   .main {
     padding: 5px;
     min-height: 450px;
-    background-image: linear-gradient(rgba(11, 11, 11, 0.2), #203b3d52),
-      url("/assets/img/header-img-portfolio1.webp");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    /* background-size: cover; */
     background-position: -1000px 0px;
     background-size: 2000px 1500px;
   }
