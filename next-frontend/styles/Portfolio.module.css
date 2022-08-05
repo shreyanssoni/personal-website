@@ -82,9 +82,9 @@
 .card h2 {
   font-size: 24px;
   font-family: "Josefin Sans", sans-serif;
-  /* font-family: "Nunito", sans-serif; */
+  font-family: "Nunito", sans-serif;
   /* font-family: "Montserrat", sans-serif; */
-  font-family: "Source Code Pro", monospace;
+  /* font-family: "Source Code Pro", monospace; */
   /* font-family: 'Square Peg', cursive;  */
   z-index: 1;
 }
