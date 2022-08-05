@@ -110,7 +110,14 @@
   display: flex;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 900px) { 
+    .main {
+        padding: 5px;
+        min-height: 450px;
+        background-position: -1000px 0px;
+        background-size: 2000px 1600px;
+    }
+
   .projects {
     width: 96%;
     margin: 10px auto;
@@ -125,7 +132,7 @@
   }
 
   .card h2 {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .links {
