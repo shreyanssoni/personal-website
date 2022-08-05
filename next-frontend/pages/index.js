@@ -7,8 +7,9 @@ import imageUrlBuilder from "@sanity/image-url";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Portfolio from "../components/portfolio";
 
-export default function Home({ blogs, profile }) {
+export default function Home({ blogs, profile, projects }) {
   var blogisthere = "none";
   if (blogs == null) {
     blogisthere = "true";
@@ -22,7 +23,6 @@ export default function Home({ blogs, profile }) {
     useCdn: false,
   });
   const builder = imageUrlBuilder(client);
-  // console.log(blogs)
   return (
     <>
       <Navbar color="white" />
@@ -132,6 +132,7 @@ export default function Home({ blogs, profile }) {
           </Link>
         </div>
       </div>
+      <Portfolio projects={projects}/>
       <Footer />
     </>
   );
@@ -150,10 +151,14 @@ export async function getServerSideProps(context) {
   const profileQuery = `*[_type == "profile"][0]`;
   const profile = await client.fetch(profileQuery);
 
+  const projectsQuery = `*[_type == "projects"]`;
+  const projects = await client.fetch(projectsQuery);
+
   return {
     props: {
       blogs,
       profile,
+      projects
     },
   };
 }

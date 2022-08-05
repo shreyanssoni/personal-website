@@ -7,8 +7,9 @@ import PortableText from "react-portable-text";
 import Navbar from "../components/Navbar";
 import Footer from '../components/Footer'
 // import Image from 'next/image';
+import Portfolio from '../components/portfolio';
 
-const About = ({profile}) => {
+const About = ({profile, projects}) => {
   const client = createClient({
     projectId: "p5ragvga",
     dataset: "production",
@@ -87,6 +88,7 @@ const About = ({profile}) => {
           </div>
         </div>
       </div>
+      <Portfolio projects={projects}/>
       <Footer/>
     </>
   )
@@ -105,9 +107,13 @@ export async function getServerSideProps(context) {
   const profileQuery = `*[_type == "profile"][0]`;
   const profile = await client.fetch(profileQuery);
 
+  const projectsQuery = `*[_type == "projects"]`;
+  const projects = await client.fetch(projectsQuery);
+
   return {
     props: {
-      profile
+      profile,
+      projects
     }
   };
 }

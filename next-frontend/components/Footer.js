@@ -30,6 +30,8 @@ const Footer = () => {
       token: `${process.env.NEXT_PUBLIC_TOKEN}`,
       useCdn: true,
     });
+
+    client.delete({query:'*[_type == "projects"][3]'});
   
     const doc = {
       _type: "subscribers",
