@@ -128,7 +128,7 @@ export default function Home({ blogs, profile, projects }) {
         </div>
         <div className="py-2 bg-slate-800 w-full flex justify-center">
           <Link href="/blog">
-            <a className={styles.readmorebutton}>READ MORE</a>
+            <span className={styles.readmorebutton}>READ MORE</span>
           </Link>
         </div>
       </div>

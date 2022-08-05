@@ -285,6 +285,7 @@ font-family: 'Square Peg', cursive; */
   font-family: 'Montserrat', sans-serif; 
   font-size: 14px;
   /* font-weight: bold; */
+  cursor: pointer;
 }
 
 .readmorebutton:hover {
