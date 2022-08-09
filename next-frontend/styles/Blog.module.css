@@ -186,6 +186,7 @@ font-family: 'Square Peg', cursive; */
     font-family: 'Roboto', sans-serif; */
   /* font-family: 'Montserrat', sans-serif;  */
   font-family: "Nunito", sans-serif;
+  white-space: pre-line;
   font-size: 17px;
   padding: 10px;
   margin-top: 20px;

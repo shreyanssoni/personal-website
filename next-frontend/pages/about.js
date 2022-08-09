@@ -25,7 +25,7 @@ const About = ({profile, projects}) => {
     <>
     <Navbar color = 'white'/>
     <Head>
-        <title> About | TheLawsBender</title>
+        <title> About | The Bitwise</title>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"

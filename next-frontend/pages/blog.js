@@ -26,7 +26,7 @@ const Blog = ({ blogs }) => {
     <>
       <Navbar color="white" />
       <Head>
-        <title>Blogs | TheLawsBender</title>
+        <title>Blogs | The Bitwise</title>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"
@@ -66,7 +66,7 @@ const Blog = ({ blogs }) => {
               Shreyans.{" "}
             </span>
           </p>
-          {/* <p className='pl-3 text-[18px]' style={{'fontFamily' : "Source Code Pro, monospace"}}>THELAWSBENDER</p> */}
+          {/* <p className='pl-3 text-[18px]' style={{'fontFamily' : "Source Code Pro, monospace"}}>The Bitwise</p> */}
         </div>
       </div>
       <div className={styles.maindiv}>

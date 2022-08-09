@@ -30,7 +30,7 @@ const Blog = ({ blog, author }) => {
     <>
     <Navbar color= 'black'/>
       <Head>
-        <title> {blog.title} | TheLawsBender</title>
+        <title> {blog.title} | The Bitwise</title>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"
@@ -80,6 +80,7 @@ const Blog = ({ blog, author }) => {
           <div className={styles.blogimage}>
             <img src={url} alt={blog.title} />
           </div>
+          <div>
           <PortableText
             className={styles.blogcontent}
             // Pass in block content straight from Sanity.io
@@ -90,11 +91,13 @@ const Blog = ({ blog, author }) => {
             // structure without doing any gymnastics
             serializers={{
               h1: (props) => <h1 style={{ color: "red" }} {...props} />,
+              // hardBreak: false,
               li: ({ children }) => (
                 <li className="special-list-item">{children}</li>
               ),
             }}
           />
+        </div>
         </div>
       </div>
       <Footer/>

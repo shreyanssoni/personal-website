@@ -64,7 +64,7 @@ const Navbar = (props) => {
                 width="24px"
                 className="pb-1"
               />
-              TheLawsBender
+              The Bitwise
             </div>
           </ul>
         </div>

@@ -10,6 +10,7 @@ import schemaTypes from 'all:part:@sanity/base/schema-type'
 import subscribers from './Subscribers'
 import form from './form'
 import projects from './projects'
+// import _break from './break'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({

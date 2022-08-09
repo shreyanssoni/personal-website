@@ -23,6 +23,11 @@ export default function Home({ blogs, profile, projects }) {
     useCdn: false,
   });
   const builder = imageUrlBuilder(client);
+  var sortedBlog = blogs.slice().sort((a, b) => {
+    let date1 = new Date(a.createdAt);
+    let date2 = new Date(b.createdAt);
+    return Number(date2) - Number(date1);
+  });
   return (
     <>
       <Navbar color="white" />
@@ -35,12 +40,12 @@ export default function Home({ blogs, profile, projects }) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
           name="viewport"
         />
-        <title>Homepage | TheLawsBender</title>
+        <title>Homepage | The Bitwise</title>
         <meta property="og:locale" content="en_US" />
         <meta property="og:url" content="//" />
         <meta
           name="description"
-          content="Personal website for Shreyans Soni. TheLawsBender, languages include NextJS, Sanity.io, JavaScript, Python, C++, DSA, Data Structures and Algorithms, HTML, CSS, Verilog. This website also contains my blogs and projects on Github."
+          content="Personal website for Shreyans Soni. The Bitwise, languages include NextJS, Sanity.io, JavaScript, Python, C++, DSA, Data Structures and Algorithms, HTML, CSS, Verilog. This website also contains my blogs and projects on Github."
         />
         <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
 
@@ -85,7 +90,7 @@ export default function Home({ blogs, profile, projects }) {
         </div>
         <div className={styles.blogcardcontainer}>
           <span style={{ display: `${blogisthere}` }}>No Blogs Present :/</span>
-          {blogs.map((item) => {
+          {sortedBlog.map((item) => {
             var date = new Date(item.createdAt);
             var month = date.toLocaleString("default", { month: "short" });
             var datetype = date.getUTCDate();
