@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 import Footer from '../components/Footer'
 // import Image from 'next/image';
 import Portfolio from '../components/portfolio';
+import Image from 'next/image';
 
 const About = ({profile, projects}) => {
   const client = createClient({
@@ -48,8 +49,8 @@ const About = ({profile, projects}) => {
         <div className={styles.aboutcontainer}>
           <div className={styles.aboutname}>
             <div className={styles.aboutimage}>
-            <img src={url} alt="Avatar" loading="lazy"/>
-            {/* <Image src={url} alt='Avatar'/> */}
+            {/* <img src={url} alt="Avatar" /> */}
+            <Image loader={()=>url} src={url} className={styles.imgIcon} alt='Avatar' width={250} height={450} loading='lazy' />
             </div>
             <h2 className='text-[25px] font-bold'>{profile.name}</h2>
             <hr className='w-12 m-auto my-5' />

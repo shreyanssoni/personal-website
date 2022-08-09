@@ -48,12 +48,12 @@
   border: solid 2px white;
 }
 
-.aboutname img {
+.aboutname .imgIcon {
   object-fit: cover;
-  object-position: 0px 20px;
+  object-position: -34px 15px;
   /* height: 40%; */
   /* height: 160%; */
-  transform: scale(1.5);
+  transform: scale(1.4);
   /* width: 50%; */
   /* border-radius: 50%; */
 }
