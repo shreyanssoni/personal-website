@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }) {
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
       
-        gtag('config', ${process.env.NEXT_PUBLIC_GOOGLE});
+        gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE}');
     `}
       </Script>
       <Component {...pageProps} />
