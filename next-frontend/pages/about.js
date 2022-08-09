@@ -50,7 +50,7 @@ const About = ({profile, projects}) => {
           <div className={styles.aboutname}>
             <div className={styles.aboutimage}>
             {/* <img src={url} alt="Avatar" /> */}
-            <Image loader={()=>url} src={url} className={styles.imgIcon} alt='Avatar' width={250} height={450} loading='lazy' />
+            <Image loader={()=>url} src={url} className={styles.imgIcon} alt='Avatar' width={280} height={450} loading='lazy' />
             </div>
             <h2 className='text-[25px] font-bold'>{profile.name}</h2>
             <hr className='w-12 m-auto my-5' />
