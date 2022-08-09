@@ -38,8 +38,8 @@ const Portfolio = ({ projects }) => {
                     </a>
                     <div className={styles.links}>
                         <ul>
-                            <li><a href={item.codelink} className='fa fa-github' rel="noreferrer" target="_blank"></a></li>
-                            <li><a href={item.websitelink} className='fa fa-link' rel="noreferrer" target="_blank"></a></li>
+                            <li><a href={item.codelink} className='fa fa-github' rel="noreferrer" target="_blank"><span>Code</span></a></li>
+                            <li><a href={item.websitelink} className='fa fa-link' rel="noreferrer" target="_blank"><span>Link</span></a></li>
                         </ul>
                     </div>
                     

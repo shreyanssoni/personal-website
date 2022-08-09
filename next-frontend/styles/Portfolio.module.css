@@ -100,24 +100,44 @@
 
 .links ul {
   display: flex;
+  margin-top: 8px;
+}
+
+.links a:hover{
+  background: white;
+  color: black;
+  transition: 0.5s;
 }
 
 .links li {
-  font-size: 25px;
+  margin: auto 8px;
+  font-size: 16px;
+}
+
+.links a {
+  border: solid 1px white;
   padding: 5px 8px;
+  border-radius: 30px;
+}
+
+.links span {
+  font-size: 16px;
+  /* margin: 0 2px; */
+  padding: 0 4px;
+  font-family: "Josefin Sans", sans-serif;
 }
 
 .card:hover > .links {
   display: flex;
 }
 
-@media (max-width: 900px) { 
-    .main {
-        padding: 5px;
-        min-height: 450px;
-        background-position: -1000px 0px;
-        background-size: 2000px 1600px;
-    }
+@media (max-width: 900px) {
+  .main {
+    padding: 5px;
+    min-height: 450px;
+    background-position: -1000px 0px;
+    background-size: 2000px 1600px;
+  }
 
   .projects {
     width: 96%;
@@ -133,7 +153,7 @@
   }
 
   .card h2 {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .links {
@@ -145,8 +165,22 @@
   }
 
   .links li {
-    font-size: 20px;
+    font-size: 18px;
+    margin: auto 5px;
   }
+
+
+.links a {
+  padding: 5px 6px;
+}
+
+.links span {
+  font-size: 15px;
+}
+
+.card:hover > .links {
+  display: flex;
+}
 }
 
 @media (max-width: 600px) {
@@ -162,34 +196,44 @@
     /* margin: 10px auto; */
     padding: 5px;
     flex-direction: column;
+    margin-bottom: 20px;
   }
 
   .card {
-    width: 100%;
+    width: 94%;
     height: 180px;
     background-repeat: no-repeat;
     background-size: 600px 400px;
     /* overflow: hidden; */
     background-position: -80px -100px;
-    margin-bottom: 5px;
+    margin: 4px auto;
   }
 
-  .overlay{
+  .overlay {
     background: rgba(0, 0, 0, 0.3);
     background-image: radial-gradient(rgba(40, 40, 40, 0), rgba(0, 0, 0, 0.1));
   }
-  
+
   .card h2 {
     font-size: 22px;
-    margin-top: -10px;
+    margin-top: -12px;
   }
 
   .links {
-    display: flex;
+    display: none;
     top: 58%;
   }
 
   .links li {
     font-size: 22px;
   }
+
+  .links a {
+    padding: 5px 8px;
+  }
+
+  .links span {
+    font-size: 18px;
+  }
+  
 }
