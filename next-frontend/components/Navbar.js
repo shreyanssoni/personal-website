@@ -21,6 +21,12 @@ const Navbar = (props) => {
       }
     }
   }
+  function idle(){
+    getVal();
+    var checkbox = document.getElementById("check");
+    checkbox.checked = false;
+    document.getElementById('i').style.cssText = `transform: rotate(0deg); color:${props.color}; transition: 0.8s`
+  }
   return (
     <nav>
       <div id="nav" className={styles.navbar}>
@@ -37,22 +43,22 @@ const Navbar = (props) => {
           </label>
           <ul id="ul" className={styles.navcontainerul}>
             <Link href="/">
-              <a className="link">
+              <a className="link" onClick={idle}>
                 <li>Home</li>
               </a>
             </Link>
             <Link href="/about">
-              <a className="link">
+              <a className="link" onClick={idle}>
                 <li>About</li>
               </a>
             </Link>
             <Link href="/blog">
-              <a className="link">
+              <a className="link" onClick={idle}>
                 <li>Blog</li>
               </a>
             </Link>
             <Link href="/contact">
-              <a className="link">
+              <a className="link" onClick={idle}>
                 <li>Contact</li>
               </a>
             </Link>
