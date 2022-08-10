@@ -197,6 +197,18 @@ font-family: 'Square Peg', cursive; */
   margin: 2px auto;
 }
 
+.blogcontent a{
+  color: #0000ee;
+  font-style: italic;
+}
+
+.blogcontent h6 {
+  font-size: 12px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-style: italic;
+}
+
 .hr {
   border: solid 1px rgba(95, 94, 94, 0.284);
   margin: 1em auto;
