@@ -114,6 +114,7 @@ export default function Home({ blogs, profile, projects }) {
                   >
                     {datetype + " " + month + ", " + year}
                   </p>
+                  <div className={styles.blogmaincontent}>
                   <h2
                     className=" pl-1 font-bold text-[18px]"
                     style={{ fontFamily: "Josefin Sans, sans-serif" }}
@@ -126,6 +127,7 @@ export default function Home({ blogs, profile, projects }) {
                   >
                     {item.metadesc.substring(0, 100)}...
                   </p>
+                  </div>
                 </div>
               </Link>
             );

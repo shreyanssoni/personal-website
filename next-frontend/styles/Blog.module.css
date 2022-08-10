@@ -193,6 +193,10 @@ font-family: 'Square Peg', cursive; */
   /* font-family: 'Nunito Sans', sans-serif; */
 }
 
+.blogcontent figure img{
+  margin: 2px auto;
+}
+
 .hr {
   border: solid 1px rgba(95, 94, 94, 0.284);
   margin: 1em auto;

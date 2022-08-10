@@ -256,8 +256,16 @@ font-family: 'Square Peg', cursive; */
   background: white;
   cursor: pointer;
   width: 20vw;
-  height: 320px;
+  height: 340px;
   overflow: hidden;
+  /* overflow-wrap:break-word; */
+  /* overflow: hidden !important; */
+}
+
+.blogmaincontent p{
+  height: 60px;
+  overflow:hidden;
+  /* text-overflow: clip; */
 }
 
 .blogImg {

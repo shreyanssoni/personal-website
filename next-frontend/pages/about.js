@@ -27,6 +27,7 @@ const About = ({profile, projects}) => {
     <Navbar color = 'white'/>
     <Head>
         <title> About | The Bitwise</title>
+        <meta name="description" content={profile.about}/>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"

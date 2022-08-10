@@ -27,6 +27,7 @@ const Blog = ({ blogs }) => {
       <Navbar color="white" />
       <Head>
         <title>Blogs | The Bitwise</title>
+        <meta name="description" content='Tech. Entrepreneurship. Electronics. Psychology? This is Shreyans Soni. Read more about my ideas and thoughts from my published blogs.' />
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"

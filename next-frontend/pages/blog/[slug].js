@@ -48,6 +48,7 @@ const Blog = ({ blog, author }) => {
         />
         <meta name="google-site-verification" content="zoIu_lrc5Gw-_uzNUiSMpRl088xH7AbdJoOKq7FDWlQ" />
         <link rel="preload" as="font"/>
+        <meta name="description" content={blog.metadesc}/>
       </Head>
 
       <div className={styles.blogmaindiv} style={{ background: "#ffeddf" }}>
