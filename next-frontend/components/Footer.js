@@ -54,8 +54,9 @@ const Footer = () => {
 
   return (
     <>
-    <div>
+    <div >
         <div className={styles.form}>
+        <h2 className={styles.request}>Don't miss on the fun. Receive the latest updates.</h2>
             <form>
             <input type="email" name='email' value ={email} placeholder='Enter your email' onChange={(e)=>{
               setEmail(e.target.value)
@@ -77,7 +78,7 @@ const Footer = () => {
         <div className={styles.footercontent}>
             THE MICROBITS | SHREYANS SONI
         </div>
-        <p style={{'fontFamily': 'Josefin Sans, sans-serif'}} className='text-center mb-2 -mt-2 mr-3 text-[11px]'>Coded using <a rel="noreferrer" target="_blank" href="https://nextjs.org/">Next.js</a> and <a rel="noreferrer" target="_blank" href="https://www.sanity.io/">Sanity.io</a></p>
+        <p style={{'fontFamily': 'Josefin Sans, sans-serif'}} className='text-center my-2 mr-3 text-[11px]'>Coded using <a rel="noreferrer" target="_blank" href="https://nextjs.org/">Next.js</a> and <a rel="noreferrer" target="_blank" href="https://www.sanity.io/">Sanity.io</a></p>
     </div>
     </>
   )
