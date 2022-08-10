@@ -27,7 +27,7 @@ const About = ({profile, projects}) => {
     <Navbar color = 'white'/>
     <Head>
         <title> About | The MicroBits</title>
-        <meta name="description" content={profile.about}/>
+        <meta name="description" content='I am Shreyans Soni, a pre-final year student pursuing Electronics and Instrumentation from BITS Pilani, Hyderabad Campus. With having discovered special interest in creation, design and development, I have been involved in Web dev for more than a year. My other interests include tinkering with electronic components, making sounds using guitar and hitting a shuttle with badminton racket. '/>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"
