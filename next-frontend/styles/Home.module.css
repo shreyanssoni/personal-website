@@ -316,8 +316,9 @@ font-family: 'Square Peg', cursive; */
   /* border: solid #111 1px; */
   background: rgba(210, 210, 210, 0.589);
   /* border-radius: 10px; */
-  padding: 4px 6px;
+  padding: 4px 8px;
   margin: auto 8px ;
+  border-radius: 1px;
   width: 350px;
 }
 
