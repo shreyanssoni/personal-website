@@ -40,12 +40,12 @@ export default function Home({ blogs, profile, projects }) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
           name="viewport"
         />
-        <title>Homepage | The Bitwise</title>
+        <title>Homepage | The MicroBits</title>
         <meta property="og:locale" content="en_US" />
         <meta property="og:url" content="//" />
         <meta
           name="description"
-          content="Personal website for Shreyans Soni. The Bitwise, languages include NextJS, Sanity.io, JavaScript, Python, C++, DSA, Data Structures and Algorithms, HTML, CSS, Verilog. This website also contains my blogs and projects on Github."
+          content="Personal website for Shreyans Soni. The MicroBits, languages include NextJS, Sanity.io, JavaScript, Python, C++, DSA, Data Structures and Algorithms, HTML, CSS, Verilog. This website also contains my blogs and projects on Github."
         />
         <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
 

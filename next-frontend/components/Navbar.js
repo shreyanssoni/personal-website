@@ -70,7 +70,7 @@ const Navbar = (props) => {
                 width="24px"
                 className="pb-1"
               />
-              The Bitwise
+              TheMicroBits
             </div>
           </ul>
         </div>

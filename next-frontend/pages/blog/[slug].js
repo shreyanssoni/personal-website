@@ -25,12 +25,12 @@ const Blog = ({ blog, author }) => {
 
   function goBack(){
     history.back();
-  }
+  }  
   return (
     <>
     <Navbar color= 'black'/>
       <Head>
-        <title> {blog.title} | The Bitwise</title>
+        <title> {blog.title} | The MicroBits</title>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"
@@ -85,6 +85,7 @@ const Blog = ({ blog, author }) => {
           <div>
           <PortableText
             className={styles.blogcontent}
+            id = "blogcontent"
             // Pass in block content straight from Sanity.io
             content={blog.content}
             projectId="p5ragvga"

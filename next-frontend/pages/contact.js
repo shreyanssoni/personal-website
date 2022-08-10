@@ -61,7 +61,7 @@ const Contact = () => {
     <>
     <Navbar color='black'/>
       <Head>
-        <title> Contact | The Bitwise</title>
+        <title> Contact | The MicroBits</title>
         <link
           rel="icon"
           href="/assets/img/shreyans1.png"
