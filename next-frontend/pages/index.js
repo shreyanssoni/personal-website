@@ -45,7 +45,7 @@ export default function Home({ blogs, profile, projects }) {
         <meta property="og:url" content="//" />
         <meta
           name="description"
-          content="Personal website for Shreyans Soni. The MicroBits, languages include NextJS, Sanity.io, JavaScript, Python, C++, DSA, Data Structures and Algorithms, HTML, CSS, Verilog. This website also contains my blogs and projects on Github."
+          content="The MicroBits is a personal website developed by Shreyans Soni. The website includes personal blogs written by Shreyans and an updated About Page comprising of a short description, resume, projects and the fields of interest. Subscribe for Blog updates."
         />
         <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
 
