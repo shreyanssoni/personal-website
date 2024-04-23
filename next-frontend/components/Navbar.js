@@ -52,6 +52,11 @@ const Navbar = (props) => {
                 <li>About</li>
               </a>
             </Link>
+            <Link href="/portfolio">
+              <a className="link" onClick={idle}>
+                <li>Portfolio</li>
+              </a>
+            </Link>
             <Link href="/blog">
               <a className="link" onClick={idle}>
                 <li>Blog</li>
