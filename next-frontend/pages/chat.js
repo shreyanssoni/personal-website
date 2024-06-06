@@ -53,12 +53,7 @@ export default function Chat() {
   const scrollContainerRef = useRef(null);
 
   const [message, setMessage] = useState("");
-  const [userId, setUserId] = useState(null);
-  const [socket, setSocket] = useState("");
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [chunks, setChunks] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [textBox, setTextBox] = useState(false); //UI components to show and hide the text box area
   const [connection, setConnection] = useState(true);
   const [status, setStatus] = useState(0);
 
