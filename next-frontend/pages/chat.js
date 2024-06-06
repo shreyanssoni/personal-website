@@ -39,7 +39,7 @@ const USER_STATUSES = [
   "decoding ",
 ];
 
-export default function chat() {
+export default function Chat() {
   const [expanded, setExpanded] = useState(false);
   const [messages, setMessages] = useState([
     [
