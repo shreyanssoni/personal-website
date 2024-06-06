@@ -1,0 +1,49 @@
+/* styles/Chat.module.css */
+.glowingBorder {
+    position: relative;
+    z-index: 1;
+}
+
+.glowingBorder::before,
+.glowingBorder::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, white, black);
+    background-size: 400% 400%;
+    border-radius: 16px; /* Match the border-radius of the Card */
+    z-index: -1;
+    animation: glowing 10s linear infinite;
+    filter: blur(8px);
+    opacity: 0.8;
+}
+
+.glowingBorder::after {
+    filter: blur(16px);
+}
+
+@keyframes glowing {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.typing {
+    /* Set the text content */
+    content: attr(data-text);
+    animation: typing 2s steps(40, end) infinite forwards;
+    overflow: hidden;
+    white-space: nowrap;
+    /* font-size: 0.9em; */
+    font-weight: bolder;
+    /* display: inline-block; */
+  }
+  
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
