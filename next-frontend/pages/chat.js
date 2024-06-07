@@ -124,11 +124,19 @@ export default function Chat() {
     });
   
       const result = await response.json();
+      if(result.status != 200){
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          ["Error occurred in the pipeline.", "Bot", "txt"],
+        ]);
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          [result['updatedData'], "Bot", "txt"],
+        ]);
+      }
         setIsTyping(false);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        [result['updatedData'], "Bot", "txt"],
-      ]);
+      
       // for (let index = 0; index < messages.length; index++) {
       //   if(messages[index][1] == 'Bot' && messages[index][0] == '...'){
       //     messages.splice(index,1)

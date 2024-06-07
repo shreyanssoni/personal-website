@@ -1,13 +1,7 @@
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = `mongodb+srv://user:${process.env.NEXT_MONGO_PASS}@bot.kit2lhj.mongodb.net/?retryWrites=true&w=majority&appName=Bot`;
-
-const connect = async () => {
-    mongoose.connect( uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-}
+const mongoKey = process.env.NEXT_MONGO_PASS
+const uri = `mongodb+srv://user:${mongoKey}@bot.kit2lhj.mongodb.net/?retryWrites=true&w=majority&appName=Bot`;
 
 const client = new MongoClient(uri, {
   serverApi: {

@@ -12,6 +12,7 @@ import {
     storageContextFromDefaults,
     ContextChatEngine
   } from "llamaindex";
+import { Timestamp } from "mongodb";
 
 Settings.llm = new Gemini({
     model: "gemini-pro"
@@ -104,10 +105,13 @@ export default async function handler (req, res) {
         // const text = response.text();
         // console.log(text)
         // Send the processed data back to the client
-        // allMessages.push(`User: ${data}, Model: ${general_response['message']['content']}`)
-        run({
+        // allMessages.push(`User: ${data}, Model: ${general_response['message']['content']}`)]
+        const date = new Date();
+        const timestamp = date.toISOString();
+        await run({
               session_id : data['session'],
-              recorded_messages : `User: ${data['message']} \n ${general_response['message']['content']}` 
+              recorded_messages : `User: ${data['message']} \n ${general_response['message']['content']}`,
+              timestamp : timestamp
             })
 
         res.status(200).json({ updatedData: general_response['message']['content'] });
