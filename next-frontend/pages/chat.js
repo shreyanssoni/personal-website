@@ -268,7 +268,7 @@ export default function Chat() {
             <Typography variant="subtitle" display="block" style={{ whiteSpace: 'pre-line',  backgroundColor :  item[1] == model ? '#343145': '#5745b4' }} sx={{ color: 'white', padding: '8px 10px', borderRadius: '10px', fontSize: '15px', textAlign: 'left', wordWrap: 'break-word', borderTopLeftRadius: item[1] == model ? '1px': '10px',  borderTopRightRadius: item[1] == model ? '10px': '1px' }}> 
               { item[0].includes("<<Link>>") && (
                   <span>{item[0].split('<<Link>>')[0]}
-                  <a href={item[0].split("<<Link>>")[1]} target="_blank" style={{ textDecoration: 'underline' }}>Download Resume</a></span>
+                  <a href={item[0].split("<<Link>>")[1]} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Download Resume</a></span>
               )}
               { !item[0].includes("<<Link>>") && 
                 item[0]
