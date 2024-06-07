@@ -1,5 +1,4 @@
 // pages/api/data.js
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 import { Gemini, QueryEngineTool } from "llamaindex";
 // import fs from "node:fs/promises";
 import run from "../../mongoDbConfig";
@@ -93,37 +92,37 @@ export default async function handler (req, res) {
         // }
     
         // const prompt = data;
-        const response = await llama_run(data['message'])
-        let general_response; 
+        // const response = await llama_run(data['message'])
+        // let general_response; 
         // console.log(response);
-        if(response.includes('Not present')){
-           general_response = await llm.chat({
-            messages: [
-              {
-              role: "system",
-              content: `You are Shreyans. Dont answer in hate or incorrect things. be general and try to avoid controversies. be poetic/aesthetic in your answers.\n\nDonot make up information on your own. and dont include placeholders. Answer in first person as Shreyans, in a friendly manner. Answer the query generally.`
-              },
-              {
-              role: "user",
-              content: `User Query: ${data['message']}.`,
-              },
-              ],
-          })
-        } else {
+        // if(response.includes('Not present')){
+        //    general_response = await llm.chat({
+        //     messages: [
+        //       {
+        //       role: "system",
+        //       content: `You are Shreyans. Dont answer in hate or incorrect things. be general and try to avoid controversies. be poetic/aesthetic in your answers.\n\nDonot make up information on your own. and dont include placeholders. Answer in first person as Shreyans, in a friendly manner. Answer the query generally.`
+        //       },
+        //       {
+        //       role: "user",
+        //       content: `User Query: ${data['message']}.`,
+        //       },
+        //       ],
+        //   })
+        // } else {
 
-          general_response = await llm.chat({
-          messages: [
-              {
-              role: "system",
-              content: `You are Shreyans. \n\nUse the data: ${response} and reformat it to answer the question. If the data is not present or not appropriate, tell acc. to what is available. Donot make up information on your own. Answer in first person as Shreyans, in a friendly manner. But if the query is general - like greetings, etc. answer based generally.`
-              },
-              {
-              role: "user",
-              content: `Query: ${data['message']}. Make the reponse concise. If data not there, answer generically with a response based on query and data reformatting it.`,
-              },
-              ],
-              });
-          }
+      const general_response = await llm.chat({
+      messages: [
+          {
+          role: "system",
+          content: `You are Shreyans. \n\nUse the data: ${Resume} and reformat it to answer the question. If the data is not present or not appropriate, tell acc. to what is available. Donot make up information on your own. Answer in first person as Shreyans, in a friendly manner. But if the query is general - like greetings, etc. answer based generally.Dont answer in hate or incorrect things. be general and try to avoid controversies. be aesthetic in your answers. be aesthetic as a writer.`
+          },
+          {
+          role: "user",
+          content: `Query: ${data['message']}. Make the reponse concise. If data not there, answer generically with a response based on query and data reformatting it.`,
+          },
+          ],
+          });
+          // }
         // const result = await model.generateContent(prompt);
         // const response = await result.response;
         // const text = response.text();
