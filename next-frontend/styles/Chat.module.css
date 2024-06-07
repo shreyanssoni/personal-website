@@ -12,11 +12,11 @@
     left: -5px;
     right: -5px;
     bottom: -5px;
-    background: linear-gradient(45deg, white, black);
+    background: linear-gradient(45deg, white, black, rgb(144, 144, 144));
     background-size: 400% 400%;
     border-radius: 16px; /* Match the border-radius of the Card */
     z-index: -1;
-    animation: glowing 10s linear infinite;
+    animation: glowing 5s linear infinite;
     filter: blur(8px);
     opacity: 0.8;
 }

@@ -183,7 +183,7 @@ export default function Chat() {
                 <MoreVertIcon />
               </IconButton>
             }
-            title="Shreyans (bot)"
+            title="Bot"
             subheader="online"
           />
 

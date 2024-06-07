@@ -3,7 +3,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 import { Gemini } from "llamaindex";
 // import fs from "node:fs/promises";
 const fs = require('fs');
+// import pc from "../../pineconeConfig";
 
+// index_name = 'resume_index'
 
 import {
     Document,
@@ -31,39 +33,39 @@ async function llama_run(data){
     const persistDir = "storage/";
     let index; 
   // Function to check if the storage directory exists
-    if(fs.existsSync(persistDir)){
-      console.log('storage persists!')
-        const secondStorageContext = await storageContextFromDefaults({
-            persistDir: persistDir,
-        });
-        index = await VectorStoreIndex.init({
-            storageContext: secondStorageContext,
-        });
+    // if(fs.existsSync(persistDir)){
+    //   console.log('storage persists!')
+    //     const secondStorageContext = await storageContextFromDefaults({
+    //         persistDir: persistDir,
+    //     });
+    //     index = await VectorStoreIndex.init({
+    //         storageContext: secondStorageContext,
+    //     });
 
-    } else {
-        const path = "public/resume.txt";
+    // } else {
+    const path = "public/resume.txt";
 
-        const essay = Resume; 
+    const essay = fs.readFileSync(path); 
+
+    // Create Document object with essay
+    const document = new Document({ text: essay, id_: path });
+    // const storageContext = await storageContextFromDefaults({
+    //     persistDir: persistDir,
+    //   });
     
-        // Create Document object with essay
-        const document = new Document({ text: essay, id_: path });
-        const storageContext = await storageContextFromDefaults({
-            persistDir: persistDir,
-          });
-        index = await VectorStoreIndex.fromDocuments([document], {
-            storageContext,
-        });
-    }
+    index = await VectorStoreIndex.fromDocuments([document]);
+    // }
 
     const retriever = index.asRetriever();
     const chatEngine = new ContextChatEngine({ retriever });
     const response = await chatEngine.chat({ message: `You are Shreyans Soni. Based on the query answer: ${data}` });
 
     return response['response']
+  // }
 }
 
 
-export default async function  handler (req, res) {
+export default async function handler (req, res) {
     if (req.method === 'POST') {
       // Get data from the request body
         const data = req.body;
@@ -81,7 +83,7 @@ export default async function  handler (req, res) {
         messages: [
             {
             role: "system",
-            content: `You are Shreyans. \n\nGenerate a valid response to the query and data in concise manner. Donot make up information on your own.`
+            content: `You are Shreyans. \n\nGenerate a valid response to the query and data in concise manner. Donot make up information on your own. Answer in first person as Shreyans, in a friendly manner.`
             },
             {
             role: "user",
