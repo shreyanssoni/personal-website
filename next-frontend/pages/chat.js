@@ -15,7 +15,7 @@ import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Paper } from "@mui/material";
-// import toast, {Toaster} from 'react-hot-toast';
+import toast, {Toaster} from 'react-hot-toast';
 // import { io } from 'socket.io-client';
 // import { getCookie } from 'cookies-next';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -40,16 +40,14 @@ const USER_STATUSES = [
 ];
 
 export default function Chat() {
-  const [expanded, setExpanded] = useState(false);
   const [messages, setMessages] = useState([
     [
-      "Hi there! I am Shreyans. Shoot me questions 💭",
+      "Hi there! What's your name? 💭",
       "Bot",
       "txt",
     ],
   ]);
-  const [isRecording, setIsRecording] = useState(false);
-  //   const router = useRouter();
+
   const scrollContainerRef = useRef(null);
 
   const [message, setMessage] = useState("");
@@ -85,7 +83,15 @@ export default function Chat() {
   // }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 20)
+    window.scrollTo(0, 20);
+    // toast("Heyyy there!", {
+    //   position: 'top-center',
+    //   icon: '🦄'
+    // })
+    // toast("Tip: type in /download to download the resume!", {
+    //   position: 'top-center',
+    //   icon: '🦄'
+    // })
   }, [])
   
   const sendMessage =  async (event) => {
@@ -93,10 +99,10 @@ export default function Chat() {
     event.preventDefault();
     // console.log(messages)
     // if (message.includes('❤️')){ // easter egg
-    //   toast('💖💖💖',
-    //   {
-    //     icon: '🦄'
-    //   }
+      // toast('💖💖💖',
+      // {
+      //   icon: '🦄'
+      // }
     // )
     // }
   if (message) {
@@ -195,6 +201,7 @@ export default function Chat() {
         />
         <link rel="preload" as="font" />
       </Head>
+      <Toaster />
       <Navbar />
       <div
       className={styles.mainContainer}
@@ -254,7 +261,15 @@ export default function Chat() {
         }}>  
             <div style={{ maxWidth: '300px', padding: '2px' }}>
           {item[2] == 'txt' && (
-            <Typography variant="subtitle" display="block" style={{ whiteSpace: 'pre-line',  backgroundColor :  item[1] == model ? '#343145': '#5745b4' }} sx={{ color: 'white', padding: '8px 10px', borderRadius: '10px', fontSize: '15px', textAlign: 'left', wordWrap: 'break-word', borderTopLeftRadius: item[1] == model ? '1px': '10px',  borderTopRightRadius: item[1] == model ? '10px': '1px' }}> {item[0]}</Typography>
+            <Typography variant="subtitle" display="block" style={{ whiteSpace: 'pre-line',  backgroundColor :  item[1] == model ? '#343145': '#5745b4' }} sx={{ color: 'white', padding: '8px 10px', borderRadius: '10px', fontSize: '15px', textAlign: 'left', wordWrap: 'break-word', borderTopLeftRadius: item[1] == model ? '1px': '10px',  borderTopRightRadius: item[1] == model ? '10px': '1px' }}> 
+              { item[0].includes("<<Link>>") && (
+                  <span>{item[0].split('<<Link>>')[0]}
+                  <a href={item[0].split("<<Link>>")[1]} target="_blank" style={{ textDecoration: 'underline' }}>Download Resume</a></span>
+              )}
+              { !item[0].includes("<<Link>>") && 
+                item[0]
+              }
+            </Typography>
           )}
             </div>
         </div>
