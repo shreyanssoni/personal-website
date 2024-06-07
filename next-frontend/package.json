@@ -9,9 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@google/generative-ai": "^0.12.0",
+    "@mui/icons-material": "^5.15.19",
+    "@mui/material": "^5.15.19",
+    "@pinecone-database/pinecone": "^2.2.2",
     "@sanity/block-content-to-react": "^3.0.0",
     "googleapis": "^105.0.0",
     "jquery": "^3.6.0",
+    "llamaindex": "^0.3.16",
     "next": "12.2.3",
     "next-sanity": "^0.6.0",
     "nextjs-progressbar": "^0.0.14",

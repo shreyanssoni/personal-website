@@ -67,6 +67,11 @@ const Navbar = (props) => {
                 <li>Contact</li>
               </a>
             </Link>
+            <Link href="/chat">
+              <a className="link" onClick={idle}>
+                <li>Chat</li>
+              </a>
+            </Link>
             <div className={styles.navcontent}>
               <img
                 src="/assets/img/shreyans1.png"
