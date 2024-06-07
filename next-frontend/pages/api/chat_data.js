@@ -27,17 +27,7 @@ const Resume = "Shreyans Soni 982-706-7491 • sonishreyans01@gmail.com • Webs
 async function llama_run(data){
     // const persistDir = "storage/";
     let index; 
-  // Function to check if the storage directory exists
-    // if(fs.existsSync(persistDir)){
-    //   console.log('storage persists!')
-    //     const secondStorageContext = await storageContextFromDefaults({
-    //         persistDir: persistDir,
-    //     });
-    //     index = await VectorStoreIndex.init({
-    //         storageContext: secondStorageContext,
-    //     });
 
-    // } else {
     const path = "public/resume.txt";
 
     const essay = Resume; 
@@ -119,7 +109,7 @@ export default async function handler (req, res) {
       messages: [
           {
           role: "system",
-          content: `You are Shreyans. \n\nUse the data: ${Resume} and reformat it to answer the question. If the data is not present or not appropriate, tell acc. to what is available. Donot make up information on your own. Answer in first person as Shreyans, in a friendly manner. But if the query is general - like greetings, etc. answer based generally.Dont answer in hate or incorrect things. be general and try to avoid controversies. be aesthetic in your answers. be aesthetic as a writer.`
+          content: `You are Shreyans. \n\nUse the data: ${Resume} and reformat it to answer the question. If the data is not present or not appropriate, tell acc. to what is available. Donot make up information on your own. Answer in first person as Shreyans, in a friendly manner. But if the query is general - like greetings, etc. answer based generally.Dont answer in hate or incorrect things. be general and try to avoid controversies. be aesthetic in your answers. be aesthetic as a writer. Respond in SHORT.`
           },
           {
           role: "user",
