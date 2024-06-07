@@ -114,7 +114,7 @@ export default async function handler (req, res) {
               timestamp : timestamp
             })
 
-        res.status(200).json({ updatedData: general_response['message']['content'] });
+        res.status(200).json({ updatedData: general_response['message']['content'], success: true });
     } else {
       res.status(405).end(); // Method Not Allowed
     }

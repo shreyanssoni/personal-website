@@ -124,7 +124,7 @@ export default function Chat() {
     });
   
       const result = await response.json();
-      if(result.status != 200){
+      if(!result['success']){
         setMessages((prevMessages) => [
           ...prevMessages,
           ["Error occurred in the pipeline.", "Bot", "txt"],
