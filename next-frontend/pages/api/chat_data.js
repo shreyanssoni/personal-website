@@ -76,6 +76,11 @@ export default async function handler (req, res) {
             res.status(200).json({ updatedData: "Here is the link to download my resume!\n<<Link>>https://drive.google.com/drive/folders/17RtGQ9Tqm9nzuPXj8FvE3aGkoUS2Knq6", success: true });
             return
           }
+
+          if (data['message'].includes('/queenriri')){
+            res.status(200).json({ updatedData: "Cutu people like you are princesss👑❤️", success: true });
+            return
+          }
         // if(data.includes("status code 999 exit.")){
         //   const new_data = data.split('status code 999 exit.')
         //   // console.log(allMedassages)

@@ -23,7 +23,7 @@
     "llamaindex": "^0.3.16",
     "mongodb": "^6.7.0",
     "moongose": "^1.0.0",
-    "next": "12.2.3",
+    "next": "^12.3.4",
     "next-sanity": "^0.6.0",
     "nextjs-progressbar": "^0.0.14",
     "react": "18.2.0",

@@ -84,27 +84,31 @@ export default function Chat() {
 
   useEffect(() => {
     window.scrollTo(0, 20);
-    // toast("Heyyy there!", {
-    //   position: 'top-center',
-    //   icon: '🦄'
-    // })
-    // toast("Tip: type in /download to download the resume!", {
-    //   position: 'top-center',
-    //   icon: '🦄'
-    // })
+  }, [])
+
+  useEffect(() => {
+    toast("Secret: type in /download to download the resume!", {
+      position: 'top-center',
+      icon: '🤫'
+    })
+    toast("Heyyyy there!", {
+      position: 'top-center',
+      icon: '🦄'
+    })
+    return 
   }, [])
   
   const sendMessage =  async (event) => {
     // print(messages)
     event.preventDefault();
-    // console.log(messages)
-    // if (message.includes('❤️')){ // easter egg
-      // toast('💖💖💖',
-      // {
-      //   icon: '🦄'
-      // }
-    // )
-    // }
+    console.log(messages)
+    if (message.includes('❤️')){ // easter egg
+      toast('💖💖💖',
+      {
+        icon: '🦄'
+      }
+    )
+    }
   if (message) {
     setIsTyping(true);
     const new_msg = message;
