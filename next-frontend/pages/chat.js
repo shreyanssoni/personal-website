@@ -183,8 +183,8 @@ export default function Chat() {
                 <MoreVertIcon />
               </IconButton>
             }
-            title="Bot"
-            subheader="online"
+            title="Shreyans (bot)"
+            subheader= {isTyping ? 'typing...' : 'online'}
           />
 
           <CardContent
@@ -238,7 +238,7 @@ export default function Chat() {
           <CardActions
             disableSpacing
             sx={{ justifyContent: "center"  }}
-            style={{ backgroundColor: "rgba(0, 0, 0, 0) !important", display: 'flex', }}
+            style={{ backgroundColor: "rgba(0, 0, 0, 0) !important", display: 'flex', padding: '8px', alignItems: 'center' }}
           >
             <div
               style={{
