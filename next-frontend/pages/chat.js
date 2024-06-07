@@ -27,9 +27,9 @@ import styles from "../styles/Chat.module.css";
 // import EmojiPicker from 'emoji-picker-react';
 
 // const darkTheme = createTheme({ palette: { mode: 'dark' } });
-const model = "Athena";
+const model = "Bot";
 
-// The messages shown to User while Athena Processes the Data
+// The messages shown to User while Bot Processes the Data
 const USER_STATUSES = [
   " ",
   "loading ",
@@ -44,7 +44,7 @@ export default function Chat() {
   const [messages, setMessages] = useState([
     [
       "Hi there! I am Shreyans. Shoot me questions 💭",
-      "Athena",
+      "Bot",
       "txt",
     ],
   ]);
@@ -95,10 +95,10 @@ export default function Chat() {
         setIsTyping(false);
       setMessages((prevMessages) => [
         ...prevMessages,
-        [result['updatedData'], "Athena", "txt"],
+        [result['updatedData'], "Bot", "txt"],
       ]);
       // for (let index = 0; index < messages.length; index++) {
-      //   if(messages[index][1] == 'Athena' && messages[index][0] == '...'){
+      //   if(messages[index][1] == 'Bot' && messages[index][0] == '...'){
       //     messages.splice(index,1)
       //     console.log(messages[index])
       //   }
@@ -157,14 +157,14 @@ export default function Chat() {
       </Head>
       <Navbar />
       <div
+      className={styles.mainContainer}
         style={{
           width: "100%",
           backgroundColor: "#d3d1d7",
-          height: "100vh",
+          minHeight: "80vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center"
-
         //   boxShadow: '1px 1px 80px 1px rgba(166, 124, 160 , 0.5)',
         }}
       >
@@ -188,10 +188,10 @@ export default function Chat() {
           />
 
           <CardContent
+            className={styles.cardCont}
             ref={scrollContainerRef}
             style={{
               height: "450px",
-              minWidth: "500px",
               display: "flex",
               flexDirection: "column",
               position: "relative",
