@@ -80,6 +80,11 @@ export default async function handler (req, res) {
             res.status(200).json({ updatedData: "Cutu people like you are princesss👑❤️", success: true });
             return
           }
+
+          if (data['message'].includes('/7wingies')){
+            res.status(200).json({ updatedData: "a bunch of misfits craving for sauce🤌🏼", success: true });
+            return
+          }
         // if(data.includes("status code 999 exit.")){
         //   const new_data = data.split('status code 999 exit.')
         //   // console.log(allMedassages)
