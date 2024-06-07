@@ -25,11 +25,16 @@
     filter: blur(16px);
 }
 
+.movable{
+    display: none;
+}
+
 @keyframes glowing {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+
 
 .typing {
     /* Set the text content */
@@ -55,10 +60,38 @@
     .mainContainer {
         height: 100vh
     }
+
+    
+    .movable {
+        display: block;
+        position: absolute;
+        padding: 12px 20px;
+        margin: 10px 10px;
+        border-radius: 10px;
+        background-image: url('/assets/img/notes.jpg');
+        background-size: 260%;
+        background-position: center;
+        /* background-position-y: 10; */
+        background-repeat: no-repeat;
+        width: 15em;
+        height: 10em;
+        z-index: 5; 
+        /* top: 0;
+        right: 0; */
+    }
+
+    .movable li {
+        font-size: 13px;
+    }
+
 }
 
 @media (max-width: 500px) {
     .mainContainer {
         height: 50em;
+    }
+
+    .cardCont {
+        height: 500px;
     }
 }

@@ -22,6 +22,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import { useRouter } from 'next/navigation';
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import styles from "../styles/Chat.module.css";
+// import Draggable from 'react-draggable';
 
 
 // import EmojiPicker from 'emoji-picker-react';
@@ -43,12 +44,12 @@ export default function Chat() {
   const [expanded, setExpanded] = useState(false);
   const [messages, setMessages] = useState([
     [
-      "Hi there! I am Shreyans. Shoot me questions 💭",
+      "Hi there! I am Shreyans. What's your name? 💭",
       "Bot",
       "txt",
     ],
   ]);
-  const [isRecording, setIsRecording] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
   //   const router = useRouter();
   const scrollContainerRef = useRef(null);
 
@@ -156,6 +157,13 @@ export default function Chat() {
         <link rel="preload" as="font" />
       </Head>
       <Navbar />
+      
+      {/* <Draggable>
+        <div className={styles.movable}>
+          <li>use the command /takeoff to directly open a page from chat</li>
+        </div>
+      </Draggable> */}
+
       <div
       className={styles.mainContainer}
         style={{
@@ -168,6 +176,7 @@ export default function Chat() {
         //   boxShadow: '1px 1px 80px 1px rgba(166, 124, 160 , 0.5)',
         }}
       >
+        
         {/* <body style={{ backgroundColor: 'black' }}> */}
         {/* <Box sx={{ bgcolor: '#cfe8fc', height: '100vh', margin: 0, padding: 0}} /> */}
         <div className={styles.glowingBorder}> 
@@ -278,7 +287,11 @@ export default function Chat() {
                   paddingLeft: "38px",
                   transition: "width 0.4s ease-in-out",
                 }}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => 
+                  {
+                    setMessage(e.target.value)
+                  }
+                }
                 placeholder="Type your message..."
                 value={message}
                 onKeyDown={handleKeyDown}
