@@ -45,7 +45,7 @@ async function llama_run(data){
     // } else {
     const path = "public/resume.txt";
 
-    const essay = fs.readFileSync(path); 
+    const essay = Resume; 
 
     // Create Document object with essay
     const document = new Document({ text: essay, id_: path });

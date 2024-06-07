@@ -12,7 +12,7 @@
     left: -5px;
     right: -5px;
     bottom: -5px;
-    background: linear-gradient(45deg, white, black, rgb(144, 144, 144));
+    background: linear-gradient(45deg, white, black, rgb(187, 187, 187));
     background-size: 400% 400%;
     border-radius: 16px; /* Match the border-radius of the Card */
     z-index: -1;
