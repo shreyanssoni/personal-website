@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+// const withLlamaIndex = require("llamaindex/next");
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
