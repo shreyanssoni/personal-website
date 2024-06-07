@@ -47,3 +47,12 @@
     to { width: 100%; }
   }
   
+@media (min-width: 600px) {
+    .cardCont {
+        min-width: 500px;
+    }
+
+    .mainContainer {
+        height: 100vh
+    }
+}
