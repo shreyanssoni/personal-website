@@ -161,7 +161,7 @@ export default function Chat() {
         style={{
           width: "100%",
           backgroundColor: "#d3d1d7",
-          minHeight: "80vh",
+          minHeight: "80%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center"
@@ -237,8 +237,8 @@ export default function Chat() {
           </CardContent>
           <CardActions
             disableSpacing
-            sx={{ justifyContent: "center" }}
-            style={{ backgroundColor: "rgba(0, 0, 0, 0) !important" }}
+            sx={{ justifyContent: "center"  }}
+            style={{ backgroundColor: "rgba(0, 0, 0, 0) !important", display: 'flex', }}
           >
             <div
               style={{
@@ -289,7 +289,8 @@ export default function Chat() {
                 style={{
                   color: "#fff",
                   backgroundColor: "#5745b4",
-                  margin: "auto 5px",
+                  // margin: "auto 5px",
+                  margin: 'auto 5px'
                 }}
                 onClick={sendMessage}
               >
