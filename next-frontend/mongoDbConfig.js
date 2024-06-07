@@ -25,12 +25,12 @@ export default async function run(data) {
 
     const database = client.db(dbName);
     const collection = database.collection(collectionName);
-    // try {
-    //   const result = await collection.insertOne(data);
-    //   console.log(`documents successfully inserted.\n`);
-    // } catch (err) {
-    //   console.error(`Something went wrong trying to insert the new documents: ${err}\n`);
-    // }
+    try {
+      const result = await collection.insertOne(data);
+      console.log(`documents successfully inserted.\n`);
+    } catch (err) {
+      console.error(`Something went wrong trying to insert the new documents: ${err}\n`);
+    }
   
   } finally {
     // Ensures that the client will close when you finish/error
