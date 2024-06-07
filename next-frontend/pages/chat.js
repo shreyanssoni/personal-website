@@ -22,7 +22,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import { useRouter } from 'next/navigation';
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import styles from "../styles/Chat.module.css";
-
+import { getSessionId, clearSessionId } from "../utils/sessions";
 
 // import EmojiPicker from 'emoji-picker-react';
 
@@ -57,17 +57,41 @@ export default function Chat() {
   const [connection, setConnection] = useState(true);
   const [status, setStatus] = useState(0);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  // useEffect(() => {
+  //   const handleBeforeUnload = async () => {
+  //     const sessionId = getSessionId();
+  //     // const allMessages = messages.toString();
+  //     // console.log(messages)
+  //     let str = ''
+      
+  //     messages.forEach((item) => {
+  //       str += item.toString()
+  //     })
+
+  //     const response = await fetch('/api/chat_data', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(`${sessionId} status code 999 exit. ${str}`),
+  //       keepalive: true 
+  //     });
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+  //   return () => {
+  //       window.removeEventListener('beforeunload', handleBeforeUnload);
+  //     };
+  // }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 60)
+    window.scrollTo(0, 20)
   }, [])
   
-
   const sendMessage =  async (event) => {
+    // print(messages)
     event.preventDefault();
+    // console.log(messages)
     // if (message.includes('❤️')){ // easter egg
     //   toast('💖💖💖',
     //   {
@@ -75,21 +99,29 @@ export default function Chat() {
     //   }
     // )
     // }
-    if (message) {
-        setMessage("");
-
+  if (message) {
     setIsTyping(true);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        [message, "Shreyans", "txt"],
+    const new_msg = message;
+    const sessionId = getSessionId();
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      [message, "Shreyans", "txt"],
       ]);
-      const response = await fetch('/api/chat_data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(message),
-      });
+      
+    setMessage("");
+    // console.log(messages)
+
+    
+    const response = await fetch('/api/chat_data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session: sessionId, 
+        message: new_msg
+      }),
+    });
   
       const result = await response.json();
         setIsTyping(false);
