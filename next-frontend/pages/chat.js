@@ -84,6 +84,7 @@ export default function Chat() {
 
   useEffect(() => {
     window.scrollTo(0, 20);
+    const session = getSessionId();
   }, [])
 
   useEffect(() => {
