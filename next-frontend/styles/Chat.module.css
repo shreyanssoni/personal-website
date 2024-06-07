@@ -61,4 +61,8 @@
     .mainContainer {
         height: 50em;
     }
+
+    .cardCont {
+        height: 500px;
+    }
 }
