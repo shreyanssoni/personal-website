@@ -26,7 +26,7 @@ const Resume = "Shreyans Soni 982-706-7491 • sonishreyans01@gmail.com • Webs
 async function llama_run(data){
     
     const document = await new SimpleDirectoryReader().loadData({
-      directoryPath: './public/storage'
+      directoryPath: 'storage'
       })
     const pinecone = new Pinecone({ apiKey: 'f418e1cd-77f6-42fe-a0ce-e0350715d656'}) 
     const pinecone_store = new PineconeVectorStore()
