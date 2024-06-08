@@ -1,19 +1,10 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 
-const pc = new Pinecone({
-  apiKey: process.env.NEXT_PINECONE_API
-});
-
-const indexName = "docs-quickstart-index"
-
-await pc.createIndex({
-  name: indexName,
-  dimension: 2,
-  metric: 'cosine',
-  spec: { 
-    serverless: { 
-      cloud: 'aws', 
-      region: 'us-east-1' 
-    }
-  } 
-});
+export default function initiate() {
+  const pc = new Pinecone({
+    apiKey: 'f418e1cd-77f6-42fe-a0ce-e0350715d656'
+  });
+  
+  const index = pc.index('resumeindex');
+  return index 
+}
