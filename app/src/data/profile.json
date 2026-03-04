@@ -1,0 +1,16 @@
+{
+  "name": "Shreyans Soni",
+  "title": "Web Developer",
+  "image": "/images/profile.jpg",
+  "link": "https://drive.google.com/drive/folders/17RtGQ9Tqm9nzuPXj8FvE3aGkoUS2Knq6?usp=sharing",
+  "projects": "https://github.com/shreyanssoni",
+  "aboutHtml": "<p>I am Shreyans Soni, a pre-final year student pursuing Electronics and Instrumentation from BITS Pilani, Hyderabad Campus. With having discovered special interest in creation, development and writing, I have been involved in AI and Web dev for more than two years. My other interests include tinkering with electronic components, making sounds using guitar and hitting a shuttle with a racket.</p>",
+  "socials": {
+    "linkedin": "https://www.linkedin.com/in/shreyans-soni/",
+    "github": "https://github.com/shreyanssoni",
+    "email": "soni21.shreyans@gmail.com",
+    "instagram": "https://www.instagram.com/shreyans.not.h/",
+    "facebook": "https://www.facebook.com/sonishreyans/",
+    "twitter": "https://x.com/abitofsoni"
+  }
+}

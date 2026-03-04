@@ -1,0 +1,150 @@
+.headercontainer {
+  height: 400px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  background-image: url("/assets/img/header-img4.webp");
+  z-index: 0;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 1600px 600px;
+}
+
+.headercontainer button {
+  border: solid white 2px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  text-align: center;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+
+.headercontainer button:hover {
+  background: white;
+  color: black;
+  transition: 0.5s linear;
+}
+
+.blogconttitle {
+  width: 100%;
+  background: rgb(30 41 59);
+  text-align: center;
+  color: white;
+  padding-top: 35px;
+  padding-bottom: 14px;
+  font-size: 32px;
+  font-family: var(--font-montserrat);
+}
+
+.blogconttitle h2 {
+  display: inline;
+  background: white;
+  color: black;
+  padding: 5px 6px;
+  vertical-align: middle;
+  font-weight: 700;
+  box-shadow: 0.5px 1px 4px 0.5px rgba(255, 255, 255, 0.458);
+}
+
+.blogcardcontainer {
+  background-color: rgb(30 41 59);
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.blog {
+  margin: 35px 3vw;
+  padding: 10px;
+  background: white;
+  cursor: pointer;
+  width: 20vw;
+  height: 340px;
+  overflow: hidden;
+}
+
+.blogmaincontent p {
+  height: 60px;
+  overflow: hidden;
+}
+
+.blogImg {
+  position: relative;
+  height: 180px;
+  background-position: center;
+  background-size: 300px;
+}
+
+.readmorebutton {
+  background: transparent;
+  width: 125px;
+  padding: 8px 12px;
+  margin: 5vh auto;
+  margin-top: 3vh;
+  color: white;
+  border-radius: 8px;
+  border: solid white 1px;
+  text-align: center;
+  transition: 0.5s linear;
+  font-family: var(--font-montserrat);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.readmorebutton:hover {
+  background: white;
+  color: black;
+}
+
+@media (max-width: 900px) {
+  .headercontainer {
+    background-position: -250px -10px;
+    background-size: 1400px 550px;
+  }
+
+  .blogcardcontainer {
+    width: 100%;
+  }
+
+  .blog {
+    margin: 35px 2vw;
+    padding: 8px;
+    width: 35vw;
+    height: 300px;
+  }
+
+  .blogImg {
+    height: 180px;
+    background-size: 300px;
+  }
+}
+
+@media (max-width: 600px) {
+  .headercontainer {
+    background-position: -200px 0;
+    height: 300px;
+    background-size: 1000px 400px;
+  }
+
+  .blogcardcontainer {
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .blog {
+    margin: 35px 1vw;
+    width: 300px;
+    height: 340px;
+  }
+
+  .blogImg {
+    background-size: 350px;
+  }
+}

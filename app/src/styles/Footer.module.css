@@ -1,0 +1,132 @@
+.footerblog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px auto;
+  width: 500px;
+}
+
+.footerblog a {
+  font-size: 20px;
+  margin: auto 1rem;
+  padding: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.footerblog a:hover {
+  opacity: 0.7;
+}
+
+.footercontent {
+  margin: 15px auto;
+  margin-top: 10px;
+  text-align: center;
+  font-family: var(--font-source-code);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.request {
+  font-family: var(--font-square-peg);
+  margin: 20px auto;
+  font-size: 30px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-montserrat);
+  font-size: 16px;
+  padding-bottom: 50px;
+  width: 500px;
+  margin: 5px auto;
+  border-bottom: solid black 2px;
+}
+
+.form input {
+  background: rgba(210, 210, 210, 0.589);
+  padding: 4px 8px;
+  margin: auto 8px;
+  width: 350px;
+  box-shadow: 1px 2px 3px 0px rgba(0, 0, 0, 0.177);
+}
+
+.form button {
+  border: solid black 1px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  background: #000;
+  color: white;
+  cursor: pointer;
+}
+
+.form button:hover {
+  color: rgb(255, 255, 255);
+  background: #000;
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.359);
+  transition: 0.5s;
+}
+
+@media (max-width: 600px) {
+  .form {
+    width: 90%;
+  }
+
+  .request {
+    margin: 15px auto;
+    font-size: 25px;
+  }
+
+  .form input {
+    padding: 4px 8px;
+    margin: auto 10px;
+    width: 250px;
+  }
+
+  .form button {
+    font-size: 14px;
+    border: solid black 1px;
+    padding: 4px 6px;
+    border-radius: 10px;
+  }
+
+  .footerblog {
+    margin: 20px auto;
+    width: 80%;
+  }
+
+  .footerblog a {
+    font-size: 20px;
+    margin: auto 0.5rem;
+    padding: 0.6rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .request {
+    margin: 14px auto;
+    font-size: 22px;
+  }
+
+  .form {
+    width: 94%;
+  }
+
+  .form input {
+    padding: 4px 6px;
+    margin: auto 8px;
+    font-size: 14px;
+    width: 200px;
+  }
+
+  .form button {
+    font-size: 13px;
+    border: solid black 1px;
+    padding: 4px 4px;
+    border-radius: 10px;
+  }
+}

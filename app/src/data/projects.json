@@ -1,0 +1,42 @@
+[
+  {
+    "id": "042e8f0d",
+    "title": "Recipe App",
+    "description": "A recipe app.",
+    "image": "/images/projects/recipe-app.jpg",
+    "codelink": "https://github.com/shreyanssoni/Recipe-app",
+    "websitelink": "http://myrecipe-application.herokuapp.com/"
+  },
+  {
+    "id": "083942dc",
+    "title": "Chat Application",
+    "description": "Chat application",
+    "image": "/images/projects/chat-application.jpg",
+    "codelink": "https://github.com/shreyanssoni/Chat-Application",
+    "websitelink": ""
+  },
+  {
+    "id": "22bef1ba",
+    "title": "Students' Union Portal",
+    "description": "",
+    "image": "/images/projects/students-union.jpg",
+    "codelink": "",
+    "websitelink": ""
+  },
+  {
+    "id": "70bcc305",
+    "title": "InsightFace & Yolo Human Detection",
+    "description": "Private project",
+    "image": "/images/projects/insightface.jpg",
+    "codelink": "https://github.com/shreyanssoni",
+    "websitelink": "https://github.com/shreyanssoni"
+  },
+  {
+    "id": "c5286043",
+    "title": "POSIX Client-Server system",
+    "description": "POSIX based multithreaded client-server system",
+    "image": "/images/projects/posix-system.webp",
+    "codelink": "https://github.com/shreyanssoni/POSIX_server_client",
+    "websitelink": "https://github.com/shreyanssoni/POSIX_server_client"
+  }
+]
