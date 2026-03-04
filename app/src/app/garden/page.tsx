@@ -31,6 +31,12 @@ export default async function GardenPage() {
           color2="rgba(0, 245, 212, 0.10)"
           color3="rgba(0, 229, 255, 0.05)"
         />
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.05] saturate-150"
+          style={{ backgroundImage: "url(/assets/img/image.png)" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-midnight/40 via-transparent to-midnight" />
+
         <div className="relative mx-auto max-w-7xl px-6 py-32 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
