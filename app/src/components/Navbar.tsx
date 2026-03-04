@@ -15,10 +15,24 @@ const links = [
   { href: "/chat", label: "Chat" },
 ];
 
+// Pages that start with a light/cream background
+const LIGHT_PAGES = ["/about"];
+
+function isLightPage(pathname: string) {
+  if (LIGHT_PAGES.includes(pathname)) return true;
+  // Blog detail pages have cream bg
+  if (pathname.startsWith("/blog/") && pathname !== "/blog") return true;
+  return false;
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const lightTop = isLightPage(pathname);
+  // Use dark text on light pages when not scrolled (no dark backdrop yet)
+  const useDarkText = lightTop && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -44,7 +58,14 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="font-display text-2xl tracking-wider text-text-primary hover:text-accent-electric transition-colors">
+        <Link
+          href="/"
+          className={`font-display text-2xl tracking-wider transition-colors ${
+            useDarkText
+              ? "text-text-dark hover:text-accent-coral"
+              : "text-text-primary hover:text-accent-electric"
+          }`}
+        >
           SHREYANS
         </Link>
 
@@ -57,7 +78,9 @@ export default function Navbar() {
                 className={`font-mono text-xs tracking-[0.15em] uppercase transition-colors ${
                   pathname === link.href
                     ? "text-accent-electric"
-                    : "text-text-secondary hover:text-text-primary"
+                    : useDarkText
+                      ? "text-text-dark/60 hover:text-text-dark"
+                      : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {link.label}
@@ -68,7 +91,9 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-text-primary z-50"
+          className={`md:hidden z-50 transition-colors ${
+            useDarkText && !open ? "text-text-dark" : "text-text-primary"
+          }`}
           onClick={() => setOpen(!open)}
           aria-label={open ? "Close menu" : "Open menu"}
         >

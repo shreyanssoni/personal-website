@@ -3,11 +3,11 @@ export const revalidate = 3600;
 import Link from "next/link";
 import { ArrowRight, Code, Cpu, Layers } from "lucide-react";
 import { getFeaturedPosts } from "@/lib/blog";
+import { getFeaturedProjects } from "@/lib/portfolio";
 import BlogCard from "@/components/BlogCard";
 import GradientBlobs from "@/components/GradientBlobs";
 import GlassCard from "@/components/GlassCard";
 import SectionLabel from "@/components/SectionLabel";
-import projects from "@/data/projects.json";
 
 export default async function Home() {
   let posts: Awaited<ReturnType<typeof getFeaturedPosts>> = [];
@@ -17,12 +17,24 @@ export default async function Home() {
     posts = [];
   }
 
-  const featuredProjects = projects.slice(0, 3);
+  let featuredProjects: Awaited<ReturnType<typeof getFeaturedProjects>> = [];
+  try {
+    featuredProjects = await getFeaturedProjects(3);
+  } catch {
+    featuredProjects = [];
+  }
 
   return (
     <>
       {/* ===== HERO ===== */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Faded background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.25]"
+          style={{ backgroundImage: "url(/assets/img/header-img5.webp)" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-midnight/40 via-transparent to-midnight" />
+
         <GradientBlobs
           color1="rgba(0, 229, 255, 0.12)"
           color2="rgba(255, 45, 133, 0.08)"

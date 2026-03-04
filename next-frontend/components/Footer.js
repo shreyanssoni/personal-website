@@ -71,7 +71,7 @@ const Footer = () => {
                 <li><a href="https://www.linkedin.com/in/shreyans-soni/" className='fa fa-linkedin' rel="noreferrer" target="_blank"></a></li>
                 <li><a href="mailto: soni21.shreyans@gmail.com" className='fa fa-envelope' rel="noreferrer" target="_blank"></a></li>
                 <li><a href="https://github.com/shreyanssoni" className='fa fa-github' rel="noreferrer" target="_blank"></a></li>
-                <li><a href="https://www.instagram.com/shreyans.not.h/" className='fa fa-instagram' rel="noreferrer" target="_blank"></a></li>
+                <li><a href="https://www.instagram.com/geeeksalad/" className='fa fa-instagram' rel="noreferrer" target="_blank"></a></li>
                 <li><a href="#" className='fa fa-twitter' rel="noreferrer" target="_blank"></a></li>
             </ul>
         </div>

@@ -8,7 +8,7 @@ const socials = [
   { href: "https://github.com/shreyanssoni", icon: Github, label: "GitHub" },
   { href: "https://www.linkedin.com/in/shreyans-soni/", icon: Linkedin, label: "LinkedIn" },
   { href: "mailto:soni21.shreyans@gmail.com", icon: Mail, label: "Email" },
-  { href: "https://www.instagram.com/shreyans.not.h/", icon: Instagram, label: "Instagram" },
+  { href: "https://www.instagram.com/geeeksalad/", icon: Instagram, label: "Instagram" },
   { href: "https://x.com/abitofsoni", icon: Twitter, label: "Twitter" },
 ];
 

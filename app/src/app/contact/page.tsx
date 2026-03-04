@@ -63,12 +63,13 @@ export default function Contact() {
             <div className="flex flex-col justify-center">
               <SectionLabel text="CONTACT" className="mb-6 block" />
               <h1 className="font-display text-6xl sm:text-8xl leading-[0.85] text-text-primary mb-6">
-                LET&apos;S<br />
+                LET&apos;S
+                <br />
                 <span className="text-accent-sunny">CONNECT</span>
               </h1>
               <p className="font-body text-base text-text-secondary leading-relaxed mb-8 max-w-md">
-                Whether it&apos;s a project idea, a collaboration, or just saying hi
-                &mdash; I&apos;d love to hear from you.
+                Whether it&apos;s a project idea, a collaboration, or just
+                saying hi &mdash; I&apos;d love to hear from you.
               </p>
               <div className="flex flex-col gap-4">
                 <a
@@ -76,7 +77,9 @@ export default function Contact() {
                   className="inline-flex items-center gap-3 text-text-secondary hover:text-accent-sunny transition-colors"
                 >
                   <Mail size={18} />
-                  <span className="font-mono text-sm">soni21.shreyans@gmail.com</span>
+                  <span className="font-mono text-sm">
+                    sonishreyans01@gmail.com
+                  </span>
                 </a>
               </div>
             </div>
@@ -132,7 +135,9 @@ export default function Contact() {
                 {alert && (
                   <p
                     className={`mt-4 font-mono text-xs text-center ${
-                      alertType === "success" ? "text-accent-teal" : "text-accent-coral"
+                      alertType === "success"
+                        ? "text-accent-teal"
+                        : "text-accent-coral"
                     }`}
                   >
                     {alert}

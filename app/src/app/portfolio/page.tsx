@@ -3,13 +3,16 @@ import { Github, ExternalLink } from "lucide-react";
 import GradientBlobs from "@/components/GradientBlobs";
 import GlassCard from "@/components/GlassCard";
 import SectionLabel from "@/components/SectionLabel";
-import projects from "@/data/projects.json";
+import { getProjects } from "@/lib/portfolio";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Portfolio",
 };
 
-export default function Portfolio() {
+export default async function Portfolio() {
+  const projects = await getProjects();
   return (
     <>
       {/* ===== HERO ===== */}
