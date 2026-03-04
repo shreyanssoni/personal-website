@@ -2,55 +2,104 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft, Flower, Star } from "lucide-react";
 
 interface Post {
   id: string;
   title: string;
   slug: string;
   published: boolean;
+  featured: boolean;
   published_at: string | null;
+  updated_at: string;
+  tags: string[];
+}
+
+interface GardenPiece {
+  id: string;
+  type: string;
+  title: string;
+  published: boolean;
+  display_order: number;
   updated_at: string;
 }
 
+const TYPE_COLORS: Record<string, string> = {
+  hero: "text-accent-electric border-accent-electric/30 bg-accent-electric/5",
+  fragment: "text-accent-pink border-accent-pink/30 bg-accent-pink/5",
+  featured: "text-accent-orange border-accent-orange/30 bg-accent-orange/5",
+  artifact: "text-accent-teal border-accent-teal/30 bg-accent-teal/5",
+};
+
 export default function AdminDashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [gardenPieces, setGardenPieces] = useState<GardenPiece[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    fetchPosts();
+    fetchData();
   }, []);
 
-  async function fetchPosts() {
-    const res = await fetch("/api/admin/posts");
-    if (res.status === 401) {
+  async function fetchData() {
+    const [postsRes, gardenRes] = await Promise.all([
+      fetch("/api/admin/posts"),
+      fetch("/api/admin/garden"),
+    ]);
+
+    if (postsRes.status === 401 || gardenRes.status === 401) {
       router.push("/admin");
       return;
     }
-    const data = await res.json();
-    setPosts(data.posts || []);
+
+    const postsData = await postsRes.json();
+    const gardenData = await gardenRes.json();
+    setPosts(postsData.posts || []);
+    setGardenPieces(gardenData.pieces || []);
     setLoading(false);
   }
 
-  async function handleDelete(id: string, title: string) {
+  async function handleDeletePost(id: string, title: string) {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
-
     const res = await fetch(`/api/admin/posts/${id}`, { method: "DELETE" });
     if (res.ok) {
       setPosts((prev) => prev.filter((p) => p.id !== id));
     }
   }
 
-  async function togglePublish(post: Post) {
+  async function togglePublishPost(post: Post) {
     const res = await fetch(`/api/admin/posts/${post.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...post, published: !post.published }),
     });
+    if (res.ok) fetchData();
+  }
+
+  async function toggleFeaturedPost(post: Post) {
+    const res = await fetch(`/api/admin/posts/${post.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...post, featured: !post.featured }),
+    });
+    if (res.ok) fetchData();
+  }
+
+  async function handleDeleteGarden(id: string, title: string) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    const res = await fetch(`/api/admin/garden/${id}`, { method: "DELETE" });
     if (res.ok) {
-      fetchPosts();
+      setGardenPieces((prev) => prev.filter((p) => p.id !== id));
     }
+  }
+
+  async function togglePublishGarden(piece: GardenPiece) {
+    const res = await fetch(`/api/admin/garden/${piece.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...piece, published: !piece.published }),
+    });
+    if (res.ok) fetchData();
   }
 
   function formatDate(dateStr: string) {
@@ -62,167 +111,236 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f5f5" }}>
+    <div className="min-h-screen bg-midnight">
       {/* Header */}
-      <div
-        style={{
-          background: "#1e383b",
-          color: "white",
-          padding: "16px 32px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "20px",
-            fontWeight: "bold",
-            fontFamily: "var(--font-josefin)",
-          }}
-        >
-          The MicroBits — Admin
-        </h1>
-        <button
-          onClick={() => router.push("/admin/posts/new")}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            background: "#dc7561",
-            color: "white",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontFamily: "var(--font-josefin)",
-          }}
-        >
-          <Plus size={16} />
-          New Post
-        </button>
+      <div className="border-b border-white/5">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push("/")}
+              className="text-text-secondary hover:text-accent-electric transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <div>
+              <h1 className="font-display text-2xl text-text-primary tracking-wide">
+                DASHBOARD
+              </h1>
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-text-secondary">
+                {posts.length} post{posts.length !== 1 ? "s" : ""} &middot; {gardenPieces.length} garden piece{gardenPieces.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push("/admin/garden/new")}
+              className="flex items-center gap-2 px-5 py-2.5 bg-accent-teal/10 border border-accent-teal/30 text-accent-teal rounded-xl font-mono text-xs tracking-[0.1em] uppercase hover:bg-accent-teal/20 hover:border-accent-teal/50 transition-all cursor-pointer"
+            >
+              <Flower size={14} />
+              New Garden Piece
+            </button>
+            <button
+              onClick={() => router.push("/admin/posts/new")}
+              className="flex items-center gap-2 px-5 py-2.5 bg-accent-pink/10 border border-accent-pink/30 text-accent-pink rounded-xl font-mono text-xs tracking-[0.1em] uppercase hover:bg-accent-pink/20 hover:border-accent-pink/50 transition-all cursor-pointer"
+            >
+              <Plus size={14} />
+              New Post
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Content */}
-      <div style={{ maxWidth: "900px", margin: "32px auto", padding: "0 16px" }}>
-        <h2
-          style={{
-            fontSize: "18px",
-            fontWeight: "600",
-            marginBottom: "16px",
-            fontFamily: "var(--font-montserrat)",
-          }}
-        >
-          Blog Posts ({posts.length})
-        </h2>
-
+      <div className="max-w-5xl mx-auto px-6 py-8">
         {loading ? (
-          <p>Loading...</p>
-        ) : posts.length === 0 ? (
-          <div
-            style={{
-              background: "white",
-              padding: "40px",
-              borderRadius: "12px",
-              textAlign: "center",
-              color: "#666",
-            }}
-          >
-            <p>No posts yet. Create your first post!</p>
+          <div className="flex items-center justify-center py-20">
+            <span className="font-mono text-xs text-text-secondary tracking-wider">
+              Loading...
+            </span>
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            {posts.map((post) => (
-              <div
-                key={post.id}
-                style={{
-                  background: "white",
-                  padding: "16px 20px",
-                  borderRadius: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-                }}
-              >
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <h3
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "600",
-                        fontFamily: "var(--font-josefin)",
-                      }}
-                    >
-                      {post.title}
-                    </h3>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        padding: "2px 8px",
-                        borderRadius: "10px",
-                        background: post.published ? "#dcfce7" : "#fef3c7",
-                        color: post.published ? "#166534" : "#92400e",
-                        fontWeight: "600",
-                      }}
-                    >
-                      {post.published ? "Published" : "Draft"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>
-                    /{post.slug} · Updated {formatDate(post.updated_at)}
-                  </p>
+          <>
+            {/* ===== BLOG POSTS ===== */}
+            <div className="mb-12">
+              <h2 className="font-display text-lg text-text-primary tracking-wide mb-4">
+                BLOG POSTS
+              </h2>
+              {posts.length === 0 ? (
+                <div className="glass-card rounded-2xl p-12 text-center">
+                  <p className="font-body text-text-secondary mb-4">No posts yet</p>
+                  <button
+                    onClick={() => router.push("/admin/posts/new")}
+                    className="font-mono text-xs tracking-wider text-accent-electric hover:text-accent-electric/80 transition-colors cursor-pointer"
+                  >
+                    Create your first post &rarr;
+                  </button>
                 </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {posts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="glass-card rounded-xl px-6 py-4 flex justify-between items-center hover:border-white/10 transition-all group"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="font-serif text-base font-bold text-text-primary truncate">
+                            {post.title}
+                          </h3>
+                          <span
+                            className={`shrink-0 font-mono text-[9px] tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full border ${
+                              post.published
+                                ? "text-accent-teal border-accent-teal/30 bg-accent-teal/5"
+                                : "text-accent-sunny border-accent-sunny/30 bg-accent-sunny/5"
+                            }`}
+                          >
+                            {post.published ? "Live" : "Draft"}
+                          </span>
+                          {post.featured && (
+                            <span className="shrink-0 font-mono text-[9px] tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full border text-accent-orange border-accent-orange/30 bg-accent-orange/5">
+                              Featured
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-text-secondary">
+                          <span className="font-mono text-[11px]">/{post.slug}</span>
+                          <span className="text-white/10">&middot;</span>
+                          <span className="font-mono text-[11px]">
+                            {formatDate(post.updated_at)}
+                          </span>
+                          {post.tags?.length > 0 && (
+                            <>
+                              <span className="text-white/10">&middot;</span>
+                              <span className="font-mono text-[11px] text-accent-pink/60">
+                                {post.tags.slice(0, 3).join(", ")}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => toggleFeaturedPost(post)}
+                          title={post.featured ? "Remove from featured" : "Mark as featured"}
+                          className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                            post.featured
+                              ? "border-accent-orange/30 bg-accent-orange/10 text-accent-orange"
+                              : "border-white/5 hover:border-accent-orange/30 hover:bg-accent-orange/5 text-text-secondary hover:text-accent-orange"
+                          }`}
+                        >
+                          <Star size={14} fill={post.featured ? "currentColor" : "none"} />
+                        </button>
+                        <button
+                          onClick={() => togglePublishPost(post)}
+                          title={post.published ? "Unpublish" : "Publish"}
+                          className="p-2 rounded-lg border border-white/5 hover:border-white/15 hover:bg-white/5 text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+                        >
+                          {post.published ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                        <button
+                          onClick={() => router.push(`/admin/posts/${post.id}/edit`)}
+                          title="Edit"
+                          className="p-2 rounded-lg border border-white/5 hover:border-accent-electric/30 hover:bg-accent-electric/5 text-text-secondary hover:text-accent-electric transition-all cursor-pointer"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeletePost(post.id, post.title)}
+                          title="Delete"
+                          className="p-2 rounded-lg border border-white/5 hover:border-accent-coral/30 hover:bg-accent-coral/5 text-text-secondary hover:text-accent-coral transition-all cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-                <div style={{ display: "flex", gap: "8px" }}>
+            {/* ===== GARDEN PIECES ===== */}
+            <div>
+              <h2 className="font-display text-lg text-text-primary tracking-wide mb-4">
+                GARDEN PIECES
+              </h2>
+              {gardenPieces.length === 0 ? (
+                <div className="glass-card rounded-2xl p-12 text-center">
+                  <p className="font-body text-text-secondary mb-4">No garden pieces yet</p>
                   <button
-                    onClick={() => togglePublish(post)}
-                    title={post.published ? "Unpublish" : "Publish"}
-                    style={{
-                      background: "none",
-                      border: "1px solid #ddd",
-                      borderRadius: "6px",
-                      padding: "6px",
-                      cursor: "pointer",
-                      display: "flex",
-                    }}
+                    onClick={() => router.push("/admin/garden/new")}
+                    className="font-mono text-xs tracking-wider text-accent-teal hover:text-accent-teal/80 transition-colors cursor-pointer"
                   >
-                    {post.published ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                  <button
-                    onClick={() => router.push(`/admin/posts/${post.id}/edit`)}
-                    title="Edit"
-                    style={{
-                      background: "none",
-                      border: "1px solid #ddd",
-                      borderRadius: "6px",
-                      padding: "6px",
-                      cursor: "pointer",
-                      display: "flex",
-                    }}
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(post.id, post.title)}
-                    title="Delete"
-                    style={{
-                      background: "none",
-                      border: "1px solid #fca5a5",
-                      borderRadius: "6px",
-                      padding: "6px",
-                      cursor: "pointer",
-                      display: "flex",
-                      color: "#dc2626",
-                    }}
-                  >
-                    <Trash2 size={16} />
+                    Create your first piece &rarr;
                   </button>
                 </div>
-              </div>
-            ))}
-          </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {gardenPieces.map((piece) => (
+                    <div
+                      key={piece.id}
+                      className="glass-card rounded-xl px-6 py-4 flex justify-between items-center hover:border-white/10 transition-all group"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="font-serif text-base font-bold text-text-primary truncate">
+                            {piece.title}
+                          </h3>
+                          <span
+                            className={`shrink-0 font-mono text-[9px] tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full border ${
+                              TYPE_COLORS[piece.type] || "text-text-secondary border-white/10"
+                            }`}
+                          >
+                            {piece.type}
+                          </span>
+                          <span
+                            className={`shrink-0 font-mono text-[9px] tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full border ${
+                              piece.published
+                                ? "text-accent-teal border-accent-teal/30 bg-accent-teal/5"
+                                : "text-accent-sunny border-accent-sunny/30 bg-accent-sunny/5"
+                            }`}
+                          >
+                            {piece.published ? "Live" : "Draft"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-text-secondary">
+                          <span className="font-mono text-[11px]">
+                            Order: {piece.display_order}
+                          </span>
+                          <span className="text-white/10">&middot;</span>
+                          <span className="font-mono text-[11px]">
+                            {formatDate(piece.updated_at)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => togglePublishGarden(piece)}
+                          title={piece.published ? "Unpublish" : "Publish"}
+                          className="p-2 rounded-lg border border-white/5 hover:border-white/15 hover:bg-white/5 text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+                        >
+                          {piece.published ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                        <button
+                          onClick={() => router.push(`/admin/garden/${piece.id}/edit`)}
+                          title="Edit"
+                          className="p-2 rounded-lg border border-white/5 hover:border-accent-electric/30 hover:bg-accent-electric/5 text-text-secondary hover:text-accent-electric transition-all cursor-pointer"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteGarden(piece.id, piece.title)}
+                          title="Delete"
+                          className="p-2 rounded-lg border border-white/5 hover:border-accent-coral/30 hover:bg-accent-coral/5 text-text-secondary hover:text-accent-coral transition-all cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

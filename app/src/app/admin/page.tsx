@@ -29,85 +29,46 @@ export default function AdminLogin() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#1e383b",
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-midnight relative overflow-hidden">
+      {/* Background blobs */}
+      <div className="absolute top-1/4 -left-32 w-64 h-64 bg-accent-electric/10 rounded-full blur-3xl animate-blob-float" />
+      <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-accent-pink/10 rounded-full blur-3xl animate-blob-float-delayed" />
+
       <form
         onSubmit={handleSubmit}
-        style={{
-          background: "white",
-          padding: "40px",
-          borderRadius: "16px",
-          width: "360px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-        }}
+        className="glass-card rounded-2xl p-10 w-[380px] relative z-10"
       >
-        <h1
-          style={{
-            fontSize: "24px",
-            fontWeight: "bold",
-            marginBottom: "8px",
-            fontFamily: "var(--font-josefin)",
-          }}
-        >
-          Admin Login
+        <div className="mb-1">
+          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-accent-electric">
+            Admin Access
+          </span>
+        </div>
+        <h1 className="font-display text-4xl text-text-primary mb-2 tracking-wide">
+          THE MICROBITS
         </h1>
-        <p
-          style={{
-            color: "#666",
-            marginBottom: "24px",
-            fontSize: "14px",
-            fontFamily: "var(--font-montserrat)",
-          }}
-        >
-          The MicroBits Dashboard
+        <p className="font-body text-sm text-text-secondary mb-8">
+          Enter your password to continue
         </p>
 
         <input
           type="password"
-          placeholder="Enter admin password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "10px 14px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            fontSize: "16px",
-            marginBottom: "16px",
-            boxSizing: "border-box",
-          }}
+          className="w-full px-4 py-3 bg-surface border border-white/10 rounded-xl text-text-primary font-body text-sm placeholder:text-text-secondary/50 focus:outline-none focus:border-accent-electric/50 focus:ring-1 focus:ring-accent-electric/20 transition-all mb-4"
           autoFocus
         />
 
         {error && (
-          <p style={{ color: "red", fontSize: "14px", marginBottom: "12px" }}>
-            {error}
-          </p>
+          <p className="text-accent-coral text-xs font-mono mb-3">{error}</p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: "100%",
-            padding: "10px",
-            background: "#1e383b",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            fontSize: "16px",
-            cursor: "pointer",
-            fontFamily: "var(--font-josefin)",
-          }}
+          className="w-full py-3 bg-accent-electric/10 border border-accent-electric/30 text-accent-electric rounded-xl font-mono text-xs tracking-[0.15em] uppercase hover:bg-accent-electric/20 hover:border-accent-electric/50 transition-all disabled:opacity-50 cursor-pointer"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Authenticating..." : "Login"}
         </button>
       </form>
     </div>

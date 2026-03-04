@@ -9,6 +9,7 @@ export interface BlogPost {
   feature_image: string;
   tags: string[];
   published: boolean;
+  featured: boolean;
   published_at: string | null;
   created_at: string;
   updated_at: string;
@@ -59,6 +60,43 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     return null;
   }
   return data;
+}
+
+export async function getFeaturedPosts(limit = 3): Promise<BlogPost[]> {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("published", true)
+    .eq("featured", true)
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch featured posts:", error);
+    return [];
+  }
+
+  // If we have enough featured posts, return them
+  if (data.length >= limit) {
+    return data;
+  }
+
+  // Fill remaining slots with recent non-featured posts
+  let query = supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .limit(limit - data.length);
+
+  if (data.length > 0) {
+    const featuredIds = data.map((p) => p.id);
+    query = query.not("id", "in", `(${featuredIds.join(",")})`);
+  }
+
+  const { data: filler } = await query;
+  return [...data, ...(filler || [])];
 }
 
 // Admin: get all posts including drafts

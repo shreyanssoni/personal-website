@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     // Gemini call
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     const chat = model.startChat({
       history: [

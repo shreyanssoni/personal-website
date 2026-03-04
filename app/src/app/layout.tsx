@@ -1,38 +1,43 @@
 import type { Metadata } from "next";
-import { Josefin_Sans, Montserrat, Source_Code_Pro, Square_Peg, Nunito } from "next/font/google";
+import { Bebas_Neue, Playfair_Display, Public_Sans, Roboto_Mono, Homemade_Apple } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-const josefin = Josefin_Sans({
-  subsets: ["latin"],
-  variable: "--font-josefin",
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
-
-const sourceCode = Source_Code_Pro({
-  subsets: ["latin"],
-  variable: "--font-source-code",
-  display: "swap",
-});
-
-const squarePeg = Square_Peg({
+const bebasNeue = Bebas_Neue({
   weight: "400",
   subsets: ["latin"],
-  variable: "--font-square-peg",
+  variable: "--font-display",
   display: "swap",
 });
 
-const nunito = Nunito({
+const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-nunito",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const publicSans = Public_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const robotoMono = Roboto_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+const homemadeApple = Homemade_Apple({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-hand",
   display: "swap",
 });
 
@@ -63,10 +68,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${josefin.variable} ${montserrat.variable} ${sourceCode.variable} ${squarePeg.variable} ${nunito.variable}`}
+      className={`${bebasNeue.variable} ${playfairDisplay.variable} ${publicSans.variable} ${robotoMono.variable} ${homemadeApple.variable}`}
     >
-      <body>
-        {children}
+      <body className="antialiased">
+        <div className="grain-overlay" aria-hidden="true" />
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
         {process.env.NEXT_PUBLIC_GOOGLE && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE} />
         )}
