@@ -215,28 +215,24 @@ export default function About() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                title: "AI & Machine Learning",
-                desc: "Exploring the frontier of intelligent systems and generative models",
+                title: "AI Systems",
+                desc: "Designing systems where AI makes decisions over time — long-running agents, contextual memory, and observable AI behavior in real software.",
               },
               {
-                title: "Web Development",
-                desc: "Crafting beautiful, performant web experiences with modern frameworks",
+                title: "Backend & Realtime Systems",
+                desc: "Building APIs, WebSocket services, and infrastructure that power responsive and stateful applications.",
               },
               {
-                title: "Electronics",
-                desc: "Tinkering with components and building hardware-software bridges",
+                title: "Developer Infrastructure",
+                desc: "Exploring runtimes, CLIs, and internal tools that make building and operating software faster and more reliable.",
               },
               {
-                title: "Writing",
-                desc: "Articulating ideas through blogs and creative expression",
+                title: "Embedded Experiments",
+                desc: "Playing with microcontrollers, sensors, and small hardware setups to bridge software with the physical world.",
               },
               {
-                title: "Music",
-                desc: "Making sounds with guitar and exploring sonic landscapes",
-              },
-              {
-                title: "Badminton",
-                desc: "Hitting a shuttle with a racket — simple joy, complex strategy",
+                title: "Technical Writing",
+                desc: "Documenting experiments, breaking down complex ideas, and thinking clearly through writing about software and AI.",
               },
             ].map((item) => (
               <GlassCard
