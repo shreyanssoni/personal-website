@@ -69,7 +69,7 @@ export default function Footer() {
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-text-secondary mb-4">
               {"// "}STAY UPDATED
             </span>
-            <form onSubmit={handleSubscribe} className="flex gap-2">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 value={email}
@@ -109,7 +109,7 @@ export default function Footer() {
             ))}
           </div>
 
-          <nav className="flex items-center gap-6">
+          <nav className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2">
             {["Home", "About", "Portfolio", "Blog", "Garden", "Contact", "Chat"].map((label) => (
               <Link
                 key={label}

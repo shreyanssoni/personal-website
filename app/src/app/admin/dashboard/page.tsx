@@ -114,7 +114,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-midnight">
       {/* Header */}
       <div className="border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push("/")}
@@ -131,20 +131,20 @@ export default function AdminDashboard() {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-10 sm:ml-0">
             <button
               onClick={() => router.push("/admin/garden/new")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-accent-teal/10 border border-accent-teal/30 text-accent-teal rounded-xl font-mono text-xs tracking-[0.1em] uppercase hover:bg-accent-teal/20 hover:border-accent-teal/50 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-accent-teal/10 border border-accent-teal/30 text-accent-teal rounded-xl font-mono text-[10px] sm:text-xs tracking-[0.1em] uppercase hover:bg-accent-teal/20 hover:border-accent-teal/50 transition-all cursor-pointer"
             >
               <Flower size={14} />
-              New Garden Piece
+              <span className="hidden sm:inline">New</span> Garden
             </button>
             <button
               onClick={() => router.push("/admin/posts/new")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-accent-pink/10 border border-accent-pink/30 text-accent-pink rounded-xl font-mono text-xs tracking-[0.1em] uppercase hover:bg-accent-pink/20 hover:border-accent-pink/50 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-accent-pink/10 border border-accent-pink/30 text-accent-pink rounded-xl font-mono text-[10px] sm:text-xs tracking-[0.1em] uppercase hover:bg-accent-pink/20 hover:border-accent-pink/50 transition-all cursor-pointer"
             >
               <Plus size={14} />
-              New Post
+              <span className="hidden sm:inline">New</span> Post
             </button>
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
                   {posts.map((post) => (
                     <div
                       key={post.id}
-                      className="glass-card rounded-xl px-6 py-4 flex justify-between items-center hover:border-white/10 transition-all group"
+                      className="glass-card rounded-xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 hover:border-white/10 transition-all group"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-3 mb-1">
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 ml-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2 sm:ml-4 sm:opacity-50 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => toggleFeaturedPost(post)}
                           title={post.featured ? "Remove from featured" : "Mark as featured"}
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
                   {gardenPieces.map((piece) => (
                     <div
                       key={piece.id}
-                      className="glass-card rounded-xl px-6 py-4 flex justify-between items-center hover:border-white/10 transition-all group"
+                      className="glass-card rounded-xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 hover:border-white/10 transition-all group"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-3 mb-1">
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 ml-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2 sm:ml-4 sm:opacity-50 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => togglePublishGarden(piece)}
                           title={piece.published ? "Unpublish" : "Publish"}

@@ -52,7 +52,7 @@ export default function Portfolio() {
 
                     {/* Content */}
                     <div className="relative h-full flex flex-col justify-between p-6">
-                      <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex justify-end gap-3 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                         {project.codelink && (
                           <a
                             href={project.codelink}
