@@ -20,8 +20,10 @@ export default async function BlogList() {
     posts = [];
   }
 
-  const featured = posts[0];
-  const rest = posts.slice(1);
+  const featured =
+    posts.length > 0 ? posts.filter((p) => p.featured)[0] : posts[0];
+  const featuredId = featured?.id;
+  const rest = posts.filter((p) => p.id !== featuredId);
 
   return (
     <>
@@ -35,7 +37,8 @@ export default async function BlogList() {
         <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-32 w-full">
           <SectionLabel text="THE_GARDEN" className="mb-4 block" />
           <h1 className="font-serif text-5xl sm:text-7xl italic text-text-primary leading-[0.95] mb-6">
-            A Walk Through<br />
+            A Walk Through
+            <br />
             <span className="text-accent-pink">Thought</span>
           </h1>
           <p className="font-hand text-lg text-text-secondary/70 max-w-md">
