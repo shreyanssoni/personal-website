@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Linkedin, Mail, Github, Instagram, Twitter, ArrowRight, ExternalLink } from "lucide-react";
+import {
+  Linkedin,
+  Mail,
+  Github,
+  Instagram,
+  Twitter,
+  ArrowRight,
+  ExternalLink,
+} from "lucide-react";
 import GradientBlobs from "@/components/GradientBlobs";
 import GlassCard from "@/components/GlassCard";
 import SectionLabel from "@/components/SectionLabel";
@@ -23,19 +31,34 @@ const socials = [
 
 const timeline = [
   {
-    year: "2019-2023",
+    year: "2019 - 2023",
     title: "BITS Pilani, Hyderabad",
-    description: "B.E. Electronics & Instrumentation",
+    description:
+      "B.E. in Electronics & Instrumentation. Explored systems, computing, and product thinking while actively contributing to campus organizations.",
   },
   {
-    year: "2021+",
-    title: "Web Development & AI",
-    description: "Building full-stack applications with modern frameworks",
+    year: "2021 - 2023",
+    title: "Builder on the Web",
+    description:
+      "Worked as a React/Web Developer for communities and campus startups and built full-stack projects while exploring AI, machine learning, and modern web frameworks.",
   },
   {
-    year: "Present",
-    title: "Creator & Developer",
-    description: "Working at the intersection of technology and human experience",
+    year: "2022 - 2023",
+    title: "Campus Leadership & Communities",
+    description:
+      "Core member at E-Cell BITS Hyderabad, member of the BITS Hyderabad Consulting Group, and web developer for the Students' Union.",
+  },
+  {
+    year: "2023",
+    title: "Industry Experience",
+    description:
+      "Worked as an SDE Intern at Argenbright Innovation Labs and previously interned in automation at Saveer Biotech.",
+  },
+  {
+    year: "2024+",
+    title: "AI Engineer",
+    description:
+      "Working as a full-time AI Engineer at a Abrightlab, solving problems, building products and working on the frontier of AI and intelligent systems.",
   },
 ];
 
@@ -65,9 +88,13 @@ export default function About() {
 
             {/* Content */}
             <div className="lg:col-span-7">
-              <SectionLabel text="ABOUT_ME" className="!text-text-dark/40 mb-4 block" />
+              <SectionLabel
+                text="ABOUT_ME"
+                className="!text-text-dark/40 mb-4 block"
+              />
               <h1 className="font-display text-6xl sm:text-8xl leading-[0.85] text-text-dark mb-6">
-                HELLO,<br />
+                HELLO,
+                <br />
                 I&apos;M <span className="text-accent-coral">SHREYANS</span>
               </h1>
               <p className="font-body text-base text-text-dark/60 uppercase tracking-wider mb-6">
@@ -142,7 +169,9 @@ export default function About() {
                 <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-accent-coral border-2 border-midnight z-10" />
 
                 {/* Card */}
-                <div className={`ml-12 md:ml-0 md:w-1/2 ${i % 2 === 0 ? "md:pr-16" : "md:pl-16"}`}>
+                <div
+                  className={`ml-12 md:ml-0 md:w-1/2 ${i % 2 === 0 ? "md:pr-16" : "md:pl-16"}`}
+                >
                   <GlassCard className="p-6">
                     <span className="font-mono text-[10px] tracking-[0.2em] text-accent-coral uppercase">
                       {item.year}
@@ -166,8 +195,9 @@ export default function About() {
         <div className="mx-auto max-w-7xl px-6 text-center">
           <SectionLabel text="PHILOSOPHY" className="mb-6 block" />
           <h2 className="font-serif text-3xl sm:text-4xl italic text-text-primary max-w-2xl mx-auto leading-relaxed mb-8">
-            &ldquo;I believe in building software that feels alive &mdash; organic systems
-            that grow and adapt, powered by precise engineering underneath.&rdquo;
+            &ldquo;I believe in building software that feels alive &mdash;
+            organic systems that grow and adapt, powered by precise engineering
+            underneath.&rdquo;
           </h2>
           <p className="font-hand text-xl text-accent-coral/70">
             &mdash; the slow code manifesto
@@ -184,14 +214,35 @@ export default function About() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "AI & Machine Learning", desc: "Exploring the frontier of intelligent systems and generative models" },
-              { title: "Web Development", desc: "Crafting beautiful, performant web experiences with modern frameworks" },
-              { title: "Electronics", desc: "Tinkering with components and building hardware-software bridges" },
-              { title: "Writing", desc: "Articulating ideas through blogs and creative expression" },
-              { title: "Music", desc: "Making sounds with guitar and exploring sonic landscapes" },
-              { title: "Badminton", desc: "Hitting a shuttle with a racket — simple joy, complex strategy" },
+              {
+                title: "AI & Machine Learning",
+                desc: "Exploring the frontier of intelligent systems and generative models",
+              },
+              {
+                title: "Web Development",
+                desc: "Crafting beautiful, performant web experiences with modern frameworks",
+              },
+              {
+                title: "Electronics",
+                desc: "Tinkering with components and building hardware-software bridges",
+              },
+              {
+                title: "Writing",
+                desc: "Articulating ideas through blogs and creative expression",
+              },
+              {
+                title: "Music",
+                desc: "Making sounds with guitar and exploring sonic landscapes",
+              },
+              {
+                title: "Badminton",
+                desc: "Hitting a shuttle with a racket — simple joy, complex strategy",
+              },
             ].map((item) => (
-              <GlassCard key={item.title} className="p-6 hover:border-accent-coral/20 transition-colors">
+              <GlassCard
+                key={item.title}
+                className="p-6 hover:border-accent-coral/20 transition-colors"
+              >
                 <h3 className="font-display text-xl text-text-primary mb-2">
                   {item.title.toUpperCase()}
                 </h3>
