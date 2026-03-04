@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 // Update a post
 export async function PUT(
@@ -17,49 +17,52 @@ export async function PUT(
     const body = await req.json();
     const { title, slug, content_html, excerpt, feature_image, tags, published, featured } = body;
 
-    const supabase = createServerClient();
-
     // If publishing for the first time, set published_at
-    const updateData: Record<string, unknown> = {
-      title,
-      slug,
-      content_html,
-      excerpt,
-      feature_image,
-      tags,
-      published,
-      featured: featured ?? false,
-      updated_at: new Date().toISOString(),
-    };
-
+    let publishedAt = undefined;
     if (published) {
-      // Check if it was previously unpublished
-      const { data: existing } = await supabase
-        .from("blog_posts")
-        .select("published_at")
-        .eq("id", id)
-        .single();
-
-      if (!existing?.published_at) {
-        updateData.published_at = new Date().toISOString();
+      const existing = await sql`
+        SELECT published_at FROM blog_posts WHERE id = ${id} LIMIT 1
+      `;
+      if (!existing[0]?.published_at) {
+        publishedAt = new Date().toISOString();
       }
     }
 
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .update(updateData)
-      .eq("id", id)
-      .select()
-      .single();
+    const rows = publishedAt !== undefined
+      ? await sql`
+          UPDATE blog_posts SET
+            title = ${title},
+            slug = ${slug},
+            content_html = ${content_html},
+            excerpt = ${excerpt},
+            feature_image = ${feature_image},
+            tags = ${tags},
+            published = ${published},
+            featured = ${featured ?? false},
+            published_at = ${publishedAt},
+            updated_at = ${new Date().toISOString()}
+          WHERE id = ${id}
+          RETURNING *
+        `
+      : await sql`
+          UPDATE blog_posts SET
+            title = ${title},
+            slug = ${slug},
+            content_html = ${content_html},
+            excerpt = ${excerpt},
+            feature_image = ${feature_image},
+            tags = ${tags},
+            published = ${published},
+            featured = ${featured ?? false},
+            updated_at = ${new Date().toISOString()}
+          WHERE id = ${id}
+          RETURNING *
+        `;
 
-    if (error) {
-      console.error("Update post error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    revalidateTag("supabase");
-    return NextResponse.json({ post: data });
-  } catch {
+    revalidatePath("/", "layout");
+    return NextResponse.json({ post: rows[0] });
+  } catch (error) {
+    console.error("Update post error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -78,19 +81,12 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const supabase = createServerClient();
-    const { error } = await supabase
-      .from("blog_posts")
-      .delete()
-      .eq("id", id);
+    await sql`DELETE FROM blog_posts WHERE id = ${id}`;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    revalidateTag("supabase");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Delete post error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -109,19 +105,17 @@ export async function GET(
 
   try {
     const { id } = await params;
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const rows = await sql`
+      SELECT * FROM blog_posts WHERE id = ${id} LIMIT 1
+    `;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ post: data });
-  } catch {
+    return NextResponse.json({ post: rows[0] });
+  } catch (error) {
+    console.error("Get post error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

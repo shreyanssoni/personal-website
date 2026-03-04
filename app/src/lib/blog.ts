@@ -1,4 +1,4 @@
-import { createServerClient } from "./supabase";
+import { sql } from "./db";
 
 export interface BlogPost {
   id: string;
@@ -16,116 +16,106 @@ export interface BlogPost {
 }
 
 export async function getPosts(): Promise<BlogPost[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("published", true)
-    .order("published_at", { ascending: false });
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM blog_posts
+      WHERE published = true
+      ORDER BY published_at DESC
+    `;
+    return rows as BlogPost[];
+  } catch (error) {
     console.error("Failed to fetch posts:", error);
     return [];
   }
-  return data || [];
 }
 
 export async function getRecentPosts(limit = 3): Promise<BlogPost[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("published", true)
-    .order("published_at", { ascending: false })
-    .limit(limit);
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM blog_posts
+      WHERE published = true
+      ORDER BY published_at DESC
+      LIMIT ${limit}
+    `;
+    return rows as BlogPost[];
+  } catch (error) {
     console.error("Failed to fetch recent posts:", error);
     return [];
   }
-  return data || [];
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("slug", slug)
-    .eq("published", true)
-    .single();
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM blog_posts
+      WHERE slug = ${slug} AND published = true
+      LIMIT 1
+    `;
+    return (rows[0] as BlogPost) || null;
+  } catch (error) {
     console.error("Failed to fetch post:", error);
     return null;
   }
-  return data;
 }
 
 export async function getFeaturedPosts(limit = 3): Promise<BlogPost[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("published", true)
-    .eq("featured", true)
-    .order("published_at", { ascending: false })
-    .limit(limit);
+  try {
+    const featured = await sql`
+      SELECT * FROM blog_posts
+      WHERE published = true AND featured = true
+      ORDER BY published_at DESC
+      LIMIT ${limit}
+    ` as BlogPost[];
 
-  if (error) {
+    if (featured.length >= limit) return featured;
+
+    const featuredIds = featured.map((p) => p.id);
+    const remaining = limit - featured.length;
+
+    const filler = featuredIds.length > 0
+      ? await sql`
+          SELECT * FROM blog_posts
+          WHERE published = true AND id != ALL(${featuredIds})
+          ORDER BY published_at DESC
+          LIMIT ${remaining}
+        `
+      : await sql`
+          SELECT * FROM blog_posts
+          WHERE published = true
+          ORDER BY published_at DESC
+          LIMIT ${remaining}
+        `;
+
+    return [...featured, ...(filler as BlogPost[])];
+  } catch (error) {
     console.error("Failed to fetch featured posts:", error);
     return [];
   }
-
-  // If we have enough featured posts, return them
-  if (data.length >= limit) {
-    return data;
-  }
-
-  // Fill remaining slots with recent non-featured posts
-  let query = supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("published", true)
-    .order("published_at", { ascending: false })
-    .limit(limit - data.length);
-
-  if (data.length > 0) {
-    const featuredIds = data.map((p) => p.id);
-    query = query.not("id", "in", `(${featuredIds.join(",")})`);
-  }
-
-  const { data: filler } = await query;
-  return [...data, ...(filler || [])];
 }
 
-// Admin: get all posts including drafts
 export async function getAllPosts(): Promise<BlogPost[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .order("updated_at", { ascending: false });
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM blog_posts
+      ORDER BY updated_at DESC
+    `;
+    return rows as BlogPost[];
+  } catch (error) {
     console.error("Failed to fetch all posts:", error);
     return [];
   }
-  return data || [];
 }
 
-// Admin: get single post by ID (including drafts)
 export async function getPostById(id: string): Promise<BlogPost | null> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM blog_posts
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    return (rows[0] as BlogPost) || null;
+  } catch (error) {
     console.error("Failed to fetch post by id:", error);
     return null;
   }
-  return data;
 }

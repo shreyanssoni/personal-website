@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 // Create a new post
 export async function POST(req: NextRequest) {
@@ -20,30 +20,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .insert({
-        title,
-        slug,
-        content_html: content_html || "",
-        excerpt: excerpt || "",
-        feature_image: feature_image || "",
-        tags: tags || [],
-        published: published || false,
-        published_at: published ? new Date().toISOString() : null,
-      })
-      .select()
-      .single();
+    const rows = await sql`
+      INSERT INTO blog_posts (title, slug, content_html, excerpt, feature_image, tags, published, published_at)
+      VALUES (
+        ${title},
+        ${slug},
+        ${content_html || ""},
+        ${excerpt || ""},
+        ${feature_image || ""},
+        ${tags || []},
+        ${published || false},
+        ${published ? new Date().toISOString() : null}
+      )
+      RETURNING *
+    `;
 
-    if (error) {
-      console.error("Create post error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    revalidateTag("supabase");
-    return NextResponse.json({ post: data });
-  } catch {
+    revalidatePath("/", "layout");
+    return NextResponse.json({ post: rows[0] });
+  } catch (error) {
+    console.error("Create post error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -57,15 +52,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .order("updated_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  try {
+    const rows = await sql`
+      SELECT * FROM blog_posts ORDER BY updated_at DESC
+    `;
+    return NextResponse.json({ posts: rows });
+  } catch (error) {
+    console.error("List posts error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  return NextResponse.json({ posts: data });
 }

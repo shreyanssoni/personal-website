@@ -1,4 +1,4 @@
-import { createServerClient } from "./supabase";
+import { sql } from "./db";
 
 export interface Project {
   id: string;
@@ -16,83 +16,77 @@ export interface Project {
 }
 
 export async function getProjects(): Promise<Project[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .eq("published", true)
-    .order("display_order", { ascending: true });
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM portfolio_projects
+      WHERE published = true
+      ORDER BY display_order ASC
+    `;
+    return rows as Project[];
+  } catch (error) {
     console.error("Failed to fetch projects:", error);
     return [];
   }
-  return data || [];
 }
 
 export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .eq("published", true)
-    .eq("featured", true)
-    .order("display_order", { ascending: true })
-    .limit(limit);
+  try {
+    const featured = await sql`
+      SELECT * FROM portfolio_projects
+      WHERE published = true AND featured = true
+      ORDER BY display_order ASC
+      LIMIT ${limit}
+    ` as Project[];
 
-  if (error) {
+    if (featured.length >= limit) return featured;
+
+    const featuredIds = featured.map((p) => p.id);
+    const remaining = limit - featured.length;
+
+    const filler = featuredIds.length > 0
+      ? await sql`
+          SELECT * FROM portfolio_projects
+          WHERE published = true AND id != ALL(${featuredIds})
+          ORDER BY display_order ASC
+          LIMIT ${remaining}
+        `
+      : await sql`
+          SELECT * FROM portfolio_projects
+          WHERE published = true
+          ORDER BY display_order ASC
+          LIMIT ${remaining}
+        `;
+
+    return [...featured, ...(filler as Project[])];
+  } catch (error) {
     console.error("Failed to fetch featured projects:", error);
     return [];
   }
-
-  if (data.length >= limit) {
-    return data;
-  }
-
-  // Fill remaining slots with recent non-featured projects
-  let query = supabase
-    .from("portfolio_projects")
-    .select("*")
-    .eq("published", true)
-    .order("display_order", { ascending: true })
-    .limit(limit - data.length);
-
-  if (data.length > 0) {
-    const featuredIds = data.map((p) => p.id);
-    query = query.not("id", "in", `(${featuredIds.join(",")})`);
-  }
-
-  const { data: filler } = await query;
-  return [...data, ...(filler || [])];
 }
 
-// Admin: get all projects including unpublished
 export async function getAllProjects(): Promise<Project[]> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .order("display_order", { ascending: true });
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM portfolio_projects
+      ORDER BY display_order ASC
+    `;
+    return rows as Project[];
+  } catch (error) {
     console.error("Failed to fetch all projects:", error);
     return [];
   }
-  return data || [];
 }
 
-// Admin: get single project by ID
 export async function getProjectById(id: string): Promise<Project | null> {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
+  try {
+    const rows = await sql`
+      SELECT * FROM portfolio_projects
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    return (rows[0] as Project) || null;
+  } catch (error) {
     console.error("Failed to fetch project by id:", error);
     return null;
   }
-  return data;
 }

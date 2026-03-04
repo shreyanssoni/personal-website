@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 export async function GET(
   req: NextRequest,
@@ -12,19 +13,17 @@ export async function GET(
 
   try {
     const { id } = await params;
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("garden_pieces")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const rows = await sql`
+      SELECT * FROM garden_pieces WHERE id = ${id} LIMIT 1
+    `;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ piece: data });
-  } catch {
+    return NextResponse.json({ piece: rows[0] });
+  } catch (error) {
+    console.error("Get garden piece error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -57,34 +56,28 @@ export async function PUT(
       published,
     } = body;
 
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("garden_pieces")
-      .update({
-        type,
-        title,
-        subtitle,
-        quote,
-        description,
-        content_html,
-        image_url,
-        link_url,
-        label,
-        display_order,
-        published,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .select()
-      .single();
+    const rows = await sql`
+      UPDATE garden_pieces SET
+        type = ${type},
+        title = ${title},
+        subtitle = ${subtitle},
+        quote = ${quote},
+        description = ${description},
+        content_html = ${content_html},
+        image_url = ${image_url},
+        link_url = ${link_url},
+        label = ${label},
+        display_order = ${display_order},
+        published = ${published},
+        updated_at = ${new Date().toISOString()}
+      WHERE id = ${id}
+      RETURNING *
+    `;
 
-    if (error) {
-      console.error("Update garden piece error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ piece: data });
-  } catch {
+    revalidatePath("/", "layout");
+    return NextResponse.json({ piece: rows[0] });
+  } catch (error) {
+    console.error("Update garden piece error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -102,18 +95,12 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const supabase = createServerClient();
-    const { error } = await supabase
-      .from("garden_pieces")
-      .delete()
-      .eq("id", id);
+    await sql`DELETE FROM garden_pieces WHERE id = ${id}`;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Delete garden piece error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 // Update a project
 export async function PUT(
@@ -17,33 +17,26 @@ export async function PUT(
     const body = await req.json();
     const { title, description, image, codelink, websitelink, tags, featured, display_order, published } = body;
 
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("portfolio_projects")
-      .update({
-        title,
-        description: description || "",
-        image: image || "",
-        codelink: codelink || "",
-        websitelink: websitelink || "",
-        tags: tags || [],
-        featured: featured ?? false,
-        display_order: display_order ?? 0,
-        published: published ?? true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .select()
-      .single();
+    const rows = await sql`
+      UPDATE portfolio_projects SET
+        title = ${title},
+        description = ${description || ""},
+        image = ${image || ""},
+        codelink = ${codelink || ""},
+        websitelink = ${websitelink || ""},
+        tags = ${tags || []},
+        featured = ${featured ?? false},
+        display_order = ${display_order ?? 0},
+        published = ${published ?? true},
+        updated_at = ${new Date().toISOString()}
+      WHERE id = ${id}
+      RETURNING *
+    `;
 
-    if (error) {
-      console.error("Update project error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    revalidateTag("supabase");
-    return NextResponse.json({ project: data });
-  } catch {
+    revalidatePath("/", "layout");
+    return NextResponse.json({ project: rows[0] });
+  } catch (error) {
+    console.error("Update project error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -62,19 +55,12 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const supabase = createServerClient();
-    const { error } = await supabase
-      .from("portfolio_projects")
-      .delete()
-      .eq("id", id);
+    await sql`DELETE FROM portfolio_projects WHERE id = ${id}`;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    revalidateTag("supabase");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Delete project error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -93,19 +79,17 @@ export async function GET(
 
   try {
     const { id } = await params;
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("portfolio_projects")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const rows = await sql`
+      SELECT * FROM portfolio_projects WHERE id = ${id} LIMIT 1
+    `;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ project: data });
-  } catch {
+    return NextResponse.json({ project: rows[0] });
+  } catch (error) {
+    console.error("Get project error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

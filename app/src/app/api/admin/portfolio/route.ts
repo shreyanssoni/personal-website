@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 // Create a new project
 export async function POST(req: NextRequest) {
@@ -20,31 +20,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("portfolio_projects")
-      .insert({
-        title,
-        description: description || "",
-        image: image || "",
-        codelink: codelink || "",
-        websitelink: websitelink || "",
-        tags: tags || [],
-        featured: featured || false,
-        display_order: display_order ?? 0,
-        published: published ?? true,
-      })
-      .select()
-      .single();
+    const rows = await sql`
+      INSERT INTO portfolio_projects (title, description, image, codelink, websitelink, tags, featured, display_order, published)
+      VALUES (
+        ${title},
+        ${description || ""},
+        ${image || ""},
+        ${codelink || ""},
+        ${websitelink || ""},
+        ${tags || []},
+        ${featured || false},
+        ${display_order ?? 0},
+        ${published ?? true}
+      )
+      RETURNING *
+    `;
 
-    if (error) {
-      console.error("Create project error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    revalidateTag("supabase");
-    return NextResponse.json({ project: data });
-  } catch {
+    revalidatePath("/", "layout");
+    return NextResponse.json({ project: rows[0] });
+  } catch (error) {
+    console.error("Create project error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -58,15 +53,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .order("display_order", { ascending: true });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  try {
+    const rows = await sql`
+      SELECT * FROM portfolio_projects ORDER BY display_order ASC
+    `;
+    return NextResponse.json({ projects: rows });
+  } catch (error) {
+    console.error("List projects error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  return NextResponse.json({ projects: data });
 }

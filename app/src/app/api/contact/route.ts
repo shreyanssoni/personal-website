@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
@@ -23,14 +23,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save to Supabase
-    const supabase = createServerClient();
-    const { error: dbError } = await supabase
-      .from("contact_submissions")
-      .insert({ name, email, message });
-
-    if (dbError) {
-      console.error("Supabase insert error:", dbError);
+    // Save to database
+    try {
+      await sql`
+        INSERT INTO contact_submissions (name, email, message)
+        VALUES (${name}, ${email}, ${message})
+      `;
+    } catch (dbError) {
+      console.error("DB insert error:", dbError);
     }
 
     // Send email

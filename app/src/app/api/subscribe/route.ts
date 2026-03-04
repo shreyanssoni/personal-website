@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,25 +12,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
-    const { error } = await supabase.from("subscribers").insert({ email });
-
-    if (error) {
-      // Duplicate email is fine — they're already subscribed
-      if (error.code === "23505") {
-        return NextResponse.json({ success: true });
-      }
-      console.error("Subscribe error:", error);
-      return NextResponse.json(
-        { error: "Failed to subscribe" },
-        { status: 500 }
-      );
-    }
+    await sql`
+      INSERT INTO subscribers (email)
+      VALUES (${email})
+      ON CONFLICT (email) DO NOTHING
+    `;
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Subscribe error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to subscribe" },
       { status: 500 }
     );
   }

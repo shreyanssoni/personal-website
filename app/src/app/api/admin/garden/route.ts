@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { createServerClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   if (!isAdminRequest(req)) {
@@ -30,32 +31,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("garden_pieces")
-      .insert({
-        type,
-        title,
-        subtitle: subtitle || "",
-        quote: quote || "",
-        description: description || "",
-        content_html: content_html || "",
-        image_url: image_url || "",
-        link_url: link_url || "",
-        label: label || "",
-        display_order: display_order || 0,
-        published: published || false,
-      })
-      .select()
-      .single();
+    const rows = await sql`
+      INSERT INTO garden_pieces (type, title, subtitle, quote, description, content_html, image_url, link_url, label, display_order, published)
+      VALUES (
+        ${type},
+        ${title},
+        ${subtitle || ""},
+        ${quote || ""},
+        ${description || ""},
+        ${content_html || ""},
+        ${image_url || ""},
+        ${link_url || ""},
+        ${label || ""},
+        ${display_order || 0},
+        ${published || false}
+      )
+      RETURNING *
+    `;
 
-    if (error) {
-      console.error("Create garden piece error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ piece: data });
-  } catch {
+    revalidatePath("/", "layout");
+    return NextResponse.json({ piece: rows[0] });
+  } catch (error) {
+    console.error("Create garden piece error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -68,16 +65,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("garden_pieces")
-    .select("*")
-    .order("type", { ascending: true })
-    .order("display_order", { ascending: true });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  try {
+    const rows = await sql`
+      SELECT * FROM garden_pieces ORDER BY type ASC, display_order ASC
+    `;
+    return NextResponse.json({ pieces: rows });
+  } catch (error) {
+    console.error("List garden pieces error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  return NextResponse.json({ pieces: data });
 }
