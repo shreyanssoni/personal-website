@@ -110,7 +110,7 @@ export default function Footer() {
           </div>
 
           <nav className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2">
-            {["Home", "About", "Portfolio", "Blog", "Garden", "Contact", "Chat"].map((label) => (
+            {["Home", "About", "Portfolio", "Blog", "News", "Garden", "Contact", "Chat"].map((label) => (
               <Link
                 key={label}
                 href={label === "Home" ? "/" : `/${label.toLowerCase()}`}

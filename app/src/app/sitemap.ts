@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getLatestIssues } from "@/lib/newsletter";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: siteUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           : issue.issue_date
       ).slice(0, 10);
       return {
-        url: `${siteUrl}/news?date=${dateStr}`,
+        url: `${siteUrl}/news/${dateStr}`,
         lastModified: new Date(dateStr + "T12:00:00Z"),
         changeFrequency: "daily" as const,
         priority: 0.9,

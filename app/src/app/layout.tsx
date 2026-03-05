@@ -66,6 +66,11 @@ export const metadata: Metadata = {
     siteName: "The MicroBits",
     locale: "en_US",
   },
+  alternates: {
+    types: {
+      "application/rss+xml": "/api/news/rss",
+    },
+  },
 };
 
 export default function RootLayout({

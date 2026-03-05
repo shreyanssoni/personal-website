@@ -121,7 +121,7 @@ export async function GET(req: NextRequest) {
     const recipientEmails = new Set(subscribers.map((s) => s.email));
     if (ownerEmail) recipientEmails.add(ownerEmail);
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
 
     for (const email of recipientEmails) {
       const token = Buffer.from(email + (process.env.CRON_SECRET || "")).toString("base64url");

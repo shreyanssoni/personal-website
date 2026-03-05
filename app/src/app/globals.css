@@ -207,6 +207,17 @@ body {
     radial-gradient(ellipse 60% 40% at 80% 60%, rgba(219, 234, 254, 0.1) 0%, transparent 50%),
     linear-gradient(180deg, #F7F6F2 0%, #F2F0EB 40%, #EDEAE4 100%);
   min-height: 100vh;
+  position: relative;
+}
+
+.news-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('/assets/img/news-bg2.jpg') center/cover no-repeat;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .news-page .signal-card {

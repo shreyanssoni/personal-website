@@ -1,9 +1,10 @@
 export const revalidate = 3600;
 
 import Link from "next/link";
-import { ArrowRight, Code, Cpu, Layers } from "lucide-react";
+import { ArrowRight, Code, Cpu, Layers, Sparkles, Rss } from "lucide-react";
 import { getFeaturedPosts } from "@/lib/blog";
 import { getFeaturedProjects } from "@/lib/portfolio";
+import { getLatestIssueWithSignals } from "@/lib/newsletter";
 import BlogCard from "@/components/BlogCard";
 import GradientBlobs from "@/components/GradientBlobs";
 import GlassCard from "@/components/GlassCard";
@@ -22,6 +23,13 @@ export default async function Home() {
     featuredProjects = await getFeaturedProjects(3);
   } catch {
     featuredProjects = [];
+  }
+
+  let latestNews: Awaited<ReturnType<typeof getLatestIssueWithSignals>> = null;
+  try {
+    latestNews = await getLatestIssueWithSignals();
+  } catch {
+    latestNews = null;
   }
 
   return (
@@ -161,6 +169,91 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ===== DAILY SIGNAL PREVIEW ===== */}
+      {latestNews && (
+        <section className="relative bg-cream py-24 overflow-hidden">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <SectionLabel text="DAILY_SIGNAL" className="!text-text-dark/40 mb-3 block" />
+                <h2 className="font-display text-4xl sm:text-5xl text-text-dark">
+                  TODAY&apos;S AI INTEL
+                </h2>
+              </div>
+              <div className="hidden sm:flex items-center gap-4">
+                <a
+                  href="/api/news/rss"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-text-dark/40 hover:text-accent-electric transition-colors"
+                  title="RSS Feed"
+                >
+                  <Rss size={14} /> RSS
+                </a>
+                <Link
+                  href="/news"
+                  className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase text-accent-electric hover:text-accent-pink transition-colors"
+                >
+                  View All <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+
+            {/* Main insight card */}
+            {latestNews.issue.main_insight && (
+              <div className="mb-8 p-6 md:p-8 rounded-2xl bg-white border border-stone-200/60 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles size={14} className="text-blue-500" />
+                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-stone-400 font-bold">
+                    Key Insight
+                  </span>
+                </div>
+                <p className="font-body text-lg sm:text-xl text-text-dark/80 leading-relaxed">
+                  {latestNews.issue.main_insight}
+                </p>
+              </div>
+            )}
+
+            {/* Top 3 signals */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[...latestNews.signals]
+                .sort((a, b) => a.display_order - b.display_order)
+                .slice(0, 3)
+                .map((signal) => (
+                  <Link
+                    key={signal.id}
+                    href="/news"
+                    className="group p-5 rounded-2xl bg-white border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                  >
+                    <span className="inline-block px-2 py-0.5 rounded text-[9px] font-bold tracking-[0.1em] uppercase bg-stone-100 text-stone-500 mb-2">
+                      {signal.category.replace("_", " ")}
+                    </span>
+                    <h3 className="font-body text-[15px] text-text-dark font-medium leading-snug mb-2 group-hover:text-accent-electric transition-colors">
+                      {signal.title}
+                    </h3>
+                    <p className="font-body text-[13px] text-text-dark/50 leading-relaxed line-clamp-2">
+                      {signal.so_what || signal.summary}
+                    </p>
+                  </Link>
+                ))}
+            </div>
+
+            <div className="mt-8 sm:hidden flex items-center gap-4">
+              <Link
+                href="/news"
+                className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase text-accent-electric"
+              >
+                View All Signals <ArrowRight size={14} />
+              </Link>
+              <a
+                href="/api/news/rss"
+                className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-text-dark/40"
+              >
+                <Rss size={14} /> RSS
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ===== PROJECTS PREVIEW ===== */}
       <section className="relative py-24 overflow-hidden">

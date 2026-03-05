@@ -26,7 +26,7 @@ export async function generateMetadata({
   searchParams: Promise<{ date?: string }>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
 
   let title = "The Daily Signal — AI & Tech Intelligence for Builders";
   let description = "Daily curated AI signals, tool launches, research breakthroughs, and builder opportunities. Scannable intelligence for developers and founders.";
@@ -45,7 +45,7 @@ export async function generateMetadata({
         description = `${issue.main_insight} Plus ${issue.signal_count} more curated AI signals for builders.`;
       }
       if (params.date) {
-        canonical = `${siteUrl}/news?date=${dateStr}`;
+        canonical = `${siteUrl}/news/${dateStr}`;
       }
     }
   } catch {}
@@ -144,27 +144,22 @@ function RadarIllustration({ className }: { className?: string }) {
   );
 }
 
-/** Books/reading illustration for the signals section */
-function BooksIllustration({ className }: { className?: string }) {
+/** Signal pulse divider — horizontal line with a heartbeat-style spike */
+function SignalPulse({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 60" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      {/* Stack of books */}
-      <rect x="10" y="35" width="40" height="8" rx="1" fill="#4F8CFF" opacity="0.2"/>
-      <rect x="12" y="27" width="36" height="8" rx="1" fill="#FF6B6B" opacity="0.2"/>
-      <rect x="8" y="43" width="44" height="8" rx="1" fill="#2ECC71" opacity="0.2"/>
-      {/* Open book */}
-      <path d="M70 45 Q70 25 90 20 Q110 25 110 45" fill="#F7F6F2" stroke="#D5D0C8" strokeWidth="0.8"/>
-      <line x1="90" y1="20" x2="90" y2="45" stroke="#D5D0C8" strokeWidth="0.5"/>
-      {/* Page lines */}
-      <line x1="75" y1="30" x2="87" y2="27" stroke="#C8C4BC" strokeWidth="0.5" opacity="0.5"/>
-      <line x1="75" y1="34" x2="87" y2="31" stroke="#C8C4BC" strokeWidth="0.5" opacity="0.4"/>
-      <line x1="75" y1="38" x2="87" y2="35" stroke="#C8C4BC" strokeWidth="0.5" opacity="0.3"/>
-      <line x1="93" y1="27" x2="105" y2="30" stroke="#C8C4BC" strokeWidth="0.5" opacity="0.5"/>
-      <line x1="93" y1="31" x2="105" y2="34" stroke="#C8C4BC" strokeWidth="0.5" opacity="0.4"/>
-      {/* Sparkle on book */}
-      <circle cx="100" cy="25" r="1.5" fill="#F4B942" opacity="0.4"/>
-      <line x1="100" y1="22" x2="100" y2="28" stroke="#F4B942" strokeWidth="0.5" opacity="0.3"/>
-      <line x1="97" y1="25" x2="103" y2="25" stroke="#F4B942" strokeWidth="0.5" opacity="0.3"/>
+    <svg viewBox="0 0 200 32" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      {/* Flat line left */}
+      <line x1="0" y1="16" x2="70" y2="16" stroke="#C8C4BC" strokeWidth="1" opacity="0.3"/>
+      {/* Pulse */}
+      <polyline
+        points="70,16 80,16 86,6 92,26 98,4 104,28 110,10 116,20 122,16 130,16"
+        stroke="#4F8CFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"
+      />
+      {/* Flat line right */}
+      <line x1="130" y1="16" x2="200" y2="16" stroke="#C8C4BC" strokeWidth="1" opacity="0.3"/>
+      {/* Signal dot */}
+      <circle cx="100" cy="4" r="2" fill="#2ECC71" opacity="0.5"/>
+      <circle cx="100" cy="4" r="4" stroke="#2ECC71" strokeWidth="0.5" opacity="0.2"/>
     </svg>
   );
 }
@@ -193,16 +188,6 @@ function PlantIllustration({ className }: { className?: string }) {
       <circle cx="28" cy="24" r="2.5" fill="#FF6B6B" opacity="0.2"/>
       <circle cx="28" cy="24" r="1" fill="#F4B942" opacity="0.3"/>
     </svg>
-  );
-}
-
-function WaveDivider() {
-  return (
-    <div className="my-8 sm:my-12 overflow-hidden opacity-30">
-      <svg viewBox="0 0 600 20" fill="none" className="w-full h-5" preserveAspectRatio="none">
-        <path d="M0 10 Q 75 0, 150 10 T 300 10 T 450 10 T 600 10" stroke="#C8C4BC" strokeWidth="1" fill="none"/>
-      </svg>
-    </div>
   );
 }
 
@@ -379,7 +364,7 @@ function IssueNav({ issues, currentDate }: { issues: NewsletterIssue[]; currentD
         return (
           <Link
             key={dateStr}
-            href={`/news?date=${dateStr}`}
+            href={`/news/${dateStr}`}
             className={`font-[family-name:var(--font-mono)] text-[11px] px-3 py-1.5 rounded-full transition-all shrink-0 font-medium ${
               active
                 ? "bg-stone-800 text-white shadow-sm"
@@ -486,7 +471,7 @@ export default async function NewsPage({
 
   const hasContent = currentIssue && signals.length > 0;
   const sorted = [...signals].sort((a, b) => a.display_order - b.display_order);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
 
   /* ─── JSON-LD Structured Data ─── */
   const jsonLd = hasContent && currentIssue ? {
@@ -535,9 +520,22 @@ export default async function NewsPage({
           </nav>
         )}
 
-        {/* Search */}
-        <div className="flex justify-center mb-6 sm:mb-8">
+        {/* Search + RSS */}
+        <div className="flex items-center justify-center gap-3 mb-6 sm:mb-8">
           <NewsSearch />
+          <a
+            href="/api/news/rss"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-white/70 border border-stone-200/50 shadow-sm hover:shadow-md hover:bg-white transition-all text-stone-400 hover:text-orange-500"
+            title="RSS Feed"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+              <circle cx="6.18" cy="17.82" r="2.18"/>
+              <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/>
+            </svg>
+            <span className="font-[family-name:var(--font-mono)] text-[9px] tracking-wider uppercase hidden sm:inline">RSS</span>
+          </a>
         </div>
 
         {hasContent && currentIssue ? (
@@ -565,11 +563,9 @@ export default async function NewsPage({
               />
             </section>
 
-            <WaveDivider />
-
             {/* Scroll prompt with books illustration */}
-            <div className="flex flex-col items-center">
-              <BooksIllustration className="w-28 sm:w-36 h-auto opacity-40 mb-2" />
+            <div className="flex flex-col items-center my-4 sm:my-6">
+              <SignalPulse className="w-40 sm:w-52 h-auto mb-1" />
               <ScrollPrompt count={signals.length} />
             </div>
 
@@ -635,7 +631,7 @@ export default async function NewsPage({
                     return (
                       <Link
                         key={dateStr}
-                        href={`/news?date=${dateStr}`}
+                        href={`/news/${dateStr}`}
                         className={`rounded-xl px-3 py-2 text-center min-w-[56px] sm:min-w-[60px] transition-all border ${
                           active
                             ? "bg-white border-stone-300 shadow-md"

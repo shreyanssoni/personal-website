@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       raw_titles: [] as string[],
     }));
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
     const email = process.env.SUPPORT_EMAIL!;
     const token = Buffer.from(email + (process.env.CRON_SECRET || "")).toString("base64url");
     const unsubscribeUrl = `${baseUrl}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}&token=${token}`;
