@@ -220,6 +220,21 @@ const RSS_SOURCES: { name: string; url: string }[] = [
     name: "hf_papers",
     url: "https://huggingface.co/papers/rss",
   },
+
+  // AI builders & indie hackers (prolific Twitter posters who also blog)
+  { name: "simonwillison", url: "https://simonwillison.net/atom/everything/" },
+  { name: "bensbites", url: "https://bensbites.beehiiv.com/feed" },
+  { name: "therundownai", url: "https://www.therundown.ai/feed" },
+  { name: "latent_space", url: "https://www.latent.space/feed" },
+  { name: "aitidbits", url: "https://aibits.substack.com/feed" },
+
+  // Product Hunt AI (new tools daily)
+  { name: "producthunt_ai", url: "https://www.producthunt.com/categories/artificial-intelligence/feed" },
+
+  // AI newsletters / aggregators that surface Twitter discourse
+  { name: "tldr_ai", url: "https://tldr.tech/ai/rss" },
+  { name: "importai", url: "https://importai.substack.com/feed" },
+  { name: "alphasignal", url: "https://alphasignal.ai/feed" },
 ];
 
 /* ─── Main Fetch Orchestrator ─── */
