@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Share2, Link2, Check, X } from "lucide-react";
+import { Share2, Link2, Check, X, Download, Image as ImageIcon } from "lucide-react";
 
 interface ShareButtonProps {
   signalId: number;
@@ -55,13 +55,28 @@ const PLATFORMS = [
   },
 ];
 
+/** Fetch the OG image and return as a shareable File */
+async function fetchOgImage(ogUrl: string, name: string): Promise<File | null> {
+  try {
+    const res = await fetch(ogUrl);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    const safeName = name.replace(/[^a-zA-Z0-9]/g, "-").slice(0, 40);
+    return new File([blob], `${safeName}.png`, { type: "image/png" });
+  } catch {
+    return null;
+  }
+}
+
 export default function ShareButton({ signalId, title, compact, dropUp }: ShareButtonProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [busy, setBusy] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "")).replace(/\/+$/, "");
   const shareUrl = `${siteUrl}/news/signal/${signalId}`;
+  const ogImageUrl = `${siteUrl}/api/og/signal/${signalId}`;
   const shareText = `${title} — The Daily Signal`;
 
   // Toggle share-open class on nearest signal-card for z-index stacking
@@ -76,9 +91,7 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -87,15 +100,12 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
   // Close on escape
   useEffect(() => {
     if (!open) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [open]);
 
   function trackShare(platform: string) {
-    // Fire and forget — don't block the share action
     fetch("/api/share/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,52 +116,98 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      trackShare("copy");
-      setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback
       const input = document.createElement("input");
       input.value = shareUrl;
       document.body.appendChild(input);
       input.select();
       document.execCommand("copy");
       document.body.removeChild(input);
-      setCopied(true);
-      trackShare("copy");
-      setTimeout(() => setCopied(false), 2000);
+    }
+    setCopied(true);
+    trackShare("copy");
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  /** Share with image via native share sheet (mobile) */
+  async function handleNativeShareWithImage() {
+    setBusy(true);
+    try {
+      const file = await fetchOgImage(ogImageUrl, title);
+      if (file && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: title,
+          text: `${shareText}\n${shareUrl}`,
+        });
+        trackShare("native_image");
+        setOpen(false);
+        return true;
+      }
+      // File sharing not supported — share URL only via native sheet
+      await navigator.share({ title, text: shareText, url: shareUrl });
+      trackShare("native");
+      setOpen(false);
+      return true;
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") return true;
+      return false;
+    } finally {
+      setBusy(false);
     }
   }
 
-  function handlePlatformShare(platform: typeof PLATFORMS[number]) {
-    if (platform.key === "copy") {
-      handleCopy();
-      return;
+  /** Download image to device */
+  async function handleDownloadImage() {
+    setBusy(true);
+    try {
+      const res = await fetch(ogImageUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `signal-${signalId}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      trackShare("download");
+    } catch { /* silent */ } finally {
+      setBusy(false);
     }
+  }
+
+  /** Desktop: open platform URL in popup */
+  function handlePlatformUrl(platform: typeof PLATFORMS[number]) {
+    if (platform.key === "copy") { handleCopy(); return; }
     trackShare(platform.key);
     const url = platform.getUrl?.(shareUrl, shareText);
     if (url) window.open(url, "_blank", "noopener,noreferrer,width=600,height=500");
     setOpen(false);
   }
 
+  /** Primary share button click */
+  async function handleButtonClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    setOpen(!open);
+  }
+
   return (
     <div className="relative" ref={menuRef}>
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen(!open);
-        }}
+        onClick={handleButtonClick}
+        disabled={busy}
         className={`inline-flex items-center gap-1.5 transition-all cursor-pointer ${
           compact
             ? "p-1.5 rounded-lg text-stone-300 hover:text-stone-500 hover:bg-stone-100"
             : "px-2.5 py-1.5 rounded-lg text-stone-400 hover:text-stone-600 hover:bg-stone-50 border border-transparent hover:border-stone-200"
-        }`}
+        } ${busy ? "opacity-50" : ""}`}
         title="Share this signal"
       >
-        <Share2 size={compact ? 13 : 14} />
+        <Share2 size={compact ? 13 : 14} className={busy ? "animate-pulse" : ""} />
         {!compact && (
           <span className="font-[family-name:var(--font-mono)] text-[9px] tracking-wider uppercase font-medium">
-            Share
+            {busy ? "..." : "Share"}
           </span>
         )}
       </button>
@@ -159,7 +215,7 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
       {/* Dropdown */}
       {open && (
         <div
-          className={`absolute right-0 z-50 w-48 py-1.5 rounded-xl bg-white border border-stone-200/80 shadow-xl shadow-stone-200/30 ${
+          className={`absolute right-0 z-50 w-52 py-1.5 rounded-xl bg-white border border-stone-200/80 shadow-xl shadow-stone-200/30 ${
             dropUp ? "bottom-full mb-2" : "top-full mt-2"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -176,36 +232,59 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
             </button>
           </div>
 
+          {/* Share with image — primary action on mobile */}
+          {typeof navigator !== "undefined" && navigator.share && (
+            <button
+              onClick={handleNativeShareWithImage}
+              disabled={busy}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-all bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-blue-700 border-b border-stone-100"
+            >
+              <ImageIcon size={15} className={busy ? "animate-pulse" : ""} />
+              <div className="flex flex-col">
+                <span className="font-[family-name:var(--font-soft)] text-[13px] font-semibold">
+                  {busy ? "Loading image..." : "Share with image"}
+                </span>
+                <span className="font-[family-name:var(--font-mono)] text-[8px] text-blue-500 tracking-wider">
+                  Opens native share
+                </span>
+              </div>
+            </button>
+          )}
+
+          {/* Save / download image */}
+          <button
+            onClick={handleDownloadImage}
+            disabled={busy}
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-stone-600 transition-all hover:bg-stone-50 hover:text-stone-700"
+          >
+            <Download size={14} className={busy ? "animate-pulse" : ""} />
+            <span className="font-[family-name:var(--font-soft)] text-[13px]">
+              {busy ? "Downloading..." : "Save image"}
+            </span>
+          </button>
+
+          <div className="h-px bg-stone-100 my-1" />
+
+          {/* Platform links */}
           {PLATFORMS.map((platform) => (
             <button
               key={platform.key}
-              onClick={() => handlePlatformShare(platform)}
+              onClick={() => handlePlatformUrl(platform)}
               className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-stone-600 transition-all ${platform.color}`}
             >
               {platform.key === "copy" && copied ? (
                 <>
                   <Check size={14} className="text-emerald-500" />
-                  <span className="font-[family-name:var(--font-soft)] text-[13px] text-emerald-600">
-                    Copied!
-                  </span>
+                  <span className="font-[family-name:var(--font-soft)] text-[13px] text-emerald-600">Copied!</span>
                 </>
               ) : (
                 <>
                   <platform.icon size={14} className="" />
-                  <span className="font-[family-name:var(--font-soft)] text-[13px]">
-                    {platform.label}
-                  </span>
+                  <span className="font-[family-name:var(--font-soft)] text-[13px]">{platform.label}</span>
                 </>
               )}
             </button>
           ))}
-
-          {/* Preview hint */}
-          <div className="mx-3 mt-1.5 pt-1.5 border-t border-stone-100">
-            <p className="font-[family-name:var(--font-mono)] text-[8px] text-stone-300 tracking-wider">
-              Includes preview image on social
-            </p>
-          </div>
         </div>
       )}
     </div>

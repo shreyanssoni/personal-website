@@ -1,8 +1,5 @@
 import { ImageResponse } from "next/og";
-import { NextRequest } from "next/server";
 import { sql } from "@/lib/db";
-
-export const runtime = "edge";
 
 const CATEGORY_COLORS: Record<string, { bg: string; accent: string; light: string; emoji: string }> = {
   launch:      { bg: "#FFF5F5", accent: "#FF6B6B", light: "#FFE0E0", emoji: "🚀" },
@@ -14,7 +11,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; accent: string; light: strin
 };
 
 export async function GET(
-  req: NextRequest,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
