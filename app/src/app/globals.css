@@ -192,6 +192,41 @@ body {
   background-blend-mode: overlay;
 }
 
+/* --- News Page (garden notebook) --- */
+.news-page {
+  background: linear-gradient(180deg, #F7F6F2 0%, #F0EEE9 100%);
+  min-height: 100vh;
+}
+
+.news-page .signal-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 8px 24px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.news-page .signal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.news-page .garden-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #C8C4BC;
+}
+
+.news-page .garden-divider::before,
+.news-page .garden-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D5D0C8, transparent);
+}
+
 /* ============================================
    ANIMATIONS
    ============================================ */

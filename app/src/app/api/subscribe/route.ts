@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
     }
 
     await sql`
-      INSERT INTO subscribers (email)
-      VALUES (${email})
-      ON CONFLICT (email) DO NOTHING
+      INSERT INTO subscribers (email, status)
+      VALUES (${email}, 'A')
+      ON CONFLICT (email) DO UPDATE SET status = 'A'
     `;
 
     return NextResponse.json({ success: true });

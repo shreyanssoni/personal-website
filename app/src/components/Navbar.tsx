@@ -11,12 +11,13 @@ const links = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/blog", label: "Blog" },
   { href: "/garden", label: "Garden" },
+  { href: "/news", label: "Intel" },
   { href: "/contact", label: "Contact" },
   { href: "/chat", label: "Chat" },
 ];
 
 // Pages that start with a light/cream background
-const LIGHT_PAGES = ["/about"];
+const LIGHT_PAGES = ["/about", "/news"];
 
 function isLightPage(pathname: string) {
   if (LIGHT_PAGES.includes(pathname)) return true;
