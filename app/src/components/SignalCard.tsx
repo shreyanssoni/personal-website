@@ -174,20 +174,23 @@ export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-3 sm:mt-4 pt-3 border-t border-stone-100/60">
-              <div className="flex items-center gap-3">
-                <span className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 font-medium">
-                  {signal.who_should_care}
-                </span>
-                <Link
-                  href={`/news/signal/${signal.id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[9px] text-[#4F8CFF] hover:text-[#3A6FD8] font-medium transition-colors"
-                >
-                  <BookOpen size={10} />
-                  Read more
-                </Link>
-              </div>
+            {/* Read more button */}
+            <Link
+              href={`/news/signal/${signal.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="mt-3 sm:mt-4 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[#4F8CFF]/8 border border-[#4F8CFF]/15 text-[#4F8CFF] hover:bg-[#4F8CFF]/15 hover:border-[#4F8CFF]/25 transition-all group"
+            >
+              <BookOpen size={14} className="group-hover:scale-105 transition-transform" />
+              <span className="font-[family-name:var(--font-soft)] text-[13px] font-medium">
+                Read full analysis
+              </span>
+              <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-3 pt-3 border-t border-stone-100/60">
+              <span className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 font-medium">
+                {signal.who_should_care}
+              </span>
               <div className="flex items-center gap-3">
                 {signal.source_urls.slice(0, 2).map((url, i) => (
                   <a
