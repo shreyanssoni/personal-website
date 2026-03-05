@@ -378,7 +378,7 @@ function Masthead({ issue, signalCount }: { issue: NewsletterIssue; signalCount:
       {issue.intro_text && (
         <div className="relative max-w-lg mx-auto px-6">
           <span className="absolute -top-3 -left-0 sm:left-1 text-4xl sm:text-5xl text-stone-200/30 font-serif select-none leading-none" aria-hidden="true">&ldquo;</span>
-          <p className="font-[family-name:var(--font-serif)] text-base sm:text-lg italic text-stone-500 leading-relaxed">
+          <p className="font-[family-name:var(--font-soft)] text-base sm:text-lg italic text-stone-500 leading-relaxed">
             {issue.intro_text}
           </p>
           <span className="absolute -bottom-4 right-2 sm:right-3 text-4xl sm:text-5xl text-stone-200/30 font-serif select-none leading-none" aria-hidden="true">&rdquo;</span>
@@ -481,7 +481,7 @@ export default async function NewsPage({
                 <GardenDivider text="fin" />
                 <div className="text-center mb-14 sm:mb-16">
                   <PlantIllustration className="w-14 sm:w-16 h-auto mx-auto mb-4 opacity-50" />
-                  <p className="font-[family-name:var(--font-serif)] text-sm sm:text-base italic text-stone-400 max-w-md mx-auto leading-relaxed">
+                  <p className="font-[family-name:var(--font-soft)] text-sm sm:text-base italic text-stone-400 max-w-md mx-auto leading-relaxed">
                     {currentIssue.closing_thought}
                   </p>
                   <div className="mt-4 flex justify-center gap-1.5">
