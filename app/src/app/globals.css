@@ -25,7 +25,14 @@
   --color-accent-lime: #A4D441;
   --color-accent-sunny: #FFD23F;
 
-  /* --- Typography --- */
+}
+
+/* --- Typography ---
+   Font families are loaded via next/font/google in layout.tsx which sets
+   --font-display, --font-serif, --font-body, --font-mono, --font-hand
+   as inline styles on <html>. We use @theme inline to register them as
+   Tailwind theme tokens without overriding the next/font values. */
+@theme inline {
   --font-display: "Bebas Neue", sans-serif;
   --font-serif: "Playfair Display", serif;
   --font-body: "Public Sans", sans-serif;
@@ -194,14 +201,19 @@ body {
 
 /* --- News Page (garden notebook) --- */
 .news-page {
-  background: linear-gradient(180deg, #F7F6F2 0%, #F0EEE9 100%);
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 228, 225, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(219, 234, 254, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #F7F6F2 0%, #F2F0EB 40%, #EDEAE4 100%);
   min-height: 100vh;
 }
 
 .news-page .signal-card {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.04);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 8px 24px rgba(0, 0, 0, 0.03);
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -210,6 +222,7 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.06);
   border-color: rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .news-page .garden-divider {
@@ -225,6 +238,15 @@ body {
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, transparent, #D5D0C8, transparent);
+}
+
+/* Hide scrollbar for issue nav */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* ============================================
