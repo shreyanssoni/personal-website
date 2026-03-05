@@ -4,211 +4,264 @@ import { sql } from "@/lib/db";
 
 export const runtime = "edge";
 
-const CATEGORY_COLORS: Record<string, { bg: string; accent: string; emoji: string }> = {
-  launch:      { bg: "#FFF5F5", accent: "#FF6B6B", emoji: "🚀" },
-  shift:       { bg: "#F0F4FF", accent: "#4F8CFF", emoji: "📈" },
-  tool:        { bg: "#F0FFF4", accent: "#2ECC71", emoji: "🔧" },
-  research:    { bg: "#F5F3FF", accent: "#8E7CFF", emoji: "🔬" },
-  funding:     { bg: "#FFFBEB", accent: "#F4B942", emoji: "💰" },
-  open_source: { bg: "#F0FFFC", accent: "#1ABC9C", emoji: "📦" },
+const CATEGORY_COLORS: Record<string, { bg: string; accent: string; light: string; emoji: string }> = {
+  launch:      { bg: "#FFF5F5", accent: "#FF6B6B", light: "#FFE0E0", emoji: "🚀" },
+  shift:       { bg: "#F0F4FF", accent: "#4F8CFF", light: "#D6E4FF", emoji: "📈" },
+  tool:        { bg: "#F0FFF4", accent: "#2ECC71", light: "#D4EFDF", emoji: "🔧" },
+  research:    { bg: "#F5F3FF", accent: "#8E7CFF", light: "#DDD6FE", emoji: "🔬" },
+  funding:     { bg: "#FFFBEB", accent: "#F4B942", light: "#FDE68A", emoji: "💰" },
+  open_source: { bg: "#F0FFFC", accent: "#1ABC9C", light: "#A7F3D0", emoji: "📦" },
 };
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const signalId = parseInt(id, 10);
-  if (isNaN(signalId)) {
-    return new Response("Invalid signal ID", { status: 400 });
-  }
+  try {
+    const { id } = await params;
+    const signalId = parseInt(id, 10);
+    if (isNaN(signalId)) {
+      return new Response("Invalid signal ID", { status: 400 });
+    }
 
-  // Fetch signal + issue date
-  const rows = await sql`
-    SELECT s.title, s.category, s.so_what, s.impact_score, s.hype_or_real,
-           i.issue_date
-    FROM newsletter_signals s
-    JOIN newsletter_issues i ON i.id = s.issue_id
-    WHERE s.id = ${signalId}
-    LIMIT 1
-  `;
+    const rows = await sql`
+      SELECT s.title, s.category, s.so_what, s.impact_score,
+             s.deep_dive, s.summary, s.delta,
+             i.issue_date
+      FROM newsletter_signals s
+      JOIN newsletter_issues i ON i.id = s.issue_id
+      WHERE s.id = ${signalId}
+      LIMIT 1
+    `;
 
-  if (!rows || (rows as unknown[]).length === 0) {
-    return new Response("Signal not found", { status: 404 });
-  }
+    if (!rows || (rows as unknown[]).length === 0) {
+      return new Response("Signal not found", { status: 404 });
+    }
 
-  const signal = (rows as unknown as {
-    title: string;
-    category: string;
-    so_what: string;
-    impact_score: number;
-    hype_or_real: string;
-    issue_date: string | Date;
-  }[])[0];
+    const signal = (rows as unknown as {
+      title: string;
+      category: string;
+      so_what: string;
+      impact_score: number;
+      deep_dive: string | null;
+      summary: string;
+      delta: string;
+      issue_date: string | Date;
+    }[])[0];
 
-  const colors = CATEGORY_COLORS[signal.category] || CATEGORY_COLORS.tool;
-  const dateStr = typeof signal.issue_date === "object" && signal.issue_date !== null && "toISOString" in signal.issue_date
-    ? (signal.issue_date as Date).toISOString().slice(0, 10)
-    : String(signal.issue_date).slice(0, 10);
+    const colors = CATEGORY_COLORS[signal.category] || CATEGORY_COLORS.tool;
+    const dateStr = typeof signal.issue_date === "object" && signal.issue_date !== null && "toISOString" in signal.issue_date
+      ? (signal.issue_date as Date).toISOString().slice(0, 10)
+      : String(signal.issue_date).slice(0, 10);
 
-  const impactDots = Array.from({ length: 5 }, (_, i) => i < signal.impact_score);
+    const title = signal.title.length > 80 ? signal.title.slice(0, 77) + "..." : signal.title;
+    const score = signal.impact_score || 3;
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "1200px",
-          height: "630px",
-          display: "flex",
-          flexDirection: "column",
-          fontFamily: "system-ui, -apple-system, sans-serif",
-          background: `linear-gradient(135deg, ${colors.bg} 0%, #FAFAF8 40%, #FFFFFF 100%)`,
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Background decoration */}
+    // Build a teaser: prefer deep_dive first paragraph, else combine so_what + delta
+    let teaser = "";
+    if (signal.deep_dive) {
+      // Grab first non-heading, non-empty paragraph from deep dive
+      const lines = signal.deep_dive.split("\n").filter(l => l.trim() && !l.startsWith("#"));
+      teaser = lines[0] || "";
+    }
+    if (!teaser && signal.so_what) {
+      teaser = signal.so_what;
+      if (signal.delta && teaser.length + signal.delta.length < 200) {
+        teaser += " " + signal.delta;
+      }
+    }
+    if (!teaser) teaser = signal.summary || "";
+    // Truncate to ~150 chars for 2 lines
+    if (teaser.length > 150) teaser = teaser.slice(0, 147) + "...";
+
+    return new ImageResponse(
+      (
         <div
           style={{
-            position: "absolute",
-            top: "-80px",
-            right: "-80px",
-            width: "400px",
-            height: "400px",
-            borderRadius: "50%",
-            background: `radial-gradient(circle, ${colors.accent}15, transparent 70%)`,
-            display: "flex",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-60px",
-            left: "-60px",
-            width: "300px",
-            height: "300px",
-            borderRadius: "50%",
-            background: `radial-gradient(circle, ${colors.accent}10, transparent 70%)`,
-            display: "flex",
-          }}
-        />
-
-        {/* Top bar */}
-        <div
-          style={{
-            height: "6px",
-            background: `linear-gradient(90deg, ${colors.accent}, ${colors.accent}80, transparent)`,
-            display: "flex",
-          }}
-        />
-
-        {/* Content */}
-        <div
-          style={{
-            flex: 1,
+            width: "1200px",
+            height: "630px",
             display: "flex",
             flexDirection: "column",
-            padding: "48px 56px 40px",
+            backgroundColor: colors.bg,
+            fontFamily: "system-ui, sans-serif",
+            position: "relative",
           }}
         >
-          {/* Header row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "6px 14px",
-                borderRadius: "8px",
-                background: `${colors.accent}18`,
-                border: `1px solid ${colors.accent}30`,
-              }}
-            >
-              <span style={{ fontSize: "16px" }}>{colors.emoji}</span>
-              <span style={{ fontSize: "13px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: colors.accent }}>
-                {signal.category.replace("_", " ")}
-              </span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontSize: "13px", color: "#9CA3AF", letterSpacing: "0.05em" }}>
+          {/* Top accent bar */}
+          <div style={{ display: "flex", width: "1200px", height: "6px", backgroundColor: colors.accent }} />
+
+          {/* Decorative circle top-right */}
+          <div
+            style={{
+              display: "flex",
+              position: "absolute",
+              top: "-100px",
+              right: "-100px",
+              width: "350px",
+              height: "350px",
+              borderRadius: "175px",
+              backgroundColor: colors.light,
+              opacity: 0.3,
+            }}
+          />
+
+          {/* Decorative circle bottom-left */}
+          <div
+            style={{
+              display: "flex",
+              position: "absolute",
+              bottom: "-80px",
+              left: "-80px",
+              width: "250px",
+              height: "250px",
+              borderRadius: "125px",
+              backgroundColor: colors.light,
+              opacity: 0.2,
+            }}
+          />
+
+          {/* Main content */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              padding: "48px 56px 40px",
+              position: "relative",
+            }}
+          >
+            {/* Category + Date row */}
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "36px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 16px",
+                  borderRadius: "20px",
+                  backgroundColor: colors.accent,
+                }}
+              >
+                <span style={{ fontSize: "14px", marginRight: "8px" }}>{colors.emoji}</span>
+                <span style={{ fontSize: "14px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#FFFFFF" }}>
+                  {signal.category.replace("_", " ")}
+                </span>
+              </div>
+              <span style={{ fontSize: "14px", color: "#9CA3AF", marginLeft: "16px", letterSpacing: "0.05em" }}>
                 {dateStr}
               </span>
             </div>
-          </div>
 
-          {/* Title */}
-          <div style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center", marginBottom: "24px" }}>
-            <h1
-              style={{
-                fontSize: signal.title.length > 60 ? "42px" : "52px",
-                fontWeight: 700,
-                color: "#1A1A1A",
-                lineHeight: 1.15,
-                margin: 0,
-                letterSpacing: "-0.02em",
-                maxWidth: "900px",
-              }}
-            >
-              {signal.title}
-            </h1>
-
-            {/* So what */}
-            {signal.so_what && (
-              <p
+            {/* Title */}
+            <div style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center" }}>
+              <div
                 style={{
-                  fontSize: "22px",
-                  color: "#6B7280",
-                  lineHeight: 1.5,
-                  marginTop: "20px",
-                  maxWidth: "850px",
-                  display: signal.so_what.length > 120 ? "none" : "flex",
+                  display: "flex",
+                  fontSize: title.length > 50 ? "44px" : "54px",
+                  fontWeight: 800,
+                  color: "#1A1A1A",
+                  lineHeight: 1.15,
+                  letterSpacing: "-0.02em",
+                  maxWidth: "950px",
                 }}
               >
-                {signal.so_what}
-              </p>
-            )}
-          </div>
-
-          {/* Bottom row */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            {/* Impact meter */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "#9CA3AF" }}>
-                Impact
-              </span>
-              <div style={{ display: "flex", gap: "4px" }}>
-                {impactDots.map((filled, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      width: "24px",
-                      height: "8px",
-                      borderRadius: "4px",
-                      background: filled ? colors.accent : "#E5E7EB",
-                    }}
-                  />
-                ))}
+                {title}
               </div>
+
+              {teaser ? (
+                <div
+                  style={{
+                    display: "flex",
+                    marginTop: "28px",
+                    paddingLeft: "20px",
+                    borderLeft: `3px solid ${colors.accent}`,
+                    maxWidth: "900px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      fontSize: "20px",
+                      color: "#6B7280",
+                      lineHeight: 1.5,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {teaser}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
-            {/* Branding */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {/* Bottom bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              {/* Impact meter */}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#9CA3AF", marginRight: "12px" }}>
+                  Impact
+                </span>
+                <div style={{ display: "flex" }}>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: "28px",
+                        height: "10px",
+                        borderRadius: "5px",
+                        backgroundColor: i <= score ? colors.accent : "#E5E7EB",
+                        marginRight: i < 5 ? "4px" : "0px",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Branding */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-                <span style={{ fontSize: "18px", fontWeight: 700, color: "#1A1A1A", letterSpacing: "0.05em" }}>
+                <span style={{ fontSize: "20px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "0.08em" }}>
                   THE DAILY SIGNAL
                 </span>
-                <span style={{ fontSize: "12px", color: "#9CA3AF", letterSpacing: "0.1em" }}>
-                  themicrobits.com/news
+                <span style={{ fontSize: "13px", color: "#9CA3AF", letterSpacing: "0.08em", marginTop: "2px" }}>
+                  shreyanssoni.vercel.app/news
                 </span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    ),
-    {
-      width: 1200,
-      height: 630,
-    }
-  );
+      ),
+      {
+        width: 1200,
+        height: 630,
+      }
+    );
+  } catch (e) {
+    console.error("[OG Image] Error:", e);
+    // Fallback: simple text image
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: "1200px",
+            height: "630px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#FAFAF8",
+            fontFamily: "system-ui, sans-serif",
+          }}
+        >
+          <div style={{ display: "flex", fontSize: "48px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "0.1em" }}>
+            THE DAILY SIGNAL
+          </div>
+          <div style={{ display: "flex", fontSize: "20px", color: "#9CA3AF", marginTop: "16px" }}>
+            Curated AI intelligence for builders
+          </div>
+          <div style={{ display: "flex", fontSize: "14px", color: "#C8C4BC", marginTop: "8px" }}>
+            shreyanssoni.vercel.app/news
+          </div>
+        </div>
+      ),
+      { width: 1200, height: 630 }
+    );
+  }
 }

@@ -206,33 +206,50 @@ function FloatingBlobs() {
 /* ─── Quick Scan ─── */
 
 const QUICK_SCAN_EMOJIS: Record<string, string> = {
-  "Biggest Signal": "🔥",
+  "Biggest Signal": "🚀",
   "Overhyped": "🫧",
   "Quiet Trend": "🌱",
 };
 
 function QuickScan({ issue }: { issue: NewsletterIssue }) {
   const cards = [
-    issue.qs_biggest_text && { icon: "◆", label: "Biggest Signal", text: issue.qs_biggest_text, accent: "#FF6B6B", gradFrom: "from-rose-50", gradTo: "to-orange-50/50" },
-    issue.qs_overhyped_text && { icon: "◇", label: "Overhyped", text: issue.qs_overhyped_text, accent: "#F4B942", gradFrom: "from-amber-50", gradTo: "to-yellow-50/50" },
-    issue.qs_quiet_text && { icon: "◈", label: "Quiet Trend", text: issue.qs_quiet_text, accent: "#1ABC9C", gradFrom: "from-emerald-50", gradTo: "to-teal-50/50" },
-  ].filter(Boolean) as { icon: string; label: string; text: string; accent: string; gradFrom: string; gradTo: string }[];
+    issue.qs_biggest_text && { label: "Biggest Signal", text: issue.qs_biggest_text, accent: "#FF6B6B", bg: "bg-rose-50/40" },
+    issue.qs_overhyped_text && { label: "Overhyped", text: issue.qs_overhyped_text, accent: "#F4B942", bg: "bg-amber-50/40" },
+    issue.qs_quiet_text && { label: "Quiet Trend", text: issue.qs_quiet_text, accent: "#1ABC9C", bg: "bg-emerald-50/40" },
+  ].filter(Boolean) as { label: string; text: string; accent: string; bg: string }[];
 
   if (cards.length === 0) return null;
 
   return (
-    <div className="mb-14 sm:mb-16">
-      <div className="flex items-center gap-2 mb-5">
+    <div className="mb-10 sm:mb-14">
+      <div className="flex items-center gap-2 mb-4 sm:mb-5">
         <span className="text-base">⚡</span>
         <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-[0.3em] uppercase text-stone-400 font-semibold">
           Today in 30 seconds
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+      {/* Mobile: compact list with left border. Desktop: 3-col cards */}
+      <div className="flex flex-col gap-2.5 sm:hidden">
         {cards.map((card) => (
           <div
             key={card.label}
-            className={`relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-br ${card.gradFrom} ${card.gradTo} p-4 sm:p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5`}
+            className={`pl-3.5 pr-3 py-2.5 border-l-[3px] rounded-r-xl ${card.bg}`}
+            style={{ borderLeftColor: card.accent }}
+          >
+            <p className="font-[family-name:var(--font-mono)] text-[9px] tracking-[0.15em] uppercase font-bold mb-0.5" style={{ color: card.accent }}>
+              {QUICK_SCAN_EMOJIS[card.label] || "✦"} {card.label}
+            </p>
+            <p className="font-[family-name:var(--font-soft)] text-[13px] text-stone-600 leading-snug">
+              {card.text}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="hidden sm:grid sm:grid-cols-3 gap-4">
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/50 p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
             style={{ borderTop: `3px solid ${card.accent}` }}
           >
             <div className="flex items-center gap-2 mb-2.5">
@@ -241,11 +258,9 @@ function QuickScan({ issue }: { issue: NewsletterIssue }) {
                 {card.label}
               </p>
             </div>
-            <p className="font-[family-name:var(--font-soft)] text-[14px] sm:text-[15px] text-stone-600 leading-relaxed">
+            <p className="font-[family-name:var(--font-soft)] text-[15px] text-stone-600 leading-relaxed">
               {card.text}
             </p>
-            {/* Decorative corner glow */}
-            <div className="absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-2xl pointer-events-none" style={{ background: card.accent, opacity: 0.06 }} />
           </div>
         ))}
       </div>
@@ -257,18 +272,26 @@ function QuickScan({ issue }: { issue: NewsletterIssue }) {
 
 function MainInsight({ text }: { text: string }) {
   return (
-    <div className="mb-14 sm:mb-16">
-      <div className="relative overflow-hidden signal-card p-5 sm:p-6 md:p-8 border-l-[3px]" style={{ borderLeftColor: "#4F8CFF" }}>
+    <div className="mb-10 sm:mb-14">
+      {/* Mobile: minimal left-border. Desktop: full card */}
+      <div className="border-l-[3px] pl-3.5 pr-3 py-3 rounded-r-xl bg-blue-50/30 sm:hidden" style={{ borderLeftColor: "#4F8CFF" }}>
+        <p className="font-[family-name:var(--font-mono)] text-[9px] tracking-[0.3em] uppercase font-bold mb-1.5" style={{ color: "#4F8CFF" }}>
+          💡 If you read one thing today
+        </p>
+        <p className="font-[family-name:var(--font-soft)] text-[15px] text-stone-700 leading-snug">
+          {text}
+        </p>
+      </div>
+      <div className="relative overflow-hidden signal-card p-6 md:p-8 border-l-[3px] hidden sm:block" style={{ borderLeftColor: "#4F8CFF" }}>
         <div className="flex items-center gap-2 mb-3">
           <span className="text-sm">💡</span>
           <p className="font-[family-name:var(--font-mono)] text-[9px] tracking-[0.3em] uppercase font-bold" style={{ color: "#4F8CFF" }}>
             If you read one thing today
           </p>
         </div>
-        <p className="font-[family-name:var(--font-soft)] text-lg sm:text-xl md:text-[22px] text-stone-700 leading-relaxed font-normal">
+        <p className="font-[family-name:var(--font-soft)] text-xl md:text-[22px] text-stone-700 leading-relaxed font-normal">
           {text}
         </p>
-        {/* Subtle blue glow */}
         <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-blue-100/30 blur-2xl pointer-events-none" />
       </div>
     </div>
@@ -280,58 +303,64 @@ function MainInsight({ text }: { text: string }) {
 function BuilderRadar({ rising, stable, declining }: { rising: string[]; stable: string[]; declining: string[] }) {
   if (rising.length === 0 && stable.length === 0 && declining.length === 0) return null;
 
+  const sections = [
+    { label: "Rising", items: rising, dotClass: "bg-[#2ECC71] shadow-[0_0_6px_rgba(46,204,113,0.4)]", textClass: "text-[#219A52]", itemClass: "text-stone-600" },
+    { label: "Stable", items: stable, dotClass: "bg-stone-300", textClass: "text-stone-400", itemClass: "text-stone-400" },
+    { label: "Cooling", items: declining, dotClass: "bg-[#FF6B6B] shadow-[0_0_6px_rgba(255,107,107,0.4)]", textClass: "text-[#D94848]", itemClass: "text-stone-400" },
+  ];
+
   return (
-    <div className="mb-14 sm:mb-16">
-      <div className="relative overflow-hidden signal-card p-5 sm:p-6">
-        <div className="flex items-center gap-2 mb-5 sm:mb-6">
+    <div className="mb-10 sm:mb-14">
+      {/* Mobile: compact inline layout */}
+      <div className="sm:hidden rounded-xl bg-white/40 border border-stone-200/30 p-3.5">
+        <div className="flex items-center gap-2 mb-3">
           <span className="text-sm">📡</span>
           <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-[0.3em] uppercase text-stone-400 font-bold">
             Builder Radar
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-2 sm:mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#2ECC71] shadow-[0_0_6px_rgba(46,204,113,0.4)]" />
-              <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[#219A52] font-bold uppercase">
-                Rising
+        <div className="space-y-2.5">
+          {sections.map((s) => s.items.length > 0 && (
+            <div key={s.label} className="flex items-start gap-2">
+              <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${s.dotClass}`} />
+                <span className={`font-[family-name:var(--font-mono)] text-[8px] tracking-wider uppercase font-bold ${s.textClass}`}>
+                  {s.label}
+                </span>
+              </div>
+              <p className="font-[family-name:var(--font-body)] text-[12px] text-stone-500 leading-snug">
+                {s.items.join(" · ")}
               </p>
             </div>
-            {rising.map((t, i) => (
-              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-600 mb-1.5 sm:mb-2 leading-snug pl-4">
-                {t}
-              </p>
-            ))}
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2 sm:mb-3 mt-3 sm:mt-0">
-              <span className="w-2 h-2 rounded-full bg-stone-300" />
-              <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-stone-400 font-bold uppercase">
-                Stable
-              </p>
-            </div>
-            {stable.map((t, i) => (
-              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 mb-1.5 sm:mb-2 leading-snug pl-4">
-                {t}
-              </p>
-            ))}
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2 sm:mb-3 mt-3 sm:mt-0">
-              <span className="w-2 h-2 rounded-full bg-[#FF6B6B] shadow-[0_0_6px_rgba(255,107,107,0.4)]" />
-              <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[#D94848] font-bold uppercase">
-                Cooling
-              </p>
-            </div>
-            {declining.map((t, i) => (
-              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 mb-1.5 sm:mb-2 leading-snug pl-4">
-                {t}
-              </p>
-            ))}
-          </div>
+          ))}
         </div>
-        {/* Radar illustration */}
-        <RadarIllustration className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-28 sm:h-28 opacity-40 pointer-events-none" />
+      </div>
+      {/* Desktop: card layout */}
+      <div className="hidden sm:block relative overflow-hidden signal-card p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <span className="text-sm">📡</span>
+          <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-[0.3em] uppercase text-stone-400 font-bold">
+            Builder Radar
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-6">
+          {sections.map((s) => (
+            <div key={s.label}>
+              <div className="flex items-center gap-2 mb-3">
+                <span className={`w-2 h-2 rounded-full ${s.dotClass}`} />
+                <p className={`font-[family-name:var(--font-mono)] text-[10px] tracking-wider font-bold uppercase ${s.textClass}`}>
+                  {s.label}
+                </p>
+              </div>
+              {s.items.map((t, i) => (
+                <p key={i} className={`font-[family-name:var(--font-body)] text-[13px] mb-2 leading-snug pl-4 ${s.itemClass}`}>
+                  {t}
+                </p>
+              ))}
+            </div>
+          ))}
+        </div>
+        <RadarIllustration className="absolute -bottom-4 -right-4 w-28 h-28 opacity-40 pointer-events-none" />
       </div>
     </div>
   );

@@ -74,13 +74,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       locale: "en_US",
       publishedTime: `${dateStr}T12:00:00Z`,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: signal.title }],
+      images: [{
+        url: ogImage,
+        secureUrl: ogImage,
+        width: 1200,
+        height: 630,
+        alt: signal.title,
+        type: "image/png",
+      }],
     },
     twitter: {
       card: "summary_large_image",
       title: signal.title,
       description,
-      images: [ogImage],
+      images: [{
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: signal.title,
+      }],
     },
     robots: { index: true, follow: true },
   };
