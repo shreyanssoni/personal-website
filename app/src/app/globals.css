@@ -221,6 +221,7 @@ body {
 }
 
 .news-page .signal-card {
+  position: relative;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -228,6 +229,10 @@ body {
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 8px 24px rgba(0, 0, 0, 0.03);
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.news-page .signal-card.share-open {
+  z-index: 10;
 }
 
 .news-page .signal-card:hover {

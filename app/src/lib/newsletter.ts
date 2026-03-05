@@ -55,6 +55,7 @@ export interface NewsletterSignal {
   time_horizon: string;
   so_what: string;
   display_order: number;
+  deep_dive: string | null;
   created_at: string;
 }
 
@@ -165,10 +166,11 @@ export async function insertSignal(signal: {
   time_horizon: string;
   so_what: string;
   display_order: number;
+  deep_dive?: string;
 }) {
   await sql`
-    INSERT INTO newsletter_signals (issue_id, category, title, source_urls, summary, delta, impact, who_should_care, hype_or_real, builder_opportunities, how_to_use, impact_score, confidence, time_horizon, so_what, display_order)
-    VALUES (${signal.issue_id}, ${signal.category}, ${signal.title}, ${signal.source_urls}, ${signal.summary}, ${signal.delta}, ${signal.impact}, ${signal.who_should_care}, ${signal.hype_or_real}, ${signal.builder_opportunities}, ${signal.how_to_use}, ${signal.impact_score}, ${signal.confidence}, ${signal.time_horizon}, ${signal.so_what}, ${signal.display_order})
+    INSERT INTO newsletter_signals (issue_id, category, title, source_urls, summary, delta, impact, who_should_care, hype_or_real, builder_opportunities, how_to_use, impact_score, confidence, time_horizon, so_what, display_order, deep_dive)
+    VALUES (${signal.issue_id}, ${signal.category}, ${signal.title}, ${signal.source_urls}, ${signal.summary}, ${signal.delta}, ${signal.impact}, ${signal.who_should_care}, ${signal.hype_or_real}, ${signal.builder_opportunities}, ${signal.how_to_use}, ${signal.impact_score}, ${signal.confidence}, ${signal.time_horizon}, ${signal.so_what}, ${signal.display_order}, ${signal.deep_dive ?? null})
   `;
 }
 

@@ -4,6 +4,7 @@ import {
   selectSignals,
   interpretSignals,
   generateNewsletterMeta,
+  generateDeepDives,
 } from "@/lib/newsletter-ai";
 import {
   getTodaysRawItems,
@@ -65,8 +66,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Interpretation failed", raw_count: rawItems.length });
     }
 
-    console.log("[Newsletter] Step 5: Generating meta (subject, radar, insight)...");
-    const meta = await generateNewsletterMeta(interpretedSignals);
+    console.log("[Newsletter] Step 5: Generating meta + deep dives...");
+    const [meta, deepDives] = await Promise.all([
+      generateNewsletterMeta(interpretedSignals),
+      generateDeepDives(interpretedSignals),
+    ]);
+
+    // Map deep dives by title for easy lookup
+    const deepDiveMap = new Map(deepDives.map((d) => [d.title, d.deep_dive]));
 
     console.log("[Newsletter] Step 6: Storing...");
     const issueId = await createIssue({
@@ -109,6 +116,7 @@ export async function GET(req: NextRequest) {
         time_horizon: signal.time_horizon || "now",
         so_what: signal.so_what || "",
         display_order: signal.display_order || 0,
+        deep_dive: deepDiveMap.get(signal.title) || undefined,
       });
     }
 

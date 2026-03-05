@@ -171,89 +171,196 @@ export default async function Home() {
       </section>
 
       {/* ===== DAILY SIGNAL PREVIEW ===== */}
-      {latestNews && (
-        <section className="relative bg-cream py-24 overflow-hidden">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <SectionLabel text="DAILY_SIGNAL" className="!text-text-dark/40 mb-3 block" />
-                <h2 className="font-display text-4xl sm:text-5xl text-text-dark">
-                  TODAY&apos;S AI INTEL
-                </h2>
+      {latestNews && (() => {
+        const CATEGORY_COLORS: Record<string, { bg: string; text: string; glow: string }> = {
+          launch: { bg: "bg-rose-500/10", text: "text-rose-400", glow: "from-rose-500/20" },
+          shift: { bg: "bg-blue-500/10", text: "text-blue-400", glow: "from-blue-500/20" },
+          tool: { bg: "bg-emerald-500/10", text: "text-emerald-400", glow: "from-emerald-500/20" },
+          research: { bg: "bg-violet-500/10", text: "text-violet-400", glow: "from-violet-500/20" },
+          funding: { bg: "bg-amber-500/10", text: "text-amber-400", glow: "from-amber-500/20" },
+          open_source: { bg: "bg-teal-500/10", text: "text-teal-400", glow: "from-teal-500/20" },
+        };
+        const topSignals = [...latestNews.signals]
+          .sort((a, b) => a.display_order - b.display_order)
+          .slice(0, 4);
+
+        return (
+          <section className="relative py-28 overflow-hidden">
+            {/* Animated background grid */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{
+              backgroundImage: `linear-gradient(rgba(0,229,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.3) 1px, transparent 1px)`,
+              backgroundSize: "60px 60px",
+            }} />
+
+            {/* Glowing orbs */}
+            <div className="absolute top-10 right-1/4 w-72 h-72 rounded-full bg-accent-electric/5 blur-[100px]" />
+            <div className="absolute bottom-10 left-1/4 w-56 h-56 rounded-full bg-accent-pink/5 blur-[80px]" />
+
+            <div className="relative mx-auto max-w-7xl px-6">
+              {/* Header with live pulse */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-14 gap-6">
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="relative flex items-center gap-2">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                      </span>
+                      <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-emerald-400/80">
+                        Live
+                      </span>
+                    </div>
+                    <span className="w-px h-3 bg-white/10" />
+                    <SectionLabel text="DAILY_SIGNAL" className="!mb-0 block" />
+                  </div>
+                  <h2 className="font-display text-5xl sm:text-6xl md:text-7xl text-text-primary leading-[0.9]">
+                    AI SIGNALS
+                    <br />
+                    <span className="text-accent-electric">TODAY</span>
+                  </h2>
+                  <p className="font-body text-sm text-text-secondary mt-4 max-w-md">
+                    {latestNews.signals.length} curated signals from across the AI ecosystem.
+                    Scanned, filtered, and ready for builders.
+                  </p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <a
+                    href="/api/news/rss"
+                    className="inline-flex items-center gap-1.5 border border-white/10 font-mono text-[10px] tracking-wider uppercase text-text-secondary/60 hover:text-accent-orange hover:border-accent-orange/30 px-4 py-2.5 rounded-lg transition-all"
+                    title="RSS Feed"
+                  >
+                    <Rss size={12} /> Feed
+                  </a>
+                  <Link
+                    href="/news"
+                    className="inline-flex items-center gap-2 bg-accent-electric text-midnight font-mono text-xs tracking-wider uppercase px-6 py-3 rounded-lg hover:bg-accent-electric/90 transition-colors"
+                  >
+                    Explore <ArrowRight size={14} />
+                  </Link>
+                </div>
               </div>
-              <div className="hidden sm:flex items-center gap-4">
-                <a
-                  href="/api/news/rss"
-                  className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-text-dark/40 hover:text-accent-electric transition-colors"
-                  title="RSS Feed"
-                >
-                  <Rss size={14} /> RSS
-                </a>
+
+              {/* Bento grid layout */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Main insight — large card */}
+                {latestNews.issue.main_insight && (
+                  <Link href="/news" className="md:col-span-7 group">
+                    <div className="relative h-full p-6 md:p-8 rounded-2xl border border-white/[0.06] bg-surface/50 backdrop-blur-sm overflow-hidden hover:border-accent-electric/20 transition-all">
+                      {/* Corner glow */}
+                      <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-accent-electric/10 blur-[60px] group-hover:bg-accent-electric/15 transition-colors" />
+
+                      <div className="relative">
+                        <div className="flex items-center gap-2 mb-4">
+                          <Sparkles size={14} className="text-accent-electric" />
+                          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-accent-electric/70 font-bold">
+                            Key Insight
+                          </span>
+                        </div>
+                        <p className="font-body text-xl sm:text-2xl md:text-[26px] text-text-primary leading-relaxed font-light">
+                          {latestNews.issue.main_insight}
+                        </p>
+                        <div className="mt-6 flex items-center gap-2 text-text-secondary/50 group-hover:text-accent-electric/70 transition-colors">
+                          <span className="font-mono text-[10px] tracking-wider uppercase">Read full briefing</span>
+                          <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                )}
+
+                {/* Signal count + radar mini widget */}
+                <div className="md:col-span-5 flex flex-col gap-4">
+                  {/* Stats card */}
+                  <div className="p-5 rounded-2xl border border-white/[0.06] bg-surface/50 backdrop-blur-sm">
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <div className="font-display text-4xl text-accent-electric">{latestNews.signals.length}</div>
+                        <div className="font-mono text-[8px] tracking-[0.2em] uppercase text-text-secondary/50 mt-1">Signals</div>
+                      </div>
+                      <div>
+                        <div className="font-display text-4xl text-accent-pink">
+                          {new Set(latestNews.signals.map(s => s.category)).size}
+                        </div>
+                        <div className="font-mono text-[8px] tracking-[0.2em] uppercase text-text-secondary/50 mt-1">Categories</div>
+                      </div>
+                      <div>
+                        <div className="font-display text-4xl text-accent-teal">
+                          {Math.round(latestNews.signals.reduce((a, s) => a + s.impact_score, 0) / latestNews.signals.length * 10) / 10}
+                        </div>
+                        <div className="font-mono text-[8px] tracking-[0.2em] uppercase text-text-secondary/50 mt-1">Avg Impact</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Top 2 signals stacked */}
+                  {topSignals.slice(0, 2).map((signal, i) => {
+                    const colors = CATEGORY_COLORS[signal.category] || { bg: "bg-white/5", text: "text-text-secondary", glow: "from-white/10" };
+                    return (
+                      <Link key={signal.id} href="/news" className="group">
+                        <div className="relative p-4 rounded-2xl border border-white/[0.06] bg-surface/50 backdrop-blur-sm overflow-hidden hover:border-white/10 transition-all">
+                          <div className={`absolute -bottom-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-t ${colors.glow} to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity`} />
+                          <div className="relative flex items-start gap-3">
+                            <span className={`mt-0.5 shrink-0 w-1.5 h-1.5 rounded-full ${colors.bg} ring-2 ${colors.text.replace("text-", "ring-")}/30`} style={{ backgroundColor: "currentColor" }}>
+                              <span className={`block w-1.5 h-1.5 rounded-full ${colors.text.replace("text-", "bg-")}`} />
+                            </span>
+                            <div className="min-w-0">
+                              <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] font-bold tracking-[0.15em] uppercase ${colors.bg} ${colors.text} mb-1.5`}>
+                                {signal.category.replace("_", " ")}
+                              </span>
+                              <h3 className="font-body text-[14px] text-text-primary leading-snug group-hover:text-accent-electric transition-colors">
+                                {signal.title}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* Bottom row: remaining signals as horizontal cards */}
+                {topSignals.slice(2, 4).map((signal) => {
+                  const colors = CATEGORY_COLORS[signal.category] || { bg: "bg-white/5", text: "text-text-secondary", glow: "from-white/10" };
+                  return (
+                    <Link key={signal.id} href="/news" className="md:col-span-6 group">
+                      <div className="relative p-5 rounded-2xl border border-white/[0.06] bg-surface/50 backdrop-blur-sm overflow-hidden hover:border-white/10 transition-all">
+                        <div className={`absolute -bottom-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-t ${colors.glow} to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity`} />
+                        <div className="relative">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] font-bold tracking-[0.15em] uppercase ${colors.bg} ${colors.text} mb-2`}>
+                            {signal.category.replace("_", " ")}
+                          </span>
+                          <h3 className="font-body text-[15px] text-text-primary leading-snug mb-1.5 group-hover:text-accent-electric transition-colors">
+                            {signal.title}
+                          </h3>
+                          <p className="font-body text-[12px] text-text-secondary/60 leading-relaxed line-clamp-2">
+                            {signal.so_what || signal.summary}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Mobile CTA */}
+              <div className="mt-8 sm:hidden flex items-center gap-4">
                 <Link
                   href="/news"
-                  className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase text-accent-electric hover:text-accent-pink transition-colors"
+                  className="inline-flex items-center gap-2 bg-accent-electric text-midnight font-mono text-xs tracking-wider uppercase px-6 py-3 rounded-lg"
                 >
-                  View All <ArrowRight size={14} />
+                  Explore Signals <ArrowRight size={14} />
                 </Link>
+                <a
+                  href="/api/news/rss"
+                  className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-text-secondary/50"
+                >
+                  <Rss size={12} /> Feed
+                </a>
               </div>
             </div>
-
-            {/* Main insight card */}
-            {latestNews.issue.main_insight && (
-              <div className="mb-8 p-6 md:p-8 rounded-2xl bg-white border border-stone-200/60 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles size={14} className="text-blue-500" />
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-stone-400 font-bold">
-                    Key Insight
-                  </span>
-                </div>
-                <p className="font-body text-lg sm:text-xl text-text-dark/80 leading-relaxed">
-                  {latestNews.issue.main_insight}
-                </p>
-              </div>
-            )}
-
-            {/* Top 3 signals */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[...latestNews.signals]
-                .sort((a, b) => a.display_order - b.display_order)
-                .slice(0, 3)
-                .map((signal) => (
-                  <Link
-                    key={signal.id}
-                    href="/news"
-                    className="group p-5 rounded-2xl bg-white border border-stone-200/60 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-                  >
-                    <span className="inline-block px-2 py-0.5 rounded text-[9px] font-bold tracking-[0.1em] uppercase bg-stone-100 text-stone-500 mb-2">
-                      {signal.category.replace("_", " ")}
-                    </span>
-                    <h3 className="font-body text-[15px] text-text-dark font-medium leading-snug mb-2 group-hover:text-accent-electric transition-colors">
-                      {signal.title}
-                    </h3>
-                    <p className="font-body text-[13px] text-text-dark/50 leading-relaxed line-clamp-2">
-                      {signal.so_what || signal.summary}
-                    </p>
-                  </Link>
-                ))}
-            </div>
-
-            <div className="mt-8 sm:hidden flex items-center gap-4">
-              <Link
-                href="/news"
-                className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase text-accent-electric"
-              >
-                View All Signals <ArrowRight size={14} />
-              </Link>
-              <a
-                href="/api/news/rss"
-                className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-text-dark/40"
-              >
-                <Rss size={14} /> RSS
-              </a>
-            </div>
-          </div>
-        </section>
-      )}
+          </section>
+        );
+      })()}
 
       {/* ===== PROJECTS PREVIEW ===== */}
       <section className="relative py-24 overflow-hidden">

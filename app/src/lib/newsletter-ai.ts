@@ -167,6 +167,76 @@ JSON only.`;
   }
 }
 
+/* ─── Deep Dives (Call 4 — runs after signals are scored) ─── */
+
+export interface DeepDiveResult {
+  title: string;
+  deep_dive: string;
+}
+
+export async function generateDeepDives(
+  signals: InterpretedSignal[]
+): Promise<DeepDiveResult[]> {
+  const model = getModel();
+
+  // Pick top signals by impact (max 5 to keep token cost low)
+  const top = [...signals]
+    .sort((a, b) => (b.impact_score || 0) - (a.impact_score || 0))
+    .slice(0, 5);
+
+  const signalBlock = top
+    .map(
+      (s, i) =>
+        `Signal ${i + 1}: "${s.title}"
+Category: ${s.category}
+Summary: ${s.summary}
+So what: ${s.so_what}
+Delta: ${s.delta}
+Impact: ${s.impact}
+Builder opportunities: ${s.builder_opportunities}
+How to use: ${s.how_to_use}
+Sources: ${s.source_urls.join(", ")}`
+    )
+    .join("\n\n");
+
+  const prompt = `You're a senior AI/tech analyst writing extended briefings for builders. For each signal below, write a "deep dive" — a 200-300 word analysis that someone can read in 90 seconds.
+
+STRUCTURE each deep dive as markdown with these sections:
+## What Happened
+1-2 paragraphs explaining the news clearly. Assume the reader knows the basics but needs context.
+
+## Why It Matters
+What does this change for builders? Be specific — mention concrete use cases, workflows, or products affected.
+
+## What To Build
+Specific, actionable opportunities. Not vague advice — real things someone could start building this weekend.
+
+## Watch For
+What to monitor next — follow-up announcements, risks, or dependencies.
+
+TONE: Direct, analytical, opinionated. Like a smart friend explaining it over coffee. No corporate speak, no "in conclusion", no filler.
+
+${top.length} signals to analyze:
+
+${signalBlock}
+
+Return JSON array:
+[{"title": "<exact signal title>", "deep_dive": "<full markdown text>"}]
+
+JSON only, no fences.`;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text().trim();
+
+  try {
+    const cleaned = text.replace(/^```json?\n?/i, "").replace(/\n?```$/i, "");
+    return JSON.parse(cleaned);
+  } catch (e) {
+    console.error("[Newsletter AI] Failed to parse deep dives:", e);
+    return [];
+  }
+}
+
 /* ─── Newsletter Meta (Call 3) ─── */
 
 export interface QuickScanPick {

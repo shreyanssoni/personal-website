@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight, Rocket, TrendingUp, Wrench, FlaskConical, DollarSign, Package } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Rocket, TrendingUp, Wrench, FlaskConical, DollarSign, Package, BookOpen } from "lucide-react";
 import type { NewsletterSignal } from "@/lib/newsletter";
+import ShareButton from "@/components/ShareButton";
 
 /* ─── Color System ─── */
 
@@ -69,7 +71,7 @@ export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
   const hype = getHype(signal.hype_or_real);
 
   return (
-    <article className="signal-card mb-5 overflow-hidden">
+    <article className="signal-card mb-5">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full text-left p-4 sm:p-5 md:p-6 cursor-pointer"
@@ -110,31 +112,37 @@ export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
             {/* Impact meter - shown inline on mobile */}
             <div className="flex items-center justify-between mt-3 sm:hidden">
               <ImpactMeter score={signal.impact_score} />
-              <ChevronRight
-                size={14}
-                className={`text-stone-300 transition-all duration-300 ${expanded ? "rotate-90" : ""}`}
-              />
+              <div className="flex items-center gap-1">
+                <ShareButton signalId={signal.id} title={signal.title} compact />
+                <ChevronRight
+                  size={14}
+                  className={`text-stone-300 transition-all duration-300 ${expanded ? "rotate-90" : ""}`}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Right: impact + chevron - hidden on mobile */}
+          {/* Right: impact + share + chevron - hidden on mobile */}
           <div className="hidden sm:flex flex-col items-end gap-3 shrink-0 pt-0.5">
             <ImpactMeter score={signal.impact_score} />
-            <ChevronRight
-              size={16}
-              className={`text-stone-300 transition-all duration-300 ${expanded ? "rotate-90" : "group-hover:translate-x-0.5"}`}
-            />
+            <div className="flex items-center gap-1.5">
+              <ShareButton signalId={signal.id} title={signal.title} compact />
+              <ChevronRight
+                size={16}
+                className={`text-stone-300 transition-all duration-300 ${expanded ? "rotate-90" : "group-hover:translate-x-0.5"}`}
+              />
+            </div>
           </div>
         </div>
       </button>
 
       {/* Expanded */}
       <div
-        className={`grid transition-all duration-300 ease-out ${
+        className={`grid transition-all duration-300 ease-out overflow-hidden ${
           expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >
-        <div className="overflow-hidden">
+        <div className="min-h-0">
           <div className="px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6 pt-0">
             {/* Thin separator */}
             <div className="h-px bg-stone-100 mb-3 sm:mb-4" />
@@ -167,10 +175,20 @@ export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
             )}
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-3 sm:mt-4 pt-3 border-t border-stone-100/60">
-              <span className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 font-medium">
-                {signal.who_should_care}
-              </span>
-              <div className="flex gap-3">
+              <div className="flex items-center gap-3">
+                <span className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 font-medium">
+                  {signal.who_should_care}
+                </span>
+                <Link
+                  href={`/news/signal/${signal.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[9px] text-[#4F8CFF] hover:text-[#3A6FD8] font-medium transition-colors"
+                >
+                  <BookOpen size={10} />
+                  Read more
+                </Link>
+              </div>
+              <div className="flex items-center gap-3">
                 {signal.source_urls.slice(0, 2).map((url, i) => (
                   <a
                     key={i}
@@ -183,6 +201,8 @@ export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
                     source {i + 1}
                   </a>
                 ))}
+                <span className="w-px h-3 bg-stone-200/60" />
+                <ShareButton signalId={signal.id} title={signal.title} dropUp />
               </div>
             </div>
           </div>
