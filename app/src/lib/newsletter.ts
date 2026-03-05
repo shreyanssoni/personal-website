@@ -205,3 +205,64 @@ export async function getIssueWithSignals(issueDate: string): Promise<{
   const signals = await getSignalsByIssue(issue.id);
   return { issue, signals };
 }
+
+/* ─── Search ─── */
+
+export interface SearchResultSignal extends NewsletterSignal {
+  rank: number;
+  result_type: "signal";
+  issue_date: string;
+}
+
+export interface SearchResultRaw {
+  id: number;
+  source: string;
+  title: string;
+  url: string;
+  description: string | null;
+  fetched_at: string;
+  rank: number;
+  result_type: "raw";
+}
+
+export type SearchResult = SearchResultSignal | SearchResultRaw;
+
+export async function searchNews(query: string, limit = 20): Promise<SearchResult[]> {
+  // websearch_to_tsquery handles natural language: "agent frameworks" → 'agent' & 'framework'
+  // Fall back to plainto_tsquery if websearch syntax fails
+  const signals = await sql`
+    SELECT
+      s.*,
+      i.issue_date,
+      ts_rank(s.search_vec, websearch_to_tsquery('english', ${query})) AS rank
+    FROM newsletter_signals s
+    JOIN newsletter_issues i ON i.id = s.issue_id
+    WHERE s.search_vec @@ websearch_to_tsquery('english', ${query})
+    ORDER BY rank DESC, i.issue_date DESC
+    LIMIT ${limit}
+  ` as unknown as (NewsletterSignal & { rank: number; issue_date: string })[];
+
+  const rawItems = await sql`
+    SELECT
+      id, source, title, url, description, fetched_at,
+      ts_rank(search_vec, websearch_to_tsquery('english', ${query})) AS rank
+    FROM raw_feed_items
+    WHERE search_vec @@ websearch_to_tsquery('english', ${query})
+    ORDER BY rank DESC, fetched_at DESC
+    LIMIT ${limit}
+  ` as unknown as (SearchResultRaw & { rank: number })[];
+
+  const results: SearchResult[] = [
+    ...signals.map((s) => ({ ...s, result_type: "signal" as const })),
+    ...rawItems.map((r) => ({ ...r, result_type: "raw" as const })),
+  ];
+
+  // Sort: signals first, then by rank, then by recency
+  results.sort((a, b) => {
+    if (a.result_type !== b.result_type) return a.result_type === "signal" ? -1 : 1;
+    if (Math.abs(a.rank - b.rank) > 0.01) return b.rank - a.rank;
+    return 0;
+  });
+
+  return results.slice(0, limit);
+}

@@ -7,6 +7,7 @@ import {
   type NewsletterSignal,
 } from "@/lib/newsletter";
 import SignalCard from "@/components/SignalCard";
+import NewsSearch from "@/components/NewsSearch";
 
 /** Postgres DATE columns come back as JS Date objects via Neon driver. */
 function toDateStr(d: string | Date): string {
@@ -19,10 +20,64 @@ function toDate(d: string | Date): Date {
   return new Date(toDateStr(d) + "T12:00:00Z");
 }
 
-export const metadata: Metadata = {
-  title: "The Daily Signal",
-  description: "Daily AI & tech intelligence. Scannable signals for builders.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+
+  let title = "The Daily Signal — AI & Tech Intelligence for Builders";
+  let description = "Daily curated AI signals, tool launches, research breakthroughs, and builder opportunities. Scannable intelligence for developers and founders.";
+  let canonical = `${siteUrl}/news`;
+
+  try {
+    const issues = await getLatestIssues(1);
+    if (issues.length > 0) {
+      const issue = issues[0];
+      const dateStr = params.date || toDateStr(issue.issue_date);
+      const d = new Date(dateStr + "T12:00:00Z");
+      const formatted = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+      title = `AI Signals for ${formatted} — The Daily Signal`;
+      if (issue.main_insight) {
+        description = `${issue.main_insight} Plus ${issue.signal_count} more curated AI signals for builders.`;
+      }
+      if (params.date) {
+        canonical = `${siteUrl}/news?date=${dateStr}`;
+      }
+    }
+  } catch {}
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: "The MicroBits",
+      type: "website",
+      locale: "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    keywords: [
+      "AI news", "AI signals", "tech intelligence", "AI tools", "developer news",
+      "AI launches", "machine learning", "LLM news", "builder tools", "AI ecosystem",
+      "daily AI briefing", "AI research", "open source AI", "AI funding",
+    ],
+  };
+}
 
 export const revalidate = 1800;
 
@@ -431,34 +486,84 @@ export default async function NewsPage({
 
   const hasContent = currentIssue && signals.length > 0;
   const sorted = [...signals].sort((a, b) => a.display_order - b.display_order);
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://themicrobits.com";
+
+  /* ─── JSON-LD Structured Data ─── */
+  const jsonLd = hasContent && currentIssue ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `The Daily Signal — ${toDateStr(currentIssue.issue_date)}`,
+    description: currentIssue.main_insight || `${signals.length} curated AI signals for builders`,
+    url: `${siteUrl}/news${currentIssue ? `?date=${toDateStr(currentIssue.issue_date)}` : ""}`,
+    numberOfItems: signals.length,
+    datePublished: toDateStr(currentIssue.issue_date),
+    publisher: {
+      "@type": "Organization",
+      name: "The MicroBits",
+      url: siteUrl,
+    },
+    itemListElement: sorted.slice(0, 10).map((signal, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "TechArticle",
+        headline: signal.title,
+        description: signal.so_what || signal.summary,
+        datePublished: toDateStr(currentIssue.issue_date),
+        about: signal.category,
+        url: signal.source_urls?.[0] || `${siteUrl}/news`,
+      },
+    })),
+  } : null;
 
   return (
     <div className="news-page min-h-screen pt-20 sm:pt-28 pb-16 sm:pb-24 relative">
+      {/* JSON-LD */}
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+
       <FloatingBlobs />
 
       <div className="mx-auto max-w-2xl px-4 sm:px-6 relative">
         {issues.length > 1 && (
-          <IssueNav issues={issues} currentDate={currentIssue ? toDateStr(currentIssue.issue_date) : ""} />
+          <nav aria-label="Issue archive navigation">
+            <IssueNav issues={issues} currentDate={currentIssue ? toDateStr(currentIssue.issue_date) : ""} />
+          </nav>
         )}
 
+        {/* Search */}
+        <div className="flex justify-center mb-6 sm:mb-8">
+          <NewsSearch />
+        </div>
+
         {hasContent && currentIssue ? (
-          <>
+          <article>
             <Masthead issue={currentIssue} signalCount={signals.length} />
 
             {/* Layer 1: Quick scan */}
-            <QuickScan issue={currentIssue} />
+            <section aria-label="Quick scan highlights">
+              <QuickScan issue={currentIssue} />
+            </section>
 
             {/* Main insight */}
             {currentIssue.main_insight && (
-              <MainInsight text={currentIssue.main_insight} />
+              <section aria-label="Key insight">
+                <MainInsight text={currentIssue.main_insight} />
+              </section>
             )}
 
             {/* Builder Radar */}
-            <BuilderRadar
-              rising={currentIssue.radar_rising || []}
-              stable={currentIssue.radar_stable || []}
-              declining={currentIssue.radar_declining || []}
-            />
+            <section aria-label="Builder radar trends">
+              <BuilderRadar
+                rising={currentIssue.radar_rising || []}
+                stable={currentIssue.radar_stable || []}
+                declining={currentIssue.radar_declining || []}
+              />
+            </section>
 
             <WaveDivider />
 
@@ -469,15 +574,18 @@ export default async function NewsPage({
             </div>
 
             {/* Layer 2: All signal cards */}
-            <div className="mb-14 sm:mb-16 space-y-4 sm:space-y-5">
-              {sorted.map((signal) => (
-                <SignalCard key={signal.id} signal={signal} />
-              ))}
-            </div>
+            <section aria-label="All curated signals">
+              <h2 className="sr-only">Today&apos;s AI Signals</h2>
+              <div className="mb-14 sm:mb-16 space-y-4 sm:space-y-5">
+                {sorted.map((signal) => (
+                  <SignalCard key={signal.id} signal={signal} />
+                ))}
+              </div>
+            </section>
 
             {/* Closing */}
             {currentIssue.closing_thought && (
-              <>
+              <footer>
                 <GardenDivider text="fin" />
                 <div className="text-center mb-14 sm:mb-16">
                   <PlantIllustration className="w-14 sm:w-16 h-auto mx-auto mb-4 opacity-50" />
@@ -490,12 +598,28 @@ export default async function NewsPage({
                     <span className="w-1 h-1 rounded-full bg-stone-300/15" />
                   </div>
                 </div>
-              </>
+              </footer>
             )}
+
+            {/* SEO: crawlable text summary of signals */}
+            <div className="sr-only" aria-hidden="false">
+              <h2>AI Signal Summary for {toDateStr(currentIssue.issue_date)}</h2>
+              <p>{currentIssue.main_insight}</p>
+              <ul>
+                {sorted.map((s) => (
+                  <li key={s.id}>
+                    <strong>{s.title}</strong> ({s.category}) — {s.so_what}. {s.delta}. Impact: {s.impact}. Builder opportunity: {s.builder_opportunities}.
+                  </li>
+                ))}
+              </ul>
+              {currentIssue.radar_rising && <p>Rising trends: {currentIssue.radar_rising.join(", ")}</p>}
+              {currentIssue.radar_stable && <p>Stable trends: {currentIssue.radar_stable.join(", ")}</p>}
+              {currentIssue.radar_declining && <p>Cooling trends: {currentIssue.radar_declining.join(", ")}</p>}
+            </div>
 
             {/* Archive calendar */}
             {issues.length > 1 && (
-              <div className="text-center">
+              <nav aria-label="Signals archive calendar" className="text-center">
                 <GardenDivider />
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <span className="text-xs">📅</span>
@@ -531,9 +655,9 @@ export default async function NewsPage({
                     );
                   })}
                 </div>
-              </div>
+              </nav>
             )}
-          </>
+          </article>
         ) : (
           <div className="text-center py-24 sm:py-32">
             <PlantIllustration className="w-20 sm:w-24 h-auto mx-auto mb-6 opacity-40" />
