@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Playfair_Display, Public_Sans, Roboto_Mono, Homemade_Apple } from "next/font/google";
+import { Bebas_Neue, Playfair_Display, Public_Sans, Roboto_Mono, Homemade_Apple, DM_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -41,6 +41,14 @@ const homemadeApple = Homemade_Apple({
   display: "swap",
 });
 
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-soft",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "The MicroBits | Shreyans Soni",
@@ -68,7 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebasNeue.variable} ${playfairDisplay.variable} ${publicSans.variable} ${robotoMono.variable} ${homemadeApple.variable}`}
+      className={`${bebasNeue.variable} ${playfairDisplay.variable} ${publicSans.variable} ${robotoMono.variable} ${homemadeApple.variable} ${dmSans.variable}`}
     >
       <body className="antialiased">
         <div className="grain-overlay" aria-hidden="true" />

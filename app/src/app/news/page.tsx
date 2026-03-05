@@ -201,7 +201,7 @@ function QuickScan({ issue }: { issue: NewsletterIssue }) {
                 {card.label}
               </p>
             </div>
-            <p className="font-[family-name:var(--font-serif)] text-[14px] sm:text-[15px] text-stone-700 leading-snug font-semibold">
+            <p className="font-[family-name:var(--font-soft)] text-[14px] sm:text-[15px] text-stone-600 leading-relaxed">
               {card.text}
             </p>
             {/* Decorative corner glow */}
@@ -225,7 +225,7 @@ function MainInsight({ text }: { text: string }) {
             If you read one thing today
           </p>
         </div>
-        <p className="font-[family-name:var(--font-serif)] text-lg sm:text-xl md:text-[22px] text-stone-800 leading-snug font-bold">
+        <p className="font-[family-name:var(--font-soft)] text-lg sm:text-xl md:text-[22px] text-stone-700 leading-relaxed font-normal">
           {text}
         </p>
         {/* Subtle blue glow */}
