@@ -91,42 +91,42 @@ function BuilderRadar({ rising, stable, declining }: { rising: string[]; stable:
         <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-[0.3em] uppercase text-stone-400 mb-6 font-bold">
           Builder Radar
         </p>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2 sm:mb-3">
               <span className="w-2 h-2 rounded-full bg-[#2ECC71]" />
               <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[#219A52] font-bold uppercase">
                 Rising
               </p>
             </div>
             {rising.map((t, i) => (
-              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-600 mb-2 leading-snug pl-4">
+              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-600 mb-1.5 sm:mb-2 leading-snug pl-4">
                 {t}
               </p>
             ))}
           </div>
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2 sm:mb-3 mt-3 sm:mt-0">
               <span className="w-2 h-2 rounded-full bg-stone-300" />
               <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-stone-400 font-bold uppercase">
                 Stable
               </p>
             </div>
             {stable.map((t, i) => (
-              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 mb-2 leading-snug pl-4">
+              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 mb-1.5 sm:mb-2 leading-snug pl-4">
                 {t}
               </p>
             ))}
           </div>
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2 sm:mb-3 mt-3 sm:mt-0">
               <span className="w-2 h-2 rounded-full bg-[#FF6B6B]" />
               <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[#D94848] font-bold uppercase">
                 Cooling
               </p>
             </div>
             {declining.map((t, i) => (
-              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 mb-2 leading-snug pl-4">
+              <p key={i} className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 mb-1.5 sm:mb-2 leading-snug pl-4">
                 {t}
               </p>
             ))}
@@ -192,22 +192,22 @@ function Masthead({ issue, signalCount }: { issue: NewsletterIssue; signalCount:
 
       <div className="garden-divider mb-6"><span className="text-stone-300/40 text-xs px-2">✦</span></div>
 
-      <h1 className="font-[family-name:var(--font-display)] text-6xl sm:text-8xl tracking-wider text-stone-800 leading-none mb-4">
+      <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl md:text-8xl tracking-wider text-stone-800 leading-none mb-4">
         THE DAILY SIGNAL
       </h1>
 
-      <p className="font-[family-name:var(--font-body)] text-[13px] text-stone-400 tracking-wide mb-6">
+      <p className="font-[family-name:var(--font-body)] text-[12px] sm:text-[13px] text-stone-400 tracking-wide mb-6">
         Scanning the AI ecosystem so builders don&apos;t have to
       </p>
 
       <div className="garden-divider mb-6"><span className="text-stone-300/40 text-xs px-2">✦</span></div>
 
-      <div className="flex items-center justify-center gap-4 mb-8">
-        <span className="font-[family-name:var(--font-serif)] text-[15px] text-stone-500">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 mb-8">
+        <span className="font-[family-name:var(--font-serif)] text-[14px] sm:text-[15px] text-stone-500">
           {date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
         </span>
-        <span className="w-1 h-1 rounded-full bg-stone-300" />
-        <span className="font-[family-name:var(--font-mono)] text-[11px] tracking-wider text-stone-400 font-medium">
+        <span className="hidden sm:block w-1 h-1 rounded-full bg-stone-300" />
+        <span className="font-[family-name:var(--font-mono)] text-[10px] sm:text-[11px] tracking-wider text-stone-400 font-medium">
           {signalCount} signals curated
         </span>
       </div>
@@ -263,8 +263,8 @@ export default async function NewsPage({
   const sorted = [...signals].sort((a, b) => a.display_order - b.display_order);
 
   return (
-    <div className="news-page min-h-screen pt-28 pb-24">
-      <div className="mx-auto max-w-2xl px-6">
+    <div className="news-page min-h-screen pt-20 sm:pt-28 pb-16 sm:pb-24">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6">
         {issues.length > 1 && (
           <IssueNav issues={issues} currentDate={currentIssue ? toDateStr(currentIssue.issue_date) : ""} />
         )}
@@ -351,7 +351,7 @@ export default async function NewsPage({
         ) : (
           <div className="text-center py-32">
             <div className="garden-divider mb-8"><span className="text-stone-300/40 text-xs px-2">✦</span></div>
-            <h1 className="font-[family-name:var(--font-display)] text-6xl tracking-wider text-stone-300 mb-4">
+            <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl tracking-wider text-stone-300 mb-4">
               THE DAILY SIGNAL
             </h1>
             <p className="font-[family-name:var(--font-serif)] text-base italic text-stone-400">

@@ -27,7 +27,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");

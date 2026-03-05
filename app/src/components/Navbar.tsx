@@ -51,60 +51,17 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-midnight/80 backdrop-blur-md border-b border-white/5"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className={`font-display text-2xl tracking-wider transition-colors ${
-            useDarkText
-              ? "text-text-dark hover:text-accent-coral"
-              : "text-text-primary hover:text-accent-electric"
-          }`}
-        >
-          SHREYANS
-        </Link>
-
-        {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className={`font-mono text-xs tracking-[0.15em] uppercase transition-colors ${
-                  pathname === link.href
-                    ? "text-accent-electric"
-                    : useDarkText
-                      ? "text-text-dark/60 hover:text-text-dark"
-                      : "text-text-secondary hover:text-text-primary"
-                }`}
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {/* Mobile toggle */}
-        <button
-          className={`md:hidden z-50 transition-colors ${
-            useDarkText && !open ? "text-text-dark" : "text-text-primary"
-          }`}
-          onClick={() => setOpen(!open)}
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile overlay */}
+    <>
+      {/* Mobile overlay — rendered outside nav to avoid stacking context issues */}
       {open && (
-        <div className="fixed inset-0 z-40 bg-midnight/95 backdrop-blur-lg flex items-center justify-center md:hidden">
+        <div className="fixed inset-0 z-50 bg-[#0c0c14] flex items-center justify-center md:hidden">
+          <button
+            className="absolute top-4 right-6 text-text-primary z-50"
+            onClick={() => setOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={24} />
+          </button>
           <ul className="flex flex-col items-center gap-8">
             {links.map((link) => (
               <li key={link.href}>
@@ -124,6 +81,58 @@ export default function Navbar() {
           </ul>
         </div>
       )}
-    </nav>
+
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-midnight/80 backdrop-blur-md border-b border-white/5"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <Link
+            href="/"
+            className={`font-display text-2xl tracking-wider transition-colors ${
+              useDarkText
+                ? "text-text-dark hover:text-accent-coral"
+                : "text-text-primary hover:text-accent-electric"
+            }`}
+          >
+            SHREYANS
+          </Link>
+
+          {/* Desktop links */}
+          <ul className="hidden md:flex items-center gap-8">
+            {links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className={`font-mono text-xs tracking-[0.15em] uppercase transition-colors ${
+                    pathname === link.href
+                      ? "text-accent-electric"
+                      : useDarkText
+                        ? "text-text-dark/60 hover:text-text-dark"
+                        : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Mobile toggle */}
+          <button
+            className={`md:hidden transition-colors ${
+              useDarkText && !open ? "text-text-dark" : "text-text-primary"
+            }`}
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Close menu" : "Open menu"}
+          >
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+    </>
   );
 }
