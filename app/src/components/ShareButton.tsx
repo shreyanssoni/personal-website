@@ -233,7 +233,7 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
           </div>
 
           {/* Share with image — primary action on mobile */}
-          {typeof navigator !== "undefined" && navigator.share && (
+          {typeof navigator !== "undefined" && !!navigator.share && (
             <button
               onClick={handleNativeShareWithImage}
               disabled={busy}
