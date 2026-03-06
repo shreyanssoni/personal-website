@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft, Flower, Star, Briefcase, Share2 } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft, Flower, Star, Briefcase, Share2, GitBranch } from "lucide-react";
 
 interface Post {
   id: string;
@@ -176,6 +176,13 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-3 ml-10 sm:ml-0">
+            <button
+              onClick={() => router.push("/admin/threads")}
+              className="flex items-center gap-2 px-4 py-2.5 bg-accent-lime/10 border border-accent-lime/30 text-accent-lime rounded-xl font-mono text-[10px] sm:text-xs tracking-[0.1em] uppercase hover:bg-accent-lime/20 hover:border-accent-lime/50 transition-all cursor-pointer"
+            >
+              <GitBranch size={14} />
+              Threads
+            </button>
             <button
               onClick={() => router.push("/admin/social")}
               className="flex items-center gap-2 px-4 py-2.5 bg-accent-electric/10 border border-accent-electric/30 text-accent-electric rounded-xl font-mono text-[10px] sm:text-xs tracking-[0.1em] uppercase hover:bg-accent-electric/20 hover:border-accent-electric/50 transition-all cursor-pointer"

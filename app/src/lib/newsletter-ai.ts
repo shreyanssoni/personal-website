@@ -372,6 +372,57 @@ Return JSON object with all 9 fields. No fences.`;
   }
 }
 
+/* ─── Thread Suggestions ─── */
+
+export interface ThreadSuggestion {
+  title: string;
+  slug: string;
+  description: string;
+  emoji: string;
+  signal_ids: number[];
+}
+
+export async function suggestThreads(
+  signals: { id: number; title: string; category: string; so_what: string; issue_date: string }[]
+): Promise<ThreadSuggestion[]> {
+  const model = getModel();
+
+  const signalBlock = signals
+    .map((s) => `- [id:${s.id}] "${s.title}" (${s.category}, ${s.issue_date}) — ${s.so_what}`)
+    .join("\n");
+
+  const prompt = `You're a tech intelligence analyst. Given the signals below from the last 30 days, identify 3-5 story threads — recurring topics, evolving narratives, or connected developments that span multiple days.
+
+Each thread groups related signals into a timeline that readers can follow.
+
+Signals:
+${signalBlock}
+
+For each thread:
+- "title": concise thread name (e.g. "The Agent Framework Race")
+- "slug": URL-safe slug (e.g. "agent-framework-race")
+- "description": 1-2 sentence description of the narrative arc
+- "emoji": single emoji representing the theme
+- "signal_ids": array of signal IDs that belong to this thread (minimum 3)
+
+Only suggest threads with at least 3 matching signals. Prefer threads that span multiple days.
+
+Return JSON array. No fences.`;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text().trim();
+
+  try {
+    const cleaned = text.replace(/^```json?\n?/i, "").replace(/\n?```$/i, "");
+    const parsed: ThreadSuggestion[] = JSON.parse(cleaned);
+    console.log(`[Newsletter AI] Suggested ${parsed.length} threads`);
+    return parsed;
+  } catch (e) {
+    console.error("[Newsletter AI] Failed to parse thread suggestions:", e);
+    return [];
+  }
+}
+
 /* ─── Social Assets (Call 5) ─── */
 
 export interface SocialAsset {

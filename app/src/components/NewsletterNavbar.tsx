@@ -7,6 +7,7 @@ import { Menu, X, Rss, Mail } from "lucide-react";
 
 const links = [
   { href: "/news", label: "Today" },
+  { href: "/news/threads", label: "Threads" },
   { href: "/api/news/rss", label: "RSS", external: true },
 ];
 
@@ -92,6 +93,16 @@ export default function NewsletterNavbar() {
           </Link>
 
           <div className="hidden md:flex items-center gap-5">
+            <Link
+              href="/news/threads"
+              className={`font-[family-name:var(--font-mono)] text-xs tracking-[0.15em] uppercase transition-colors ${
+                pathname.startsWith("/news/threads")
+                  ? "text-[#4F8CFF]"
+                  : "text-stone-400 hover:text-stone-600"
+              }`}
+            >
+              Threads
+            </Link>
             <a
               href="/api/news/rss"
               target="_blank"

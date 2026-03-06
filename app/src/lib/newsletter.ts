@@ -336,6 +336,160 @@ export async function deleteSocialPostsByIssue(issueId: number) {
   await sql`DELETE FROM social_posts WHERE issue_id = ${issueId}`;
 }
 
+/* ─── Threads ─── */
+
+export interface NewsletterThread {
+  id: number;
+  slug: string;
+  title: string;
+  description: string | null;
+  emoji: string;
+  status: string;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ThreadWithSignals extends NewsletterThread {
+  signals: (NewsletterSignal & { issue_date: string; sequence_order: number })[];
+}
+
+export async function getPublishedThreads(): Promise<NewsletterThread[]> {
+  return sql`
+    SELECT * FROM newsletter_threads
+    WHERE status = 'published'
+    ORDER BY display_order ASC, updated_at DESC
+  ` as unknown as NewsletterThread[];
+}
+
+export async function getAllThreads(): Promise<NewsletterThread[]> {
+  return sql`
+    SELECT * FROM newsletter_threads
+    ORDER BY display_order ASC, updated_at DESC
+  ` as unknown as NewsletterThread[];
+}
+
+export async function getThreadBySlug(slug: string): Promise<ThreadWithSignals | null> {
+  const rows = await sql`SELECT * FROM newsletter_threads WHERE slug = ${slug}`;
+  const threads = rows as unknown as NewsletterThread[];
+  if (threads.length === 0) return null;
+
+  const thread = threads[0];
+  const signals = await sql`
+    SELECT s.*, i.issue_date, ts.sequence_order
+    FROM thread_signals ts
+    JOIN newsletter_signals s ON s.id = ts.signal_id
+    JOIN newsletter_issues i ON i.id = s.issue_id
+    WHERE ts.thread_id = ${thread.id}
+    ORDER BY i.issue_date ASC, ts.sequence_order ASC
+  ` as unknown as (NewsletterSignal & { issue_date: string; sequence_order: number })[];
+
+  return { ...thread, signals };
+}
+
+export async function getThreadById(id: number): Promise<ThreadWithSignals | null> {
+  const rows = await sql`SELECT * FROM newsletter_threads WHERE id = ${id}`;
+  const threads = rows as unknown as NewsletterThread[];
+  if (threads.length === 0) return null;
+
+  const thread = threads[0];
+  const signals = await sql`
+    SELECT s.*, i.issue_date, ts.sequence_order
+    FROM thread_signals ts
+    JOIN newsletter_signals s ON s.id = ts.signal_id
+    JOIN newsletter_issues i ON i.id = s.issue_id
+    WHERE ts.thread_id = ${thread.id}
+    ORDER BY i.issue_date ASC, ts.sequence_order ASC
+  ` as unknown as (NewsletterSignal & { issue_date: string; sequence_order: number })[];
+
+  return { ...thread, signals };
+}
+
+export async function createThread(data: {
+  slug: string;
+  title: string;
+  description?: string;
+  emoji?: string;
+  status?: string;
+  display_order?: number;
+}): Promise<number> {
+  const rows = await sql`
+    INSERT INTO newsletter_threads (slug, title, description, emoji, status, display_order)
+    VALUES (${data.slug}, ${data.title}, ${data.description ?? null}, ${data.emoji ?? '📡'}, ${data.status ?? 'draft'}, ${data.display_order ?? 0})
+    RETURNING id
+  `;
+  return (rows as unknown as { id: number }[])[0].id;
+}
+
+export async function updateThread(
+  id: number,
+  fields: Partial<Pick<NewsletterThread, "title" | "description" | "emoji" | "status" | "display_order" | "slug">>
+) {
+  await sql`
+    UPDATE newsletter_threads SET
+      title = COALESCE(${fields.title ?? null}, title),
+      description = COALESCE(${fields.description ?? null}, description),
+      emoji = COALESCE(${fields.emoji ?? null}, emoji),
+      status = COALESCE(${fields.status ?? null}, status),
+      display_order = COALESCE(${fields.display_order ?? null}, display_order),
+      slug = COALESCE(${fields.slug ?? null}, slug),
+      updated_at = NOW()
+    WHERE id = ${id}
+  `;
+}
+
+export async function deleteThread(id: number) {
+  await sql`DELETE FROM newsletter_threads WHERE id = ${id}`;
+}
+
+export async function addSignalsToThread(threadId: number, signalIds: number[]) {
+  for (const signalId of signalIds) {
+    await sql`
+      INSERT INTO thread_signals (thread_id, signal_id, sequence_order)
+      VALUES (${threadId}, ${signalId}, COALESCE((SELECT MAX(sequence_order) + 1 FROM thread_signals WHERE thread_id = ${threadId}), 0))
+      ON CONFLICT (thread_id, signal_id) DO NOTHING
+    `;
+  }
+}
+
+export async function removeSignalFromThread(threadId: number, signalId: number) {
+  await sql`DELETE FROM thread_signals WHERE thread_id = ${threadId} AND signal_id = ${signalId}`;
+}
+
+export async function reorderThreadSignals(threadId: number, signalIds: number[]) {
+  for (let i = 0; i < signalIds.length; i++) {
+    await sql`
+      UPDATE thread_signals SET sequence_order = ${i}
+      WHERE thread_id = ${threadId} AND signal_id = ${signalIds[i]}
+    `;
+  }
+}
+
+export async function refreshThreadSignals(threadId: number): Promise<number> {
+  const rows = await sql`SELECT * FROM newsletter_threads WHERE id = ${threadId}`;
+  const thread = (rows as unknown as NewsletterThread[])[0];
+  if (!thread) return 0;
+
+  const searchQuery = `${thread.title} ${thread.description || ""}`.trim();
+
+  const newSignals = await sql`
+    SELECT s.id
+    FROM newsletter_signals s
+    JOIN newsletter_issues i ON i.id = s.issue_id
+    WHERE i.issue_date >= CURRENT_DATE - INTERVAL '7 days'
+      AND s.search_vec @@ websearch_to_tsquery('english', ${searchQuery})
+      AND s.id NOT IN (SELECT signal_id FROM thread_signals WHERE thread_id = ${threadId})
+    ORDER BY i.issue_date DESC
+  ` as unknown as { id: number }[];
+
+  if (newSignals.length === 0) return 0;
+
+  await addSignalsToThread(threadId, newSignals.map((s) => s.id));
+  await sql`UPDATE newsletter_threads SET updated_at = NOW() WHERE id = ${threadId}`;
+
+  return newSignals.length;
+}
+
 /* ─── Search ─── */
 
 export interface SearchResultSignal extends NewsletterSignal {

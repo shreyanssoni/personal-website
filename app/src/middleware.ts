@@ -14,6 +14,8 @@ const NEWSLETTER_PATHS = [
   "/unsubscribe",
   "/api/admin/social",
   "/admin/social",
+  "/api/admin/threads",
+  "/admin/threads",
 ];
 
 export function middleware(req: NextRequest) {
