@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import type { RawFeedItem } from "./newsletter";
+import type { RawFeedItem, NewsletterSignal } from "./newsletter";
 
 const genAI = new GoogleGenerativeAI(
   process.env.NEWSLETTER_GEMINI_API_KEY || process.env.GOOGLE_API_KEY || ""
@@ -369,5 +369,103 @@ Return JSON object with all 9 fields. No fences.`;
         { label: "What to Watch", summary: signals[signals.length - 1]?.so_what || "Quieter trends worth monitoring." },
       ],
     };
+  }
+}
+
+/* ─── Social Assets (Call 5) ─── */
+
+export interface SocialAsset {
+  format: "insight" | "contrarian" | "thread" | "question";
+  signal_title: string;
+  post_text: string;
+  hook_curiosity: string;
+  hook_contrarian: string;
+  hook_prediction: string;
+  thesis: string;
+  topic_cluster: string;
+  posting_order: number;
+  signal_url: string;
+}
+
+export async function generateSocialAssets(
+  signals: NewsletterSignal[],
+  baseUrl: string
+): Promise<SocialAsset[]> {
+  const model = getModel();
+
+  const top = [...signals]
+    .sort((a, b) => (b.impact_score || 0) - (a.impact_score || 0))
+    .slice(0, 5);
+
+  const signalBlock = top
+    .map(
+      (s, i) =>
+        `Signal ${i + 1} (id:${s.id}): "${s.title}"
+Category: ${s.category}
+So what: ${s.so_what}
+Delta: ${s.delta}
+Impact: ${s.impact}
+Builder opportunities: ${s.builder_opportunities}`
+    )
+    .join("\n\n");
+
+  const prompt = `You're a sharp AI/tech creator building a Twitter presence around daily AI signals. Generate 4 social media assets — one per format — from today's top signals.
+
+FORMATS:
+1. "insight" — Pure idea tweet. No link. Builds authority. Statement of what you observed.
+2. "contrarian" — Challenges a common belief. Triggers replies/debate.
+3. "thread" — 6-tweet thread: hook → signal 1 → signal 2 → signal 3 → takeaway → newsletter link. Separate tweets with \\n---\\n
+4. "question" — Open-ended or poll-style. Drives replies.
+
+For the thread format, use "${baseUrl}/news" as the newsletter link in the final tweet.
+
+CONSTRAINTS:
+- Max 270 characters per tweet (leave room for links)
+- Max 1 hashtag per tweet (only if natural)
+- NO emoji walls. Zero or one emoji max.
+- Hook-first: opening line must create tension or curiosity
+- No "check out our newsletter" energy. Be the signal, not the promoter.
+- Thread tweets separated by \\n---\\n
+
+For each asset, also generate:
+- "hook_curiosity": an alternative opening using curiosity ("Something strange is happening...")
+- "hook_contrarian": an alternative opening that challenges ("The biggest AI shift isn't...")
+- "hook_prediction": an alternative opening with prediction ("Within 18 months...")
+- "thesis": one bold, memorable, screenshot-worthy one-liner from the insight
+- "topic_cluster": one of: "agents", "coding_tools", "local_ai", "models", "infra", "open_source", "research", "market"
+- "posting_order": suggested order for the day (1=first to post, 4=last)
+- "signal_url": relative URL — use "/news/signal/{id}" for the most relevant signal, or "/news" for general
+
+Today's top ${top.length} signals:
+
+${signalBlock}
+
+Return JSON array of 4 objects:
+{
+  "format": "insight"|"contrarian"|"thread"|"question",
+  "signal_title": "title of primary signal used",
+  "post_text": "the tweet or thread text",
+  "hook_curiosity": "...",
+  "hook_contrarian": "...",
+  "hook_prediction": "...",
+  "thesis": "...",
+  "topic_cluster": "...",
+  "posting_order": 1-4,
+  "signal_url": "/news/signal/{id}" or "/news"
+}
+
+JSON only, no fences.`;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text().trim();
+
+  try {
+    const cleaned = text.replace(/^```json?\n?/i, "").replace(/\n?```$/i, "");
+    const parsed: SocialAsset[] = JSON.parse(cleaned);
+    console.log(`[Newsletter AI] Generated ${parsed.length} social assets`);
+    return parsed;
+  } catch (e) {
+    console.error("[Newsletter AI] Failed to parse social assets:", e);
+    return [];
   }
 }

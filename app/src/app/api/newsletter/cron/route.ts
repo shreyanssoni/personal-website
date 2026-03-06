@@ -5,6 +5,7 @@ import {
   interpretSignals,
   generateNewsletterMeta,
   generateDeepDives,
+  generateSocialAssets,
 } from "@/lib/newsletter-ai";
 import {
   getTodaysRawItems,
@@ -13,6 +14,9 @@ import {
   insertSignal,
   markIssueSent,
   getIssueByDate,
+  getSignalsByIssue,
+  insertSocialPost,
+  deleteSocialPostsByIssue,
 } from "@/lib/newsletter";
 import { buildNewsletterHtml } from "@/lib/newsletter-email";
 import { sql } from "@/lib/db";
@@ -79,6 +83,8 @@ export async function GET(req: NextRequest) {
     } else if (lastStep === "interpreted") {
       return await step4_enrich_store(today);
     } else if (lastStep === "stored") {
+      return await step4b_social(today);
+    } else if (lastStep === "social_done") {
       return await step5_email(today);
     } else {
       return NextResponse.json({ status: "unknown_state", last_step: lastStep });
@@ -231,6 +237,70 @@ async function step4_enrich_store(today: string) {
   `;
 
   return NextResponse.json({ step: 4, status: "stored", issue_id: issueId, signals: interpretedSignals.length, next: "email" });
+}
+
+/* ─── Step 4b: Generate social assets ─── */
+async function step4b_social(today: string) {
+  console.log("[Newsletter] Step 4b: Generating social assets...");
+
+  const rows = await sql`
+    SELECT data FROM newsletter_pipeline_state WHERE date = ${today} AND step = 'stored'
+  ` as unknown as { data: string }[];
+
+  if (!rows.length) {
+    // Skip social if no stored data — don't block email
+    await sql`
+      INSERT INTO newsletter_pipeline_state (date, step, data)
+      VALUES (${today}, 'social_done', '{}'::jsonb)
+      ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+    `;
+    return NextResponse.json({ step: "4b", status: "social_done", message: "No stored data, skipped" });
+  }
+
+  const { issueId } = typeof rows[0].data === "string" ? JSON.parse(rows[0].data) : rows[0].data;
+
+  try {
+    const signals = await getSignalsByIssue(issueId);
+    if (signals.length === 0) throw new Error("No signals found for issue");
+
+    const baseUrl = getBaseUrl();
+    const assets = await generateSocialAssets(signals, baseUrl);
+
+    // Find signal IDs by matching titles
+    const signalMap = new Map(signals.map(s => [s.title.toLowerCase(), s.id]));
+
+    // Clear old social posts for this issue
+    await deleteSocialPostsByIssue(issueId);
+
+    for (const asset of assets) {
+      const matchedSignalId = signalMap.get(asset.signal_title?.toLowerCase()) || null;
+      await insertSocialPost({
+        issue_id: issueId,
+        signal_id: matchedSignalId,
+        format: asset.format,
+        post_text: asset.post_text,
+        hook_curiosity: asset.hook_curiosity,
+        hook_contrarian: asset.hook_contrarian,
+        hook_prediction: asset.hook_prediction,
+        thesis: asset.thesis,
+        topic_cluster: asset.topic_cluster,
+        signal_url: asset.signal_url,
+        posting_order: asset.posting_order,
+      });
+    }
+
+    console.log(`[Newsletter] Generated ${assets.length} social assets`);
+  } catch (e) {
+    console.error("[Newsletter] Social generation failed (non-blocking):", e);
+  }
+
+  await sql`
+    INSERT INTO newsletter_pipeline_state (date, step, data)
+    VALUES (${today}, 'social_done', ${JSON.stringify({ issueId })}::jsonb)
+    ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+  `;
+
+  return NextResponse.json({ step: "4b", status: "social_done", issue_id: issueId, next: "email" });
 }
 
 /* ─── Step 5: Send emails ─── */

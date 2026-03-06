@@ -209,6 +209,133 @@ export async function getIssueWithSignals(issueDate: string): Promise<{
   return { issue, signals };
 }
 
+/* ─── Social Posts ─── */
+
+export interface SocialPost {
+  id: number;
+  issue_id: number;
+  signal_id: number | null;
+  format: string;
+  post_text: string;
+  hook_curiosity: string | null;
+  hook_contrarian: string | null;
+  hook_prediction: string | null;
+  thesis: string | null;
+  topic_cluster: string | null;
+  signal_url: string | null;
+  posting_order: number;
+  status: string;
+  shared_at: string | null;
+  posted_url: string | null;
+  impressions: number | null;
+  likes: number | null;
+  reposts: number | null;
+  replies: number | null;
+  clicks: number | null;
+  subs_gained: number | null;
+  format_score: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function insertSocialPost(post: {
+  issue_id: number;
+  signal_id?: number | null;
+  format: string;
+  post_text: string;
+  hook_curiosity?: string;
+  hook_contrarian?: string;
+  hook_prediction?: string;
+  thesis?: string;
+  topic_cluster?: string;
+  signal_url?: string;
+  posting_order?: number;
+}) {
+  await sql`
+    INSERT INTO social_posts (issue_id, signal_id, format, post_text, hook_curiosity, hook_contrarian, hook_prediction, thesis, topic_cluster, signal_url, posting_order)
+    VALUES (${post.issue_id}, ${post.signal_id ?? null}, ${post.format}, ${post.post_text}, ${post.hook_curiosity ?? null}, ${post.hook_contrarian ?? null}, ${post.hook_prediction ?? null}, ${post.thesis ?? null}, ${post.topic_cluster ?? null}, ${post.signal_url ?? null}, ${post.posting_order ?? 0})
+  `;
+}
+
+export async function getLatestSocialPosts(): Promise<(SocialPost & { signal_title?: string; signal_category?: string })[]> {
+  return sql`
+    SELECT sp.*, ns.title as signal_title, ns.category as signal_category
+    FROM social_posts sp
+    LEFT JOIN newsletter_signals ns ON ns.id = sp.signal_id
+    WHERE sp.issue_id = (SELECT id FROM newsletter_issues ORDER BY issue_date DESC LIMIT 1)
+    ORDER BY sp.posting_order ASC
+  ` as unknown as (SocialPost & { signal_title?: string; signal_category?: string })[];
+}
+
+export async function updateSocialPost(
+  id: number,
+  fields: Partial<Pick<SocialPost, "post_text" | "status" | "shared_at" | "posted_url" | "hook_curiosity" | "hook_contrarian" | "hook_prediction" | "impressions" | "likes" | "reposts" | "replies" | "clicks" | "subs_gained" | "format_score">>
+) {
+  await sql`
+    UPDATE social_posts SET
+      post_text = COALESCE(${fields.post_text ?? null}, post_text),
+      status = COALESCE(${fields.status ?? null}, status),
+      shared_at = COALESCE(${fields.shared_at ?? null}, shared_at),
+      posted_url = COALESCE(${fields.posted_url ?? null}, posted_url),
+      hook_curiosity = COALESCE(${fields.hook_curiosity ?? null}, hook_curiosity),
+      hook_contrarian = COALESCE(${fields.hook_contrarian ?? null}, hook_contrarian),
+      hook_prediction = COALESCE(${fields.hook_prediction ?? null}, hook_prediction),
+      impressions = COALESCE(${fields.impressions ?? null}, impressions),
+      likes = COALESCE(${fields.likes ?? null}, likes),
+      reposts = COALESCE(${fields.reposts ?? null}, reposts),
+      replies = COALESCE(${fields.replies ?? null}, replies),
+      clicks = COALESCE(${fields.clicks ?? null}, clicks),
+      subs_gained = COALESCE(${fields.subs_gained ?? null}, subs_gained),
+      format_score = COALESCE(${fields.format_score ?? null}, format_score),
+      updated_at = NOW()
+    WHERE id = ${id}
+  `;
+}
+
+export async function getSocialAnalytics(days = 30) {
+  const formatPerf = await sql`
+    SELECT format,
+      COUNT(*) as post_count,
+      AVG(format_score) as avg_score,
+      SUM(impressions) as total_impressions,
+      SUM(subs_gained) as total_subs
+    FROM social_posts
+    WHERE created_at >= NOW() - INTERVAL '1 day' * ${days}
+      AND status = 'shared'
+    GROUP BY format
+    ORDER BY avg_score DESC NULLS LAST
+  ` as unknown as { format: string; post_count: number; avg_score: number | null; total_impressions: number | null; total_subs: number | null }[];
+
+  const clusterPerf = await sql`
+    SELECT topic_cluster,
+      COUNT(*) as post_count,
+      AVG(format_score) as avg_score,
+      SUM(subs_gained) as total_subs
+    FROM social_posts
+    WHERE created_at >= NOW() - INTERVAL '1 day' * ${days}
+      AND status = 'shared'
+    GROUP BY topic_cluster
+    ORDER BY avg_score DESC NULLS LAST
+  ` as unknown as { topic_cluster: string; post_count: number; avg_score: number | null; total_subs: number | null }[];
+
+  const topPosts = await sql`
+    SELECT sp.*, ns.title as signal_title
+    FROM social_posts sp
+    LEFT JOIN newsletter_signals ns ON ns.id = sp.signal_id
+    WHERE sp.created_at >= NOW() - INTERVAL '1 day' * ${days}
+      AND sp.status = 'shared'
+      AND sp.subs_gained IS NOT NULL
+    ORDER BY sp.subs_gained DESC
+    LIMIT 10
+  ` as unknown as (SocialPost & { signal_title?: string })[];
+
+  return { formatPerf, clusterPerf, topPosts };
+}
+
+export async function deleteSocialPostsByIssue(issueId: number) {
+  await sql`DELETE FROM social_posts WHERE issue_id = ${issueId}`;
+}
+
 /* ─── Search ─── */
 
 export interface SearchResultSignal extends NewsletterSignal {
