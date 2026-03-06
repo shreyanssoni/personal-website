@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse, after } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchAllSources } from "@/lib/newsletter-sources";
 import {
   selectSignals,
@@ -41,98 +41,95 @@ function authCheck(req: NextRequest): boolean {
 }
 
 /**
- * Pipeline is split into steps to stay under 60s Vercel Hobby limit.
- * cron-job.org hits: /api/newsletter/cron (no step param = full chain)
- * Each step calls the next via fetch to get a fresh 60s window.
+ * Auto-advancing pipeline. cron-job.org hits this every 2 minutes.
+ * Each hit checks pipeline state and runs the next pending step.
+ * Steps: fetch → select → interpret → enrich → email → done
  */
 export async function GET(req: NextRequest) {
   if (!authCheck(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const step = req.nextUrl.searchParams.get("step") || "1";
   const today = new Date().toISOString().split("T")[0];
 
   try {
-    switch (step) {
-      case "1":
-        return await step1_fetch(today, req);
-      case "2":
-        return await step2_select(today, req);
-      case "3":
-        return await step3_interpret(today, req);
-      case "4":
-        return await step4_enrich_store(today, req);
-      case "5":
-        return await step5_email(today, req);
-      default:
-        return NextResponse.json({ error: "Unknown step" }, { status: 400 });
+    // Check if already done today
+    const existing = await getIssueByDate(today);
+    if (existing?.sent_at) {
+      return NextResponse.json({ status: "done", message: "Already sent today", issue_id: existing.id });
+    }
+
+    // Determine current pipeline state
+    const stateRows = await sql`
+      SELECT step FROM newsletter_pipeline_state
+      WHERE date = ${today}
+      ORDER BY updated_at DESC
+      LIMIT 1
+    ` as unknown as { step: string }[];
+
+    const lastStep = stateRows[0]?.step || null;
+
+    // Run the next step based on last completed step
+    if (!lastStep) {
+      return await step1_fetch(today);
+    } else if (lastStep === "fetched") {
+      return await step2_select(today);
+    } else if (lastStep === "selected") {
+      return await step3_interpret(today);
+    } else if (lastStep === "interpreted") {
+      return await step4_enrich_store(today);
+    } else if (lastStep === "stored") {
+      return await step5_email(today);
+    } else {
+      return NextResponse.json({ status: "unknown_state", last_step: lastStep });
     }
   } catch (error) {
-    console.error(`[Newsletter] Step ${step} error:`, error);
+    console.error(`[Newsletter] Pipeline error:`, error);
     return NextResponse.json(
-      { error: `Step ${step} failed`, details: error instanceof Error ? error.message : String(error) },
+      { error: "Pipeline failed", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
 }
 
-/** Fire-and-forget the next step — uses after() to keep the function alive until the request is sent */
-function triggerNextStep(step: number, req: NextRequest) {
-  const baseUrl = getBaseUrl();
-  const authHeader = req.headers.get("authorization");
-  after(async () => {
-    try {
-      await fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
-        headers: authHeader ? { authorization: authHeader } : {},
-      });
-    } catch (e) {
-      console.error(`[Newsletter] Failed to trigger step ${step}:`, e);
-    }
-  });
-}
-
 /* ─── Step 1: Fetch all sources ─── */
-async function step1_fetch(today: string, req: NextRequest) {
-  const existing = await getIssueByDate(today);
-  if (existing?.sent_at) {
-    return NextResponse.json({ message: "Already sent today", issue_id: existing.id });
-  }
-
+async function step1_fetch(today: string) {
   console.log("[Newsletter] Step 1: Fetching sources...");
   await fetchAllSources();
 
-  // Fire off step 2 and return immediately
-  triggerNextStep(2, req);
-  return NextResponse.json({ step: 1, status: "done", next: 2 });
+  await sql`
+    INSERT INTO newsletter_pipeline_state (date, step, data)
+    VALUES (${today}, 'fetched', '{}'::jsonb)
+    ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+  `;
+
+  return NextResponse.json({ step: 1, status: "fetched", next: "select" });
 }
 
 /* ─── Step 2: Select signals via AI ─── */
-async function step2_select(today: string, req: NextRequest) {
+async function step2_select(today: string) {
   console.log("[Newsletter] Step 2: Loading raw items & selecting signals...");
   const rawItems = await getTodaysRawItems();
   if (rawItems.length === 0) {
-    return NextResponse.json({ message: "No raw items", raw_count: 0 });
+    return NextResponse.json({ step: 2, message: "No raw items", raw_count: 0 });
   }
 
   const selectedSignals = await selectSignals(rawItems);
   if (selectedSignals.length === 0) {
-    return NextResponse.json({ message: "No signals selected", raw_count: rawItems.length });
+    return NextResponse.json({ step: 2, message: "No signals selected", raw_count: rawItems.length });
   }
 
-  // Store selected signals temporarily in DB for next step
   await sql`
     INSERT INTO newsletter_pipeline_state (date, step, data)
     VALUES (${today}, 'selected', ${JSON.stringify(selectedSignals)}::jsonb)
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
 
-  triggerNextStep(3, req);
-  return NextResponse.json({ step: 2, raw_count: rawItems.length, selected: selectedSignals.length, next: 3 });
+  return NextResponse.json({ step: 2, status: "selected", raw_count: rawItems.length, selected: selectedSignals.length, next: "interpret" });
 }
 
 /* ─── Step 3: Interpret & score signals ─── */
-async function step3_interpret(today: string, req: NextRequest) {
+async function step3_interpret(today: string) {
   console.log("[Newsletter] Step 3: Interpreting signals...");
 
   const rows = await sql`
@@ -147,7 +144,7 @@ async function step3_interpret(today: string, req: NextRequest) {
   const interpretedSignals = await interpretSignals(selectedSignals);
 
   if (interpretedSignals.length === 0) {
-    return NextResponse.json({ message: "Interpretation failed" });
+    return NextResponse.json({ step: 3, message: "Interpretation failed" });
   }
 
   await sql`
@@ -156,12 +153,11 @@ async function step3_interpret(today: string, req: NextRequest) {
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
 
-  triggerNextStep(4, req);
-  return NextResponse.json({ step: 3, interpreted: interpretedSignals.length, next: 4 });
+  return NextResponse.json({ step: 3, status: "interpreted", interpreted: interpretedSignals.length, next: "enrich" });
 }
 
 /* ─── Step 4: Deep dives + meta + store in DB ─── */
-async function step4_enrich_store(today: string, req: NextRequest) {
+async function step4_enrich_store(today: string) {
   console.log("[Newsletter] Step 4: Deep dives, meta, storing...");
 
   const rows = await sql`
@@ -231,19 +227,17 @@ async function step4_enrich_store(today: string, req: NextRequest) {
     });
   }
 
-  // Store meta + issueId for email step
   await sql`
     INSERT INTO newsletter_pipeline_state (date, step, data)
     VALUES (${today}, 'stored', ${JSON.stringify({ issueId, meta, signalCount: interpretedSignals.length })}::jsonb)
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
 
-  triggerNextStep(5, req);
-  return NextResponse.json({ step: 4, issue_id: issueId, signals: interpretedSignals.length, next: 5 });
+  return NextResponse.json({ step: 4, status: "stored", issue_id: issueId, signals: interpretedSignals.length, next: "email" });
 }
 
 /* ─── Step 5: Send emails ─── */
-async function step5_email(today: string, _req: NextRequest) {
+async function step5_email(today: string) {
   console.log("[Newsletter] Step 5: Sending emails...");
 
   const rows = await sql`
@@ -256,7 +250,6 @@ async function step5_email(today: string, _req: NextRequest) {
 
   const { issueId, meta, signalCount } = typeof rows[0].data === "string" ? JSON.parse(rows[0].data) : rows[0].data;
 
-  // Re-fetch interpreted signals for email HTML
   const interpretedRows = await sql`
     SELECT data FROM newsletter_pipeline_state WHERE date = ${today} AND step = 'interpreted'
   ` as unknown as { data: string }[];
@@ -304,6 +297,7 @@ async function step5_email(today: string, _req: NextRequest) {
   console.log("[Newsletter] Done!");
   return NextResponse.json({
     step: 5,
+    status: "sent",
     success: true,
     issue_id: issueId,
     date: today,
