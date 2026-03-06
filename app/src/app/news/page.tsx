@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import {
   getLatestIssues,
@@ -29,7 +30,7 @@ export async function generateMetadata({
   const params = await searchParams;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
 
-  let title = "The Daily Signal — AI & Tech Intelligence for Builders";
+  let title = "The Daily Vibe Code — AI & Tech Intelligence for Builders";
   let description = "Daily curated AI signals, tool launches, research breakthroughs, and builder opportunities. Scannable intelligence for developers and founders.";
   let canonical = `${siteUrl}/news`;
 
@@ -41,7 +42,7 @@ export async function generateMetadata({
       const d = new Date(dateStr + "T12:00:00Z");
       const formatted = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
-      title = `AI Signals for ${formatted} — The Daily Signal`;
+      title = `AI Signals for ${formatted} — The Daily Vibe Code`;
       if (issue.main_insight) {
         description = `${issue.main_insight} Plus ${issue.signal_count} more curated AI signals for builders.`;
       }
@@ -426,7 +427,7 @@ function Masthead({ issue, signalCount }: { issue: NewsletterIssue; signalCount:
       <div className="garden-divider mb-5 sm:mb-6"><span className="text-stone-300/40 text-xs px-2">✦</span></div>
 
       <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl md:text-8xl tracking-wider text-stone-800 leading-none mb-3 sm:mb-4">
-        THE DAILY SIGNAL
+        THE DAILY VIBE CODE
       </h1>
 
       <p className="font-[family-name:var(--font-body)] text-[11px] sm:text-[13px] text-stone-400 tracking-wide mb-5 sm:mb-6">
@@ -513,7 +514,7 @@ export default async function NewsPage({
   const jsonLd = hasContent && currentIssue ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `The Daily Signal — ${toDateStr(currentIssue.issue_date)}`,
+    name: `The Daily Vibe Code — ${toDateStr(currentIssue.issue_date)}`,
     description: currentIssue.main_insight || `${signals.length} curated AI signals for builders`,
     url: `${siteUrl}/news${currentIssue ? `?date=${toDateStr(currentIssue.issue_date)}` : ""}`,
     numberOfItems: signals.length,
@@ -695,7 +696,7 @@ export default async function NewsPage({
             <PlantIllustration className="w-20 sm:w-24 h-auto mx-auto mb-6 opacity-40" />
             <div className="garden-divider mb-8"><span className="text-stone-300/40 text-xs px-2">✦</span></div>
             <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl tracking-wider text-stone-300 mb-4">
-              THE DAILY SIGNAL
+              THE DAILY VIBE CODE
             </h1>
             <p className="font-[family-name:var(--font-serif)] text-sm sm:text-base italic text-stone-400">
               No briefing yet. The first issue appears when the daily cron runs.

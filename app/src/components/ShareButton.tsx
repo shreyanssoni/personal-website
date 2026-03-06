@@ -77,8 +77,8 @@ export default function ShareButton({ signalId, issueId, issueDate, title, compa
     : `${siteUrl}/news/signal/${signalId}`;
   const ogImageUrl = signalId ? `${siteUrl}/api/og/signal/${signalId}` : "";
   const shareText = isIssueShare
-    ? `The Daily Signal — ${title}`
-    : `${title} — The Daily Signal`;
+    ? `The Daily Vibe Code — ${title}`
+    : `${title} — The Daily Vibe Code`;
 
   useEffect(() => {
     const card = menuRef.current?.closest(".signal-card");

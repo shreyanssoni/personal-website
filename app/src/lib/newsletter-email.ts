@@ -89,7 +89,7 @@ export function buildNewsletterHtml(
           <table width="100%" cellpadding="0" cellspacing="0"><tr>
             <td style="height:1px;background:linear-gradient(90deg,transparent,#D5D0C8,transparent);"></td>
           </tr></table>
-          <p style="font-family:Georgia,'Times New Roman',serif;font-size:28px;color:#2D2A26;margin:16px 0 4px;letter-spacing:4px;font-weight:700;">THE DAILY SIGNAL</p>
+          <p style="font-family:Georgia,'Times New Roman',serif;font-size:28px;color:#2D2A26;margin:16px 0 4px;letter-spacing:4px;font-weight:700;">THE DAILY VIBE CODE</p>
           <p style="font-family:-apple-system,sans-serif;font-size:11px;color:#A09B91;letter-spacing:1px;margin:0 0 12px;">Scanning the AI ecosystem so builders don't have to</p>
           <table width="100%" cellpadding="0" cellspacing="0"><tr>
             <td style="height:1px;background:linear-gradient(90deg,transparent,#D5D0C8,transparent);"></td>
@@ -136,7 +136,7 @@ export function buildNewsletterHtml(
 
         <!-- Footer -->
         <tr><td style="padding:16px 0 0;text-align:center;">
-          <p style="font-family:'Courier New',monospace;font-size:9px;color:#C8C4BC;margin:0;">The Daily Signal by The MicroBits</p>
+          <p style="font-family:'Courier New',monospace;font-size:9px;color:#C8C4BC;margin:0;">The Daily Vibe Code by The MicroBits</p>
           ${unsubscribeUrl ? `<p style="font-family:'Courier New',monospace;font-size:9px;color:#C8C4BC;margin:6px 0 0;"><a href="${unsubscribeUrl}" style="color:#A09B91;text-decoration:underline;">unsubscribe</a></p>` : ""}
         </td></tr>
 

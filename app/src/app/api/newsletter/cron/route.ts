@@ -342,7 +342,7 @@ async function step5_email(today: string) {
 
     try {
       await transporter.sendMail({
-        from: `"The Daily Signal" <${process.env.EMAIL_FROM}>`,
+        from: `"The Daily Vibe Code" <${process.env.EMAIL_FROM}>`,
         to: email,
         subject: meta.subject,
         html,

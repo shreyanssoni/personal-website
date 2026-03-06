@@ -22,14 +22,14 @@ export async function GET() {
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>The Daily Signal — AI Intelligence for Builders</title>
+  <title>The Daily Vibe Code — AI Intelligence for Builders</title>
   <link>${siteUrl}/news</link>
   <description>Daily curated AI signals, tool launches, research breakthroughs, and builder opportunities from The MicroBits.</description>
   <language>en-us</language>
   <atom:link href="${siteUrl}/api/news/rss" rel="self" type="application/rss+xml"/>
   <image>
     <url>${siteUrl}/assets/img/shreyans1.png</url>
-    <title>The Daily Signal</title>
+    <title>The Daily Vibe Code</title>
     <link>${siteUrl}/news</link>
   </image>
 `;

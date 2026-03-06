@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Bebas_Neue, Playfair_Display, Public_Sans, Roboto_Mono, Homemade_Apple, DM_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Navbar from "@/components/Navbar";
+import NewsletterNavbar from "@/components/NewsletterNavbar";
 import Footer from "@/components/Footer";
+import NewsletterFooter from "@/components/NewsletterFooter";
 import "./globals.css";
 
 const bebasNeue = Bebas_Neue({
@@ -49,35 +52,67 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "The MicroBits | Shreyans Soni",
-    template: "%s | The MicroBits",
-  },
-  description:
-    "The MicroBits is a personal website developed by Shreyans Soni. The website includes personal blogs written by Shreyans and an updated About Page comprising of a short description, resume, projects and the fields of interest.",
-  icons: {
-    icon: "/assets/img/shreyans1.png",
-  },
-  verification: {
-    google: "zoIu_lrc5Gw-_uzNUiSMpRl088xH7AbdJoOKq7FDWlQ",
-  },
-  openGraph: {
-    siteName: "The MicroBits",
-    locale: "en_US",
-  },
-  alternates: {
-    types: {
-      "application/rss+xml": "/api/news/rss",
-    },
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  const isNewsletter = host.includes("thedailyvibecode");
 
-export default function RootLayout({
+  if (isNewsletter) {
+    return {
+      title: {
+        default: "The Daily Vibe Code",
+        template: "%s | The Daily Vibe Code",
+      },
+      description: "Daily curated AI signals, tool launches, research breakthroughs, and builder opportunities. Scannable intelligence for developers and founders.",
+      icons: {
+        icon: "/assets/img/shreyans1.png", // TODO: replace with vibecode-icon.png when ready
+      },
+      openGraph: {
+        siteName: "The Daily Vibe Code",
+        locale: "en_US",
+      },
+      alternates: {
+        types: {
+          "application/rss+xml": "/api/news/rss",
+        },
+      },
+    };
+  }
+
+  return {
+    title: {
+      default: "The MicroBits | Shreyans Soni",
+      template: "%s | The MicroBits",
+    },
+    description:
+      "The MicroBits is a personal website developed by Shreyans Soni. The website includes personal blogs written by Shreyans and an updated About Page comprising of a short description, resume, projects and the fields of interest.",
+    icons: {
+      icon: "/assets/img/shreyans1.png",
+    },
+    verification: {
+      google: "zoIu_lrc5Gw-_uzNUiSMpRl088xH7AbdJoOKq7FDWlQ",
+    },
+    openGraph: {
+      siteName: "The MicroBits",
+      locale: "en_US",
+    },
+    alternates: {
+      types: {
+        "application/rss+xml": "/api/news/rss",
+      },
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  const isNewsletter = host.includes("thedailyvibecode");
+
   return (
     <html
       lang="en"
@@ -85,9 +120,9 @@ export default function RootLayout({
     >
       <body className="antialiased">
         <div className="grain-overlay" aria-hidden="true" />
-        <Navbar />
+        {isNewsletter ? <NewsletterNavbar /> : <Navbar />}
         <main>{children}</main>
-        <Footer />
+        {isNewsletter ? <NewsletterFooter /> : <Footer />}
         {process.env.NEXT_PUBLIC_GOOGLE && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE} />
         )}

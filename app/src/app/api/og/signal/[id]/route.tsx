@@ -215,10 +215,10 @@ export async function GET(
               {/* Branding */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
                 <span style={{ fontSize: "20px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "0.08em" }}>
-                  THE DAILY SIGNAL
+                  THE DAILY VIBE CODE
                 </span>
                 <span style={{ fontSize: "13px", color: "#9CA3AF", letterSpacing: "0.08em", marginTop: "2px" }}>
-                  shreyanssoni.vercel.app/news
+                  thedailyvibecode.vercel.app
                 </span>
               </div>
             </div>
@@ -248,13 +248,13 @@ export async function GET(
           }}
         >
           <div style={{ display: "flex", fontSize: "48px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "0.1em" }}>
-            THE DAILY SIGNAL
+            THE DAILY VIBE CODE
           </div>
           <div style={{ display: "flex", fontSize: "20px", color: "#9CA3AF", marginTop: "16px" }}>
             Curated AI intelligence for builders
           </div>
           <div style={{ display: "flex", fontSize: "14px", color: "#C8C4BC", marginTop: "8px" }}>
-            shreyanssoni.vercel.app/news
+            thedailyvibecode.vercel.app
           </div>
         </div>
       ),

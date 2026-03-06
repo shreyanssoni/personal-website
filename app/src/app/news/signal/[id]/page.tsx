@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!signal) return { title: "Signal Not Found" };
 
   const dateStr = toDateStr(signal.issue_date);
-  const title = `${signal.title} — The Daily Signal`;
+  const title = `${signal.title} — The Daily Vibe Code`;
   const description = signal.so_what || signal.summary;
   const ogImage = `${siteUrl}/api/og/signal/${signal.id}`;
 

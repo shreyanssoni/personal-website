@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
 
     // Send test email
     await transporter.sendMail({
-      from: `"The Daily Signal [TEST]" <${process.env.EMAIL_FROM}>`,
+      from: `"The Daily Vibe Code [TEST]" <${process.env.EMAIL_FROM}>`,
       to: email,
       subject: `[TEST] ${meta.subject}`,
       html,

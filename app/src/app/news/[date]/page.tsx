@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const d = new Date(date + "T12:00:00Z");
   const formatted = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-  const title = `AI Signals for ${formatted} — The Daily Signal`;
+  const title = `AI Signals for ${formatted} — The Daily Vibe Code`;
   const description = issue.main_insight
     ? `${issue.main_insight} Plus ${issue.signal_count} more curated AI signals for builders.`
     : `${issue.signal_count} curated AI signals for developers and founders — ${formatted}`;

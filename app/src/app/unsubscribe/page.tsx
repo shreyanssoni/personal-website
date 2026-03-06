@@ -10,7 +10,7 @@ export default function UnsubscribePage({
           UNSUBSCRIBED
         </h1>
         <p className="font-body text-sm text-text-secondary/60 mb-6">
-          You&apos;ve been removed from The Daily Signal. No more emails from us.
+          You&apos;ve been removed from The Daily Vibe Code. No more emails from us.
         </p>
         <a
           href="/news"
