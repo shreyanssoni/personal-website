@@ -38,12 +38,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Root → redirect to /news
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/news", req.url));
-  }
-
-  // Any other path → redirect to /news
+  // Everything else (including /) → redirect to /news
   return NextResponse.redirect(new URL("/news", req.url));
 }
 
