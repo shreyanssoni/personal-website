@@ -391,21 +391,42 @@ export async function suggestThreads(
     .map((s) => `- [id:${s.id}] "${s.title}" (${s.category}, ${s.issue_date}) — ${s.so_what}`)
     .join("\n");
 
-  const prompt = `You're a tech intelligence analyst. Given the signals below from the last 30 days, identify 3-5 story threads — recurring topics, evolving narratives, or connected developments that span multiple days.
+  const prompt = `You're a sharp, opinionated tech writer with a knack for spotting the narratives people actually care about. Given the signals below from the last 30 days, find 3-5 SPECIFIC story threads that developers and builders would genuinely want to follow.
 
-Each thread groups related signals into a timeline that readers can follow.
+WHAT MAKES A GREAT THREAD:
+- SPECIFIC, not generic. "Jobs Claude Has Taken This Month" >> "The AI Revolution". "Google vs OpenAI: The Benchmark Wars" >> "Model Competition".
+- Has a NARRATIVE ARC — something is unfolding, escalating, or surprising. Readers should think "wait, what happens next?"
+- Named like a podcast episode or a viral tweet, not a Wikipedia article. Punchy, opinionated, maybe funny.
+- Tracks a CONCRETE rivalry, product saga, controversy, or trend with real momentum.
+- Something people would actually share: "yo follow this thread on Vibe Code"
 
-Signals:
+BAD THREAD NAMES (too generic, boring):
+- "The Agentic AI Revolution"
+- "Open Source AI Progress"
+- "AI Infrastructure Evolution"
+- "The Future of Coding"
+
+GOOD THREAD NAMES (specific, compelling, followable):
+- "Claude's Body Count: Every Job It Replaced This Month"
+- "The Great Vibe Coding Debate"
+- "OpenAI vs Anthropic: Benchmark Cage Match"
+- "Cursor vs Windsurf: IDE Wars Get Ugly"
+- "Open Source Models That Actually Ship"
+- "Google's Quiet Gemini Comeback"
+- "The Agent Framework Graveyard"
+- "Things That Broke When People Used AI in Prod"
+
+Signals from the last 30 days:
 ${signalBlock}
 
 For each thread:
-- "title": concise thread name (e.g. "The Agent Framework Race")
-- "slug": URL-safe slug (e.g. "agent-framework-race")
-- "description": 1-2 sentence description of the narrative arc
-- "emoji": single emoji representing the theme
+- "title": punchy, specific, scroll-stopping thread name
+- "slug": URL-safe slug
+- "description": 1-2 sentences that hook the reader — what's the drama? why should they care? write it like a trailer, not an abstract.
+- "emoji": single emoji that fits the vibe
 - "signal_ids": array of signal IDs that belong to this thread (minimum 3)
 
-Only suggest threads with at least 3 matching signals. Prefer threads that span multiple days.
+Only suggest threads with at least 3 matching signals. Prefer threads that span multiple days and have a clear narrative tension.
 
 Return JSON array. No fences.`;
 
