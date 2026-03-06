@@ -81,13 +81,15 @@ export async function GET(req: NextRequest) {
 function triggerNextStep(step: number, req: NextRequest) {
   const baseUrl = getBaseUrl();
   const authHeader = req.headers.get("authorization");
-  after(
-    fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
-      headers: authHeader ? { authorization: authHeader } : {},
-    }).catch((e) => {
+  after(async () => {
+    try {
+      await fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
+        headers: authHeader ? { authorization: authHeader } : {},
+      });
+    } catch (e) {
       console.error(`[Newsletter] Failed to trigger step ${step}:`, e);
-    })
-  );
+    }
+  });
 }
 
 /* ─── Step 1: Fetch all sources ─── */
