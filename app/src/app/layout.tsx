@@ -65,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
       },
       description: "Daily curated AI signals, tool launches, research breakthroughs, and builder opportunities. Scannable intelligence for developers and founders.",
       icons: {
-        icon: "/assets/img/cube_logo.png",
+        icon: "/assets/img/cube_logo_dark.png",
       },
       openGraph: {
         siteName: "The Daily Vibe Code",
