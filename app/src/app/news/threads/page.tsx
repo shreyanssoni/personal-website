@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getPublishedThreads } from "@/lib/newsletter";
+import { getPublishedThreads, archiveStaleThreads } from "@/lib/newsletter";
 
 export const revalidate = 1800;
 
@@ -22,6 +22,8 @@ function timeAgo(dateStr: string): string {
 }
 
 export default async function ThreadsPage() {
+  // Auto-archive threads not updated in 14+ days
+  await archiveStaleThreads().catch(() => {});
   const threads = await getPublishedThreads();
 
   return (

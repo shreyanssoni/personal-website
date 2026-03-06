@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getThreadBySlug, refreshThreadSignals } from "@/lib/newsletter";
+import ShareButton from "@/components/ShareButton";
 
 export const revalidate = 1800;
 
@@ -81,8 +82,11 @@ export default async function ThreadPage({
               {thread.description}
             </p>
           )}
-          <div className="mt-3 font-[family-name:var(--font-mono)] text-[11px] text-stone-400 tracking-wide">
-            {signals.length} signal{signals.length !== 1 ? "s" : ""}
+          <div className="mt-3 flex items-center gap-3">
+            <span className="font-[family-name:var(--font-mono)] text-[11px] text-stone-400 tracking-wide">
+              {signals.length} signal{signals.length !== 1 ? "s" : ""}
+            </span>
+            <ShareButton threadSlug={thread.slug} title={`${thread.emoji} ${thread.title}`} compact />
           </div>
         </header>
 

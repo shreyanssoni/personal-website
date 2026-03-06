@@ -7,6 +7,7 @@ interface ShareButtonProps {
   signalId?: number;
   issueId?: number;
   issueDate?: string;
+  threadSlug?: string;
   title: string;
   compact?: boolean;
   dropUp?: boolean;
@@ -64,21 +65,26 @@ const PLATFORMS = [
   },
 ];
 
-export default function ShareButton({ signalId, issueId, issueDate, title, compact, dropUp }: ShareButtonProps) {
+export default function ShareButton({ signalId, issueId, issueDate, threadSlug, title, compact, dropUp }: ShareButtonProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const isIssueShare = !signalId && (!!issueId || !!issueDate);
+  const isThreadShare = !!threadSlug;
+  const isIssueShare = !signalId && !threadSlug && (!!issueId || !!issueDate);
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "")).replace(/\/+$/, "");
-  const shareUrl = isIssueShare
-    ? `${siteUrl}/news/${issueDate || ""}`
-    : `${siteUrl}/news/signal/${signalId}`;
+  const shareUrl = isThreadShare
+    ? `${siteUrl}/news/threads/${threadSlug}`
+    : isIssueShare
+      ? `${siteUrl}/news/${issueDate || ""}`
+      : `${siteUrl}/news/signal/${signalId}`;
   const ogImageUrl = signalId ? `${siteUrl}/api/og/signal/${signalId}` : "";
-  const shareText = isIssueShare
-    ? `The Daily Vibe Code — ${title}`
-    : `${title} — The Daily Vibe Code`;
+  const shareText = isThreadShare
+    ? `${title} — The Daily Vibe Code`
+    : isIssueShare
+      ? `The Daily Vibe Code — ${title}`
+      : `${title} — The Daily Vibe Code`;
 
   useEffect(() => {
     const card = menuRef.current?.closest(".signal-card");
@@ -220,7 +226,7 @@ export default function ShareButton({ signalId, issueId, issueDate, title, compa
         >
           <div className="flex items-center justify-between px-3 py-1.5 mb-1">
             <span className="font-[family-name:var(--font-mono)] text-[8px] tracking-[0.2em] uppercase text-stone-400 font-bold">
-              {isIssueShare ? "Share issue" : "Share signal"}
+              {isThreadShare ? "Share thread" : isIssueShare ? "Share issue" : "Share signal"}
             </span>
             <button onClick={() => setOpen(false)} className="text-stone-300 hover:text-stone-500 transition-colors">
               <X size={12} />
@@ -261,7 +267,7 @@ export default function ShareButton({ signalId, issueId, issueDate, title, compa
           </button>
 
           {/* Save image — signal shares only */}
-          {!isIssueShare && (
+          {!isIssueShare && !isThreadShare && (
             <button
               onClick={handleDownloadImage}
               disabled={busy}

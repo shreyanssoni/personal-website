@@ -490,6 +490,18 @@ export async function refreshThreadSignals(threadId: number): Promise<number> {
   return newSignals.length;
 }
 
+/** Auto-archive published threads not updated in over 14 days */
+export async function archiveStaleThreads(): Promise<number> {
+  const result = await sql`
+    UPDATE newsletter_threads
+    SET status = 'archived', updated_at = NOW()
+    WHERE status = 'published'
+      AND updated_at < NOW() - INTERVAL '14 days'
+    RETURNING id
+  `;
+  return (result as unknown as { id: number }[]).length;
+}
+
 /* ─── Search ─── */
 
 export interface SearchResultSignal extends NewsletterSignal {
