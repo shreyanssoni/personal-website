@@ -77,19 +77,15 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/** Call the next step with a fresh 60s window */
-async function callNextStep(step: number, req: NextRequest) {
+/** Fire-and-forget the next step — don't await the response */
+function triggerNextStep(step: number, req: NextRequest) {
   const baseUrl = getBaseUrl();
   const authHeader = req.headers.get("authorization");
-  try {
-    const res = await fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
-      headers: authHeader ? { authorization: authHeader } : {},
-    });
-    return res.json();
-  } catch (e) {
-    console.error(`[Newsletter] Failed to call step ${step}:`, e);
-    return { error: `Chain to step ${step} failed` };
-  }
+  fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
+    headers: authHeader ? { authorization: authHeader } : {},
+  }).catch((e) => {
+    console.error(`[Newsletter] Failed to trigger step ${step}:`, e);
+  });
 }
 
 /* ─── Step 1: Fetch all sources ─── */
@@ -102,9 +98,9 @@ async function step1_fetch(today: string, req: NextRequest) {
   console.log("[Newsletter] Step 1: Fetching sources...");
   await fetchAllSources();
 
-  // Chain to step 2
-  const next = await callNextStep(2, req);
-  return NextResponse.json({ step: 1, status: "done", next });
+  // Fire off step 2 and return immediately
+  triggerNextStep(2, req);
+  return NextResponse.json({ step: 1, status: "done", next: 2 });
 }
 
 /* ─── Step 2: Select signals via AI ─── */
@@ -127,8 +123,8 @@ async function step2_select(today: string, req: NextRequest) {
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
 
-  const next = await callNextStep(3, req);
-  return NextResponse.json({ step: 2, raw_count: rawItems.length, selected: selectedSignals.length, next });
+  triggerNextStep(3, req);
+  return NextResponse.json({ step: 2, raw_count: rawItems.length, selected: selectedSignals.length, next: 3 });
 }
 
 /* ─── Step 3: Interpret & score signals ─── */
@@ -156,8 +152,8 @@ async function step3_interpret(today: string, req: NextRequest) {
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
 
-  const next = await callNextStep(4, req);
-  return NextResponse.json({ step: 3, interpreted: interpretedSignals.length, next });
+  triggerNextStep(4, req);
+  return NextResponse.json({ step: 3, interpreted: interpretedSignals.length, next: 4 });
 }
 
 /* ─── Step 4: Deep dives + meta + store in DB ─── */
@@ -238,8 +234,8 @@ async function step4_enrich_store(today: string, req: NextRequest) {
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
 
-  const next = await callNextStep(5, req);
-  return NextResponse.json({ step: 4, issue_id: issueId, signals: interpretedSignals.length, next });
+  triggerNextStep(5, req);
+  return NextResponse.json({ step: 4, issue_id: issueId, signals: interpretedSignals.length, next: 5 });
 }
 
 /* ─── Step 5: Send emails ─── */

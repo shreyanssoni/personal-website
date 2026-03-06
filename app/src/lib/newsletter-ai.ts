@@ -243,17 +243,40 @@ ${top.length} signals to analyze:
 
 ${signalBlock}
 
-Return JSON array:
-[{"title": "<exact signal title>", "deep_dive": "<full markdown text>"}]
+Return using this EXACT format — separate each deep dive with the delimiter ===DEEPDIVE=== on its own line:
 
-JSON only, no fences.`;
+TITLE: <exact signal title>
+---
+<full markdown deep dive text>
+===DEEPDIVE===
+TITLE: <next signal title>
+---
+<full markdown text>
+===DEEPDIVE===
+
+Use this delimiter format ONLY. No JSON, no code fences.`;
 
   const result = await model.generateContent(prompt);
   const text = result.response.text().trim();
 
   try {
-    const cleaned = text.replace(/^```json?\n?/i, "").replace(/\n?```$/i, "");
-    return JSON.parse(cleaned);
+    const blocks = text.split("===DEEPDIVE===").map((b) => b.trim()).filter(Boolean);
+    const results: DeepDiveResult[] = [];
+
+    for (const block of blocks) {
+      const titleMatch = block.match(/^TITLE:\s*(.+)/);
+      if (!titleMatch) continue;
+      const title = titleMatch[1].trim();
+      const dividerIdx = block.indexOf("---");
+      if (dividerIdx === -1) continue;
+      const deep_dive = block.slice(dividerIdx + 3).trim();
+      if (deep_dive) {
+        results.push({ title, deep_dive });
+      }
+    }
+
+    console.log(`[Newsletter AI] Parsed ${results.length} deep dives`);
+    return results;
   } catch (e) {
     console.error("[Newsletter AI] Failed to parse deep dives:", e);
     return [];
