@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, Rss, Mail } from "lucide-react";
@@ -83,12 +84,19 @@ export default function NewsletterNavbar() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link
             href="/news"
-            className={`font-[family-name:var(--font-display)] text-2xl tracking-wider transition-colors ${
+            className={`flex items-center gap-2.5 font-[family-name:var(--font-display)] text-2xl tracking-wider transition-colors ${
               useDarkText || scrolled
                 ? "text-stone-800 hover:text-[#4F8CFF]"
                 : "text-stone-800 hover:text-[#4F8CFF]"
             }`}
           >
+            <Image
+              src="/assets/img/cube_logo.png"
+              alt=""
+              width={28}
+              height={28}
+              className="shrink-0"
+            />
             THE DAILY VIBE CODE
           </Link>
 
