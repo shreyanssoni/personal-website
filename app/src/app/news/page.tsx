@@ -539,7 +539,7 @@ export default async function NewsPage({
   } : null;
 
   return (
-    <div className="news-page min-h-screen pt-20 sm:pt-28 pb-16 sm:pb-24 relative">
+    <div className="news-page min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24 relative">
       {/* JSON-LD */}
       {jsonLd && (
         <script

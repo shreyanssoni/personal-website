@@ -99,7 +99,7 @@ export default function NewsletterNavbar() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link
             href="/news"
-            className={`flex items-center gap-2.5 font-[family-name:var(--font-display)] text-2xl tracking-wider transition-colors ${
+            className={`flex items-center gap-1 font-[family-name:var(--font-display)] text-2xl tracking-wider transition-colors ${
               useDarkText || scrolled
                 ? "text-stone-800 hover:text-[#4F8CFF]"
                 : "text-stone-800 hover:text-[#4F8CFF]"
@@ -108,8 +108,8 @@ export default function NewsletterNavbar() {
             <Image
               src="/assets/img/cube_logo_dark.png"
               alt=""
-              width={52}
-              height={52}
+              width={120}
+              height={120}
               className="shrink-0"
             />
             THE DAILY VIBE CODE
