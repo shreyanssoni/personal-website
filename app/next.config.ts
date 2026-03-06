@@ -20,6 +20,17 @@ const nextConfig: NextConfig = {
         destination: "/news",
         permanent: true,
       },
+      {
+        source: "/",
+        has: [
+          {
+            type: "host",
+            value: "thedailyvibecode.vercel.app",
+          },
+        ],
+        destination: "/news",
+        permanent: false,
+      },
     ];
   },
 };
