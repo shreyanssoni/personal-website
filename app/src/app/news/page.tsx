@@ -4,8 +4,10 @@ import Link from "next/link";
 import {
   getLatestIssues,
   getSignalsByIssue,
+  getPublishedThreads,
   type NewsletterIssue,
   type NewsletterSignal,
+  type NewsletterThread,
 } from "@/lib/newsletter";
 import SignalCard from "@/components/SignalCard";
 import ShareButton from "@/components/ShareButton";
@@ -483,6 +485,73 @@ function ScrollPrompt({ count }: { count: number }) {
   );
 }
 
+/* ─── Threads Promo ─── */
+
+function ThreadsPromo({ threads }: { threads: NewsletterThread[] }) {
+  if (threads.length === 0) return null;
+
+  return (
+    <div className="mb-14 sm:mb-16">
+      <div className="relative overflow-hidden rounded-2xl border border-stone-200/50 bg-gradient-to-br from-white via-white to-stone-50 p-6 sm:p-8">
+        {/* Decorative bg */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#4F8CFF]/5 to-transparent rounded-bl-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-emerald-100/20 to-transparent rounded-tr-full pointer-events-none" />
+
+        <div className="relative">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-base">🧵</span>
+                <h3 className="font-[family-name:var(--font-display)] text-lg tracking-wider text-stone-800">
+                  STORY THREADS
+                </h3>
+              </div>
+              <p className="font-[family-name:var(--font-body)] text-[13px] text-stone-400">
+                Follow evolving narratives across days — not just single signals
+              </p>
+            </div>
+            <Link
+              href="/news/threads"
+              className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-800 text-white font-[family-name:var(--font-mono)] text-[10px] tracking-[0.12em] uppercase hover:bg-stone-700 transition-colors shrink-0"
+            >
+              View all threads &rarr;
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {threads.slice(0, 4).map((thread) => (
+              <Link
+                key={thread.id}
+                href={`/news/threads/${thread.slug}`}
+                className="group flex items-start gap-3 p-3.5 rounded-xl bg-white/80 border border-stone-200/40 hover:border-stone-300 hover:shadow-sm transition-all"
+              >
+                <span className="text-lg mt-0.5 shrink-0">{thread.emoji}</span>
+                <div className="min-w-0">
+                  <h4 className="font-[family-name:var(--font-serif)] text-[14px] font-bold text-stone-700 group-hover:text-[#4F8CFF] transition-colors leading-snug mb-0.5 truncate">
+                    {thread.title}
+                  </h4>
+                  {thread.description && (
+                    <p className="font-[family-name:var(--font-body)] text-[12px] text-stone-400 leading-snug line-clamp-1">
+                      {thread.description}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            href="/news/threads"
+            className="sm:hidden flex items-center justify-center gap-1.5 mt-4 py-2.5 rounded-xl bg-stone-800 text-white font-[family-name:var(--font-mono)] text-[10px] tracking-[0.12em] uppercase hover:bg-stone-700 transition-colors"
+          >
+            View all threads &rarr;
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Page ─── */
 
 export default async function NewsPage({
@@ -494,9 +563,13 @@ export default async function NewsPage({
   let issues: NewsletterIssue[] = [];
   let signals: NewsletterSignal[] = [];
   let currentIssue: NewsletterIssue | null = null;
+  let threads: NewsletterThread[] = [];
 
   try {
-    issues = await getLatestIssues(14);
+    [issues, threads] = await Promise.all([
+      getLatestIssues(14),
+      getPublishedThreads(),
+    ]);
     if (issues.length > 0) {
       const targetDate = params.date || toDateStr(issues[0].issue_date);
       currentIssue = issues.find((i) => toDateStr(i.issue_date) === targetDate) || issues[0];
@@ -615,6 +688,9 @@ export default async function NewsPage({
                 ))}
               </div>
             </section>
+
+            {/* Threads promo */}
+            <ThreadsPromo threads={threads} />
 
             {/* Closing */}
             {currentIssue.closing_thought && (

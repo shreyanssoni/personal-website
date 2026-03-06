@@ -381,7 +381,7 @@ export async function getThreadBySlug(slug: string): Promise<ThreadWithSignals |
     JOIN newsletter_signals s ON s.id = ts.signal_id
     JOIN newsletter_issues i ON i.id = s.issue_id
     WHERE ts.thread_id = ${thread.id}
-    ORDER BY i.issue_date ASC, ts.sequence_order ASC
+    ORDER BY i.issue_date DESC, ts.sequence_order ASC
   ` as unknown as (NewsletterSignal & { issue_date: string; sequence_order: number })[];
 
   return { ...thread, signals };
@@ -399,7 +399,7 @@ export async function getThreadById(id: number): Promise<ThreadWithSignals | nul
     JOIN newsletter_signals s ON s.id = ts.signal_id
     JOIN newsletter_issues i ON i.id = s.issue_id
     WHERE ts.thread_id = ${thread.id}
-    ORDER BY i.issue_date ASC, ts.sequence_order ASC
+    ORDER BY i.issue_date DESC, ts.sequence_order ASC
   ` as unknown as (NewsletterSignal & { issue_date: string; sequence_order: number })[];
 
   return { ...thread, signals };
