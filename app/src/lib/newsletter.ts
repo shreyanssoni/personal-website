@@ -72,15 +72,22 @@ export async function insertRawFeedItem(item: {
   await sql`
     INSERT INTO raw_feed_items (source, title, url, description, author, source_published_at)
     VALUES (${item.source}, ${item.title}, ${item.url}, ${item.description ?? null}, ${item.author ?? null}, ${item.source_published_at ?? null})
-    ON CONFLICT (url, fetched_at) DO NOTHING
+    ON CONFLICT (url) WHERE fetched_at >= CURRENT_DATE - INTERVAL '3 days' DO NOTHING
   `;
 }
 
 export async function getTodaysRawItems(): Promise<RawFeedItem[]> {
   return sql`
-    SELECT * FROM raw_feed_items
-    WHERE fetched_at = CURRENT_DATE
-    ORDER BY source, created_at DESC
+    SELECT r.* FROM raw_feed_items r
+    WHERE r.fetched_at = CURRENT_DATE
+      AND NOT EXISTS (
+        SELECT 1 FROM newsletter_signals s
+        JOIN newsletter_issues i ON i.id = s.issue_id
+        WHERE i.issue_date >= CURRENT_DATE - 3
+          AND i.issue_date < CURRENT_DATE
+          AND s.search_vec @@ plainto_tsquery('english', r.title)
+      )
+    ORDER BY r.source, r.created_at DESC
   ` as unknown as RawFeedItem[];
 }
 

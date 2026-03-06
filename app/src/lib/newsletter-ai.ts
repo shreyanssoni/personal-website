@@ -78,6 +78,8 @@ SKIP: opinion pieces, minor bumps, PR fluff, regulatory unless it hits builders,
 
 MERGE duplicate coverage into single signals.
 
+NOTE: Items that overlap with signals published in the last 3 days have already been filtered out. If you still notice similar themes, merge them or skip — prioritize genuinely NEW developments.
+
 Feed (${rawItems.length} items):
 
 ${feedSummary}
