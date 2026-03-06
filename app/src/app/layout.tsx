@@ -118,10 +118,10 @@ export default async function RootLayout({
       lang="en"
       className={`${bebasNeue.variable} ${playfairDisplay.variable} ${publicSans.variable} ${robotoMono.variable} ${homemadeApple.variable} ${dmSans.variable}`}
     >
-      <body className={`antialiased ${isNewsletter ? "bg-[#FAFAF8]" : ""}`}>
+      <body className={`antialiased flex flex-col min-h-screen ${isNewsletter ? "bg-[#FAFAF8]" : ""}`}>
         {!isNewsletter && <div className="grain-overlay" aria-hidden="true" />}
         {isNewsletter ? <NewsletterNavbar /> : <Navbar />}
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
         {isNewsletter ? <NewsletterFooter /> : <Footer />}
         {process.env.NEXT_PUBLIC_GOOGLE && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE} />
