@@ -71,8 +71,11 @@ export async function insertRawFeedItem(item: {
 }) {
   await sql`
     INSERT INTO raw_feed_items (source, title, url, description, author, source_published_at)
-    VALUES (${item.source}, ${item.title}, ${item.url}, ${item.description ?? null}, ${item.author ?? null}, ${item.source_published_at ?? null})
-    ON CONFLICT (url) WHERE fetched_at >= CURRENT_DATE - INTERVAL '3 days' DO NOTHING
+    SELECT ${item.source}, ${item.title}, ${item.url}, ${item.description ?? null}, ${item.author ?? null}, ${item.source_published_at ?? null}
+    WHERE NOT EXISTS (
+      SELECT 1 FROM raw_feed_items
+      WHERE url = ${item.url} AND fetched_at >= CURRENT_DATE - INTERVAL '3 days'
+    )
   `;
 }
 
