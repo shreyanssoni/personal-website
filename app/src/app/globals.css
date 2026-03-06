@@ -49,10 +49,12 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  background-color: var(--color-midnight);
-  color: var(--color-text-primary);
-  font-family: var(--font-body);
+@layer base {
+  body {
+    background-color: var(--color-midnight);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+  }
 }
 
 ::selection {
