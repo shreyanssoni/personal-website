@@ -30,7 +30,7 @@ export default function NewsletterFooter() {
       if (res.ok) {
         setEmail("");
         setIsError(false);
-        setMessage("You're in! First issue hits tomorrow.");
+        setMessage("You're in! The next issue hits tomorrow.");
       } else {
         setIsError(true);
         setMessage("Something went wrong. Try again!");

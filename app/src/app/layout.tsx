@@ -118,8 +118,8 @@ export default async function RootLayout({
       lang="en"
       className={`${bebasNeue.variable} ${playfairDisplay.variable} ${publicSans.variable} ${robotoMono.variable} ${homemadeApple.variable} ${dmSans.variable}`}
     >
-      <body className="antialiased">
-        <div className="grain-overlay" aria-hidden="true" />
+      <body className={`antialiased ${isNewsletter ? "bg-[#FAFAF8]" : ""}`}>
+        {!isNewsletter && <div className="grain-overlay" aria-hidden="true" />}
         {isNewsletter ? <NewsletterNavbar /> : <Navbar />}
         <main>{children}</main>
         {isNewsletter ? <NewsletterFooter /> : <Footer />}

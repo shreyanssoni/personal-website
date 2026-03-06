@@ -70,6 +70,21 @@ export default function NewsletterNavbar() {
                 )}
               </li>
             ))}
+            <li>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setTimeout(() => {
+                    const footer = document.querySelector("footer");
+                    const input = footer?.querySelector("input[type='email']") as HTMLInputElement | null;
+                    if (input) { input.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => input.focus(), 400); }
+                  }, 300);
+                }}
+                className="flex items-center gap-2.5 font-[family-name:var(--font-display)] text-4xl tracking-wider text-stone-800 hover:text-[#4F8CFF] transition-colors"
+              >
+                SUBSCRIBE
+              </button>
+            </li>
           </ul>
         </div>
       )}
