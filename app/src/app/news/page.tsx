@@ -7,6 +7,7 @@ import {
   type NewsletterSignal,
 } from "@/lib/newsletter";
 import SignalCard from "@/components/SignalCard";
+import ShareButton from "@/components/ShareButton";
 import NewsSearch from "@/components/NewsSearch";
 
 /** Postgres DATE columns come back as JS Date objects via Neon driver. */
@@ -442,6 +443,12 @@ function Masthead({ issue, signalCount }: { issue: NewsletterIssue; signalCount:
         <span className="font-[family-name:var(--font-mono)] text-[10px] sm:text-[11px] tracking-wider text-stone-400 font-medium">
           {signalCount} signals curated
         </span>
+        <span className="hidden sm:block w-1 h-1 rounded-full bg-stone-300" />
+        <ShareButton
+          issueId={issue.id}
+          issueDate={toDateStr(issue.issue_date)}
+          title={date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+        />
       </div>
 
       {issue.intro_text && (

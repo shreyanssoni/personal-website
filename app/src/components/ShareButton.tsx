@@ -4,7 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import { Share2, Link2, Check, X, Download } from "lucide-react";
 
 interface ShareButtonProps {
-  signalId: number;
+  signalId?: number;
+  issueId?: number;
+  issueDate?: string;
   title: string;
   compact?: boolean;
   dropUp?: boolean;
@@ -62,16 +64,21 @@ const PLATFORMS = [
   },
 ];
 
-export default function ShareButton({ signalId, title, compact, dropUp }: ShareButtonProps) {
+export default function ShareButton({ signalId, issueId, issueDate, title, compact, dropUp }: ShareButtonProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const isIssueShare = !signalId && (!!issueId || !!issueDate);
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "")).replace(/\/+$/, "");
-  const shareUrl = `${siteUrl}/news/signal/${signalId}`;
-  const ogImageUrl = `${siteUrl}/api/og/signal/${signalId}`;
-  const shareText = `${title} — The Daily Signal`;
+  const shareUrl = isIssueShare
+    ? `${siteUrl}/news/${issueDate || ""}`
+    : `${siteUrl}/news/signal/${signalId}`;
+  const ogImageUrl = signalId ? `${siteUrl}/api/og/signal/${signalId}` : "";
+  const shareText = isIssueShare
+    ? `The Daily Signal — ${title}`
+    : `${title} — The Daily Signal`;
 
   useEffect(() => {
     const card = menuRef.current?.closest(".signal-card");
@@ -97,10 +104,13 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
   }, [open]);
 
   function trackShare(platform: string) {
+    const payload = signalId
+      ? { signal_id: signalId, platform }
+      : { issue_id: issueId, platform };
     fetch("/api/share/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ signal_id: signalId, platform }),
+      body: JSON.stringify(payload),
     }).catch(() => {});
   }
 
@@ -125,10 +135,10 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
     setBusy(true);
     trackShare(platform.key);
 
-    // Try native share with image first
+    // Try native share with image first (signal shares only)
     if (navigator.share) {
       try {
-        const file = await fetchOgImage(ogImageUrl, title);
+        const file = ogImageUrl ? await fetchOgImage(ogImageUrl, title) : null;
         if (file && navigator.canShare?.({ files: [file] })) {
           await navigator.share({
             files: [file],
@@ -210,7 +220,7 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
         >
           <div className="flex items-center justify-between px-3 py-1.5 mb-1">
             <span className="font-[family-name:var(--font-mono)] text-[8px] tracking-[0.2em] uppercase text-stone-400 font-bold">
-              Share signal
+              {isIssueShare ? "Share issue" : "Share signal"}
             </span>
             <button onClick={() => setOpen(false)} className="text-stone-300 hover:text-stone-500 transition-colors">
               <X size={12} />
@@ -250,17 +260,19 @@ export default function ShareButton({ signalId, title, compact, dropUp }: ShareB
             )}
           </button>
 
-          {/* Save image */}
-          <button
-            onClick={handleDownloadImage}
-            disabled={busy}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-stone-600 transition-all hover:bg-stone-100 hover:text-stone-700 ${busy ? "opacity-50" : ""}`}
-          >
-            <Download size={14} className={busy ? "animate-pulse" : ""} />
-            <span className="font-[family-name:var(--font-soft)] text-[13px]">
-              {busy ? "Downloading..." : "Save image"}
-            </span>
-          </button>
+          {/* Save image — signal shares only */}
+          {!isIssueShare && (
+            <button
+              onClick={handleDownloadImage}
+              disabled={busy}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-stone-600 transition-all hover:bg-stone-100 hover:text-stone-700 ${busy ? "opacity-50" : ""}`}
+            >
+              <Download size={14} className={busy ? "animate-pulse" : ""} />
+              <span className="font-[family-name:var(--font-soft)] text-[13px]">
+                {busy ? "Downloading..." : "Save image"}
+              </span>
+            </button>
+          )}
         </div>
       )}
     </div>
