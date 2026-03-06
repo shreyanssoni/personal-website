@@ -93,8 +93,8 @@ export default function NewsletterNavbar() {
             <Image
               src="/assets/img/cube_logo_dark.png"
               alt=""
-              width={40}
-              height={40}
+              width={52}
+              height={52}
               className="shrink-0"
             />
             THE DAILY VIBE CODE
