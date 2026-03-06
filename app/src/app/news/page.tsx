@@ -207,16 +207,16 @@ function FloatingBlobs() {
 /* ─── Quick Scan ─── */
 
 const QUICK_SCAN_EMOJIS: Record<string, string> = {
-  "Biggest Signal": "🚀",
-  "Overhyped": "🫧",
-  "Quiet Trend": "🌱",
+  "What Launched": "🚀",
+  "What's Shifting": "🔄",
+  "What to Watch": "👀",
 };
 
 function QuickScan({ issue }: { issue: NewsletterIssue }) {
   const cards = [
-    issue.qs_biggest_text && { label: "Biggest Signal", text: issue.qs_biggest_text, accent: "#FF6B6B", bg: "bg-rose-50/40" },
-    issue.qs_overhyped_text && { label: "Overhyped", text: issue.qs_overhyped_text, accent: "#F4B942", bg: "bg-amber-50/40" },
-    issue.qs_quiet_text && { label: "Quiet Trend", text: issue.qs_quiet_text, accent: "#1ABC9C", bg: "bg-emerald-50/40" },
+    issue.qs_launched_text && { label: "What Launched", text: issue.qs_launched_text, accent: "#FF6B6B", bg: "bg-rose-50/40" },
+    issue.qs_shifting_text && { label: "What's Shifting", text: issue.qs_shifting_text, accent: "#F4B942", bg: "bg-amber-50/40" },
+    issue.qs_watch_text && { label: "What to Watch", text: issue.qs_watch_text, accent: "#1ABC9C", bg: "bg-emerald-50/40" },
   ].filter(Boolean) as { label: string; text: string; accent: string; bg: string }[];
 
   if (cards.length === 0) return null;

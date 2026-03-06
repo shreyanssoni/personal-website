@@ -25,12 +25,9 @@ export interface NewsletterIssue {
   radar_declining: string[] | null;
   curiosity_hook: string | null;
   closing_thought: string | null;
-  qs_biggest_title: string | null;
-  qs_biggest_text: string | null;
-  qs_overhyped_title: string | null;
-  qs_overhyped_text: string | null;
-  qs_quiet_title: string | null;
-  qs_quiet_text: string | null;
+  qs_launched_text: string | null;
+  qs_shifting_text: string | null;
+  qs_watch_text: string | null;
   raw_count: number;
   signal_count: number;
   sent_at: string | null;
@@ -106,18 +103,15 @@ export async function createIssue(data: {
   radar_declining: string[];
   curiosity_hook: string;
   closing_thought: string;
-  qs_biggest_title: string;
-  qs_biggest_text: string;
-  qs_overhyped_title: string;
-  qs_overhyped_text: string;
-  qs_quiet_title: string;
-  qs_quiet_text: string;
+  qs_launched_text: string;
+  qs_shifting_text: string;
+  qs_watch_text: string;
   raw_count: number;
   signal_count: number;
 }): Promise<number> {
   const rows = await sql`
-    INSERT INTO newsletter_issues (issue_date, subject, intro_text, main_insight, radar_rising, radar_stable, radar_declining, curiosity_hook, closing_thought, qs_biggest_title, qs_biggest_text, qs_overhyped_title, qs_overhyped_text, qs_quiet_title, qs_quiet_text, raw_count, signal_count)
-    VALUES (${data.date}, ${data.subject}, ${data.intro_text}, ${data.main_insight}, ${data.radar_rising}, ${data.radar_stable}, ${data.radar_declining}, ${data.curiosity_hook}, ${data.closing_thought}, ${data.qs_biggest_title}, ${data.qs_biggest_text}, ${data.qs_overhyped_title}, ${data.qs_overhyped_text}, ${data.qs_quiet_title}, ${data.qs_quiet_text}, ${data.raw_count}, ${data.signal_count})
+    INSERT INTO newsletter_issues (issue_date, subject, intro_text, main_insight, radar_rising, radar_stable, radar_declining, curiosity_hook, closing_thought, qs_launched_text, qs_shifting_text, qs_watch_text, raw_count, signal_count)
+    VALUES (${data.date}, ${data.subject}, ${data.intro_text}, ${data.main_insight}, ${data.radar_rising}, ${data.radar_stable}, ${data.radar_declining}, ${data.curiosity_hook}, ${data.closing_thought}, ${data.qs_launched_text}, ${data.qs_shifting_text}, ${data.qs_watch_text}, ${data.raw_count}, ${data.signal_count})
     ON CONFLICT (issue_date) DO UPDATE SET
       subject = EXCLUDED.subject,
       intro_text = EXCLUDED.intro_text,
@@ -127,12 +121,9 @@ export async function createIssue(data: {
       radar_declining = EXCLUDED.radar_declining,
       curiosity_hook = EXCLUDED.curiosity_hook,
       closing_thought = EXCLUDED.closing_thought,
-      qs_biggest_title = EXCLUDED.qs_biggest_title,
-      qs_biggest_text = EXCLUDED.qs_biggest_text,
-      qs_overhyped_title = EXCLUDED.qs_overhyped_title,
-      qs_overhyped_text = EXCLUDED.qs_overhyped_text,
-      qs_quiet_title = EXCLUDED.qs_quiet_title,
-      qs_quiet_text = EXCLUDED.qs_quiet_text,
+      qs_launched_text = EXCLUDED.qs_launched_text,
+      qs_shifting_text = EXCLUDED.qs_shifting_text,
+      qs_watch_text = EXCLUDED.qs_watch_text,
       raw_count = EXCLUDED.raw_count,
       signal_count = EXCLUDED.signal_count
     RETURNING id

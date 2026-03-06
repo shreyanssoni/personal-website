@@ -287,9 +287,9 @@ Use this delimiter format ONLY. No JSON, no code fences.`;
 
 /* ─── Newsletter Meta (Call 3) ─── */
 
-export interface QuickScanPick {
-  signal_title: string;
-  text: string;
+export interface QuickScanCategory {
+  label: string;
+  summary: string;
 }
 
 export interface NewsletterMeta {
@@ -301,9 +301,7 @@ export interface NewsletterMeta {
   radar_declining: string[];
   curiosity_hook: string;
   closing_thought: string;
-  quick_scan_biggest: QuickScanPick;
-  quick_scan_overhyped: QuickScanPick;
-  quick_scan_quiet: QuickScanPick;
+  quick_scan: QuickScanCategory[];
 }
 
 export async function generateNewsletterMeta(
@@ -341,13 +339,13 @@ Generate ALL of these:
 
 8. "closing_thought" - Opinionated parting thought that leaves the reader thinking. One sentence. (e.g. "The tooling layer around agents is still wide open. Someone will build the Stripe of AI workflows.")
 
-9. "quick_scan_biggest" - The SINGLE most important signal today. NOT just the highest score — think about what a builder HAS to know. Return {"signal_title": "<exact title from signals>", "text": "<one punchy sentence why this is the biggest deal>"}
+9. "quick_scan" - An array of EXACTLY 3 briefing categories. Each is {"label": "<category>", "summary": "<2-3 sentences>"}. The categories are:
+   a) "What Launched" — Summarize ALL new tools, models, APIs, releases, and launches from today's signals. Be specific: name the tools/models. A reader should know what shipped today from this alone.
+   b) "What's Shifting" — Synthesize the bigger trends and paradigm shifts visible across today's signals. What patterns are forming? What's changing in how we build? Connect the dots.
+   c) "What to Watch" — The quieter signals, upcoming implications, and things to monitor. What did most people miss that builders should care about? What's brewing?
+   Each summary should be SELF-CONTAINED — a reader who reads ONLY these 3 blurbs should understand today's AI landscape. Be factual, specific, and scannable. No vague opinions.
 
-10. "quick_scan_overhyped" - The signal getting the most buzz but deserves skepticism. Pick one that sounds impressive but may not live up to hype. Return {"signal_title": "<exact title>", "text": "<why it's overhyped, one sentence>"}
-
-11. "quick_scan_quiet" - A signal most people will miss but builders should watch. The sleeper. NOT the biggest, NOT hype — the quiet trend. Return {"signal_title": "<exact title>", "text": "<why this matters more than people think, one sentence>"}
-
-Return JSON object with all 11 fields. No fences.`;
+Return JSON object with all 9 fields. No fences.`;
 
   const result = await model.generateContent(prompt);
   const text = result.response.text().trim();
@@ -365,9 +363,11 @@ Return JSON object with all 11 fields. No fences.`;
       radar_declining: ["single-prompt chatbots"],
       curiosity_hook: `${signals.length} signals today including new launches and research.`,
       closing_thought: "The best time to build is when the landscape is shifting.",
-      quick_scan_biggest: { signal_title: signals[0]?.title || "", text: signals[0]?.so_what || "The biggest signal today." },
-      quick_scan_overhyped: { signal_title: signals.find(s => s.hype_or_real?.toLowerCase().includes("hype"))?.title || signals[1]?.title || "", text: "Worth watching but don't overreact." },
-      quick_scan_quiet: { signal_title: signals[signals.length - 1]?.title || "", text: "A quiet trend worth watching." },
+      quick_scan: [
+        { label: "What Launched", summary: signals.filter(s => s.category === "launch" || s.category === "tool").map(s => s.title).slice(0, 3).join(", ") + "." || "New tools and releases shipped today." },
+        { label: "What's Shifting", summary: signals[0]?.so_what || "The AI ecosystem moved today." },
+        { label: "What to Watch", summary: signals[signals.length - 1]?.so_what || "Quieter trends worth monitoring." },
+      ],
     };
   }
 }

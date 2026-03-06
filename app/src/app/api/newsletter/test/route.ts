@@ -43,9 +43,11 @@ export async function GET(req: NextRequest) {
       radar_declining: issue.radar_declining || [],
       curiosity_hook: issue.curiosity_hook || "",
       closing_thought: issue.closing_thought || "",
-      quick_scan_biggest: { signal_title: issue.qs_biggest_title || "", text: issue.qs_biggest_text || "" },
-      quick_scan_overhyped: { signal_title: issue.qs_overhyped_title || "", text: issue.qs_overhyped_text || "" },
-      quick_scan_quiet: { signal_title: issue.qs_quiet_title || "", text: issue.qs_quiet_text || "" },
+      quick_scan: [
+        { label: "What Launched", summary: issue.qs_launched_text || "" },
+        { label: "What's Shifting", summary: issue.qs_shifting_text || "" },
+        { label: "What to Watch", summary: issue.qs_watch_text || "" },
+      ],
     };
 
     // Map DB signals to InterpretedSignal shape for the email builder
