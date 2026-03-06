@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { fetchAllSources } from "@/lib/newsletter-sources";
 import {
   selectSignals,
@@ -77,15 +77,17 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/** Fire-and-forget the next step — don't await the response */
+/** Fire-and-forget the next step — uses after() to keep the function alive until the request is sent */
 function triggerNextStep(step: number, req: NextRequest) {
   const baseUrl = getBaseUrl();
   const authHeader = req.headers.get("authorization");
-  fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
-    headers: authHeader ? { authorization: authHeader } : {},
-  }).catch((e) => {
-    console.error(`[Newsletter] Failed to trigger step ${step}:`, e);
-  });
+  after(
+    fetch(`${baseUrl}/api/newsletter/cron?step=${step}`, {
+      headers: authHeader ? { authorization: authHeader } : {},
+    }).catch((e) => {
+      console.error(`[Newsletter] Failed to trigger step ${step}:`, e);
+    })
+  );
 }
 
 /* ─── Step 1: Fetch all sources ─── */
