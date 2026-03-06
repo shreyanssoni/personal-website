@@ -3,6 +3,8 @@ import { isAdminRequest } from "@/lib/admin-auth";
 import { sql } from "@/lib/db";
 import { suggestThreads } from "@/lib/newsletter-ai";
 
+export const maxDuration = 60;
+
 export async function GET(req: NextRequest) {
   if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
