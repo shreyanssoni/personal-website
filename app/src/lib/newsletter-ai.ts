@@ -24,13 +24,34 @@ export async function selectSignals(
 ): Promise<SelectedSignal[]> {
   const model = getModel();
 
-  const grouped: Record<string, { title: string; url: string; desc: string }[]> = {};
+  // Pre-filter: cap per source (avoid arxiv/HN flooding), dedupe by title similarity
+  const perSourceCap = 8;
+  const sourceCounts: Record<string, number> = {};
+  const seenTitles = new Set<string>();
+  const filtered: RawFeedItem[] = [];
+
   for (const item of rawItems) {
+    sourceCounts[item.source] = (sourceCounts[item.source] || 0) + 1;
+    if (sourceCounts[item.source] > perSourceCap) continue;
+
+    // Simple dedupe: skip if a very similar title already seen
+    const normalized = item.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 60);
+    if (seenTitles.has(normalized)) continue;
+    seenTitles.add(normalized);
+
+    filtered.push(item);
+  }
+
+  // Hard cap at 120 items to keep prompt under Gemini's sweet spot
+  const capped = filtered.slice(0, 120);
+
+  const grouped: Record<string, { title: string; url: string; desc: string }[]> = {};
+  for (const item of capped) {
     if (!grouped[item.source]) grouped[item.source] = [];
     grouped[item.source].push({
       title: item.title,
       url: item.url,
-      desc: (item.description || "").substring(0, 200),
+      desc: (item.description || "").substring(0, 120),
     });
   }
 
@@ -40,6 +61,8 @@ export async function selectSignals(
         `## ${source}\n${items.map((i) => `- ${i.title} | ${i.url} | ${i.desc}`).join("\n")}`
     )
     .join("\n\n");
+
+  console.log(`[Newsletter AI] Selecting from ${capped.length}/${rawItems.length} items (filtered)`);
 
   const prompt = `You are a senior AI/tech intelligence analyst. Pick the 10-15 MOST IMPORTANT signals from today's feed for an AI engineer/builder.
 
