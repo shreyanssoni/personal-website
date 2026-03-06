@@ -91,10 +91,10 @@ export default function NewsletterNavbar() {
             }`}
           >
             <Image
-              src="/assets/img/cube_logo.png"
+              src="/assets/img/cube_logo_dark.png"
               alt=""
-              width={28}
-              height={28}
+              width={40}
+              height={40}
               className="shrink-0"
             />
             THE DAILY VIBE CODE
