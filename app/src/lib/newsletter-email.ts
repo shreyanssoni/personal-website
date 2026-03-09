@@ -20,7 +20,7 @@ export function buildNewsletterHtml(
     .sort((a, b) => a.display_order - b.display_order)
     .slice(0, 3);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreyanssoni.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_NEWS_SITE_URL || "https://shreyanssoni.vercel.app";
 
   const signalCards = top3
     .map((s) => {
