@@ -30,8 +30,6 @@ export default function NewsletterNavbar() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const isLight = pathname.startsWith("/news");
-  const useDarkText = isLight && !scrolled;
 
   return (
     <>
@@ -90,26 +88,22 @@ export default function NewsletterNavbar() {
       )}
 
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           scrolled
-            ? "bg-white/80 backdrop-blur-md border-b border-stone-200/30 shadow-sm"
+            ? "bg-[#FAFAF8] border-b-2 border-stone-900"
             : "bg-transparent"
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
           <Link
             href="/news"
-            className={`flex items-center gap-1 font-[family-name:var(--font-display)] text-2xl tracking-wider transition-colors ${
-              useDarkText || scrolled
-                ? "text-stone-800 hover:text-[#4F8CFF]"
-                : "text-stone-800 hover:text-[#4F8CFF]"
-            }`}
+            className="flex items-center gap-1 font-[family-name:var(--font-display)] text-xl tracking-widest text-stone-900 hover:text-[#4F8CFF] transition-colors"
           >
             <Image
               src="/assets/img/cube_logo_dark.png"
               alt=""
-              width={120}
-              height={120}
+              width={100}
+              height={100}
               className="shrink-0"
             />
             THE DAILY VIBE CODE
@@ -118,10 +112,10 @@ export default function NewsletterNavbar() {
           <div className="hidden md:flex items-center gap-5">
             <Link
               href="/news/threads"
-              className={`font-[family-name:var(--font-mono)] text-xs tracking-[0.15em] uppercase transition-colors ${
+              className={`font-[family-name:var(--font-mono)] text-[10px] tracking-[0.2em] uppercase font-bold transition-colors ${
                 pathname.startsWith("/news/threads")
-                  ? "text-[#4F8CFF]"
-                  : "text-stone-400 hover:text-stone-600"
+                  ? "text-stone-900"
+                  : "text-stone-400 hover:text-stone-900"
               }`}
             >
               Threads
@@ -130,9 +124,9 @@ export default function NewsletterNavbar() {
               href="/api/news/rss"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-xs tracking-[0.15em] uppercase text-stone-400 hover:text-orange-500 transition-colors"
+              className="flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-[10px] tracking-[0.2em] uppercase font-bold text-stone-400 hover:text-orange-500 transition-colors"
             >
-              <Rss size={14} />
+              <Rss size={13} />
               RSS
             </a>
             <button
@@ -141,15 +135,15 @@ export default function NewsletterNavbar() {
                 const input = footer?.querySelector("input[type='email']") as HTMLInputElement | null;
                 if (input) { input.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => input.focus(), 400); }
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-stone-800 text-white font-[family-name:var(--font-mono)] text-[10px] tracking-[0.12em] uppercase hover:bg-stone-700 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 text-white font-[family-name:var(--font-mono)] text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-stone-700 transition-colors cursor-pointer"
             >
-              <Mail size={12} />
+              <Mail size={11} />
               Get daily emails
             </button>
           </div>
 
           <button
-            className={`md:hidden transition-colors ${useDarkText || scrolled ? "text-stone-800" : "text-stone-800"}`}
+            className="md:hidden text-stone-900 transition-colors"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close menu" : "Open menu"}
           >

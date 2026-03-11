@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Twitter, Rss } from "lucide-react";
+import { X, Rss } from "lucide-react";
 
 export default function NewsletterFooter() {
   const [email, setEmail] = useState("");
@@ -42,74 +42,60 @@ export default function NewsletterFooter() {
   }
 
   return (
-    <footer className="bg-[#FAFAF8] border-t border-stone-200/40">
-      <div className="mx-auto max-w-2xl px-6 py-16">
-        <div className="text-center mb-10">
-          <h2 className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl tracking-wider text-stone-800 mb-3">
+    <footer className="bg-stone-900 border-t-[3px] border-stone-900">
+      <div className="mx-auto max-w-2xl px-6 py-14">
+        {/* Masthead-style header */}
+        <div className="border-b border-stone-700 pb-6 mb-8 text-center">
+          <h2 className="font-[family-name:var(--font-display)] text-4xl sm:text-6xl tracking-widest text-white leading-none mb-3">
             STAY IN THE LOOP
           </h2>
-          <p className="font-[family-name:var(--font-soft)] text-sm text-stone-400">
-            Daily AI signals delivered to your inbox. No spam, just signal.
+          <p className="font-[family-name:var(--font-mono)] text-[10px] tracking-[0.3em] uppercase text-stone-500 font-bold">
+            Daily AI signals · No spam · Just signal
           </p>
         </div>
 
-        <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto mb-8">
+        <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto mb-6">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="flex-1 bg-white border border-stone-200 rounded-xl px-4 py-3 font-[family-name:var(--font-mono)] text-sm text-stone-700 placeholder:text-stone-300 focus:outline-none focus:border-[#4F8CFF]/50 transition-colors"
+            className="flex-1 bg-stone-800 border border-stone-700 px-4 py-3 font-[family-name:var(--font-mono)] text-sm text-white placeholder:text-stone-600 focus:outline-none focus:border-stone-500 transition-colors"
           />
           <button
             type="submit"
-            className="bg-stone-800 text-white font-[family-name:var(--font-mono)] text-xs font-semibold tracking-wider uppercase px-6 py-3 rounded-xl hover:bg-stone-700 transition-colors"
+            className="bg-white text-stone-900 font-[family-name:var(--font-mono)] text-[10px] font-bold tracking-[0.2em] uppercase px-6 py-3 hover:bg-stone-100 transition-colors"
           >
             Subscribe
           </button>
         </form>
+
         {message && (
-          <p className={`text-center font-[family-name:var(--font-mono)] text-xs mb-6 ${isError ? "text-red-500" : "text-emerald-600"}`}>
+          <p className={`text-center font-[family-name:var(--font-mono)] text-xs mb-6 ${isError ? "text-red-400" : "text-emerald-400"}`}>
             {message}
           </p>
         )}
 
-        <div className="flex items-center justify-center gap-6 mb-8">
-          <a
-            href="https://x.com/abitofsoni"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-stone-300 hover:text-stone-600 transition-colors"
-            aria-label="Twitter"
-          >
-            <Twitter size={18} />
-          </a>
-          <a
-            href="/api/news/rss"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-stone-300 hover:text-orange-500 transition-colors"
-            aria-label="RSS Feed"
-          >
-            <Rss size={18} />
-          </a>
-        </div>
-
-        <div className="text-center space-y-1.5">
-          <p className="font-[family-name:var(--font-mono)] text-[10px] text-stone-300 tracking-wider">
-            The Daily Vibe Code &middot; Curated AI intelligence for builders
-          </p>
-          <p className="font-[family-name:var(--font-mono)] text-[10px] text-stone-300/60 tracking-wider">
-            by{" "}
-            <a
-              href="https://shreyanssoni.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-stone-400/80 hover:text-[#4F8CFF] transition-colors underline underline-offset-2 decoration-stone-200/50"
-            >
-              Shreyans Soni
+        <div className="border-t border-stone-800 pt-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <a href="https://x.com/abitofsoni" target="_blank" rel="noopener noreferrer" className="text-stone-600 hover:text-white transition-colors" aria-label="Twitter">
+              <X size={16} />
             </a>
-          </p>
+            <a href="/api/news/rss" target="_blank" rel="noopener noreferrer" className="text-stone-600 hover:text-orange-400 transition-colors" aria-label="RSS Feed">
+              <Rss size={16} />
+            </a>
+          </div>
+          <div className="text-right">
+            <p className="font-[family-name:var(--font-mono)] text-[9px] text-stone-600 tracking-[0.2em] uppercase">
+              The Daily Vibe Code
+            </p>
+            <p className="font-[family-name:var(--font-mono)] text-[9px] text-stone-700 tracking-wider">
+              by{" "}
+              <a href="https://shreyanssoni.vercel.app" target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-white transition-colors">
+                Shreyans Soni
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
