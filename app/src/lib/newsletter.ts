@@ -71,7 +71,7 @@ export async function insertRawFeedItem(item: {
     SELECT ${item.source}, ${item.title}, ${item.url}, ${item.description ?? null}, ${item.author ?? null}, ${item.source_published_at ?? null}
     WHERE NOT EXISTS (
       SELECT 1 FROM raw_feed_items
-      WHERE url = ${item.url} AND fetched_at >= CURRENT_DATE - INTERVAL '3 days'
+      WHERE url = ${item.url} AND fetched_at >= CURRENT_DATE - INTERVAL '7 days'
     )
   `;
 }
@@ -83,7 +83,7 @@ export async function getTodaysRawItems(): Promise<RawFeedItem[]> {
       AND NOT EXISTS (
         SELECT 1 FROM newsletter_signals s
         JOIN newsletter_issues i ON i.id = s.issue_id
-        WHERE i.issue_date >= CURRENT_DATE - 3
+        WHERE i.issue_date >= CURRENT_DATE - 7
           AND i.issue_date < CURRENT_DATE
           AND s.search_vec @@ plainto_tsquery('english', r.title)
       )

@@ -109,6 +109,13 @@ export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
               {signal.so_what}
             </p>
 
+            {/* How to use — actionable step, always visible */}
+            {signal.how_to_use && (
+              <p className="mt-2 font-[family-name:var(--font-body)] text-[12px] sm:text-[13px] text-amber-700/80 font-medium truncate">
+                → {signal.how_to_use}
+              </p>
+            )}
+
             {/* Impact meter - shown inline on mobile */}
             <div className="flex items-center justify-between mt-3 sm:hidden">
               <ImpactMeter score={signal.impact_score} />

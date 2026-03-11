@@ -78,7 +78,15 @@ SKIP: opinion pieces, minor bumps, PR fluff, regulatory unless it hits builders,
 
 MERGE duplicate coverage into single signals.
 
-NOTE: Items that overlap with signals published in the last 3 days have already been filtered out. If you still notice similar themes, merge them or skip — prioritize genuinely NEW developments.
+NOTE: Items that overlap with signals published in the last 7 days have already been filtered out. If you still notice similar themes, merge them or skip — prioritize genuinely NEW developments.
+
+SIGNAL TITLE RULES:
+- Frame titles as developer benefits or actions, not news events
+- Good: "Build security agents directly inside your IDE with Codex"
+- Bad: "OpenAI launches Codex security agent in research preview"
+- Good: "1M token context means entire repos fit in one Gemini call"
+- Bad: "Google expands Gemini context window to 1M tokens"
+- Under 12 words. Start with a verb or capability when possible.
 
 Feed (${rawItems.length} items):
 
@@ -86,7 +94,7 @@ ${feedSummary}
 
 Return JSON array:
 {
-  "title": "Specific signal title",
+  "title": "Developer-action framed signal title (under 12 words)",
   "category": "launch" | "research" | "tool" | "shift" | "funding" | "open_source",
   "source_urls": ["url1", "url2"],
   "summary": "1-2 sentence factual summary",

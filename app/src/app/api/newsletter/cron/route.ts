@@ -17,6 +17,8 @@ import {
   getSignalsByIssue,
   insertSocialPost,
   deleteSocialPostsByIssue,
+  getPublishedThreads,
+  refreshThreadSignals,
 } from "@/lib/newsletter";
 import { buildNewsletterHtml } from "@/lib/newsletter-email";
 import { sql } from "@/lib/db";
@@ -235,6 +237,11 @@ async function step4_enrich_store(today: string) {
     VALUES (${today}, 'stored', ${JSON.stringify({ issueId, meta, signalCount: interpretedSignals.length })}::jsonb)
     ON CONFLICT (date, step) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
   `;
+
+  // Auto-refresh all published threads with today's new signals
+  const threads = await getPublishedThreads().catch(() => []);
+  await Promise.allSettled(threads.map((t) => refreshThreadSignals(t.id)));
+  console.log(`[Newsletter] Auto-refreshed ${threads.length} threads`);
 
   return NextResponse.json({ step: 4, status: "stored", issue_id: issueId, signals: interpretedSignals.length, next: "email" });
 }

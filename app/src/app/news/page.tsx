@@ -664,6 +664,9 @@ export default async function NewsPage({
               </section>
             )}
 
+            {/* Threads promo — above signals for discoverability */}
+            <ThreadsPromo threads={threads} />
+
             {/* Builder Radar */}
             <section aria-label="Builder radar trends">
               <BuilderRadar
@@ -688,9 +691,6 @@ export default async function NewsPage({
                 ))}
               </div>
             </section>
-
-            {/* Threads promo */}
-            <ThreadsPromo threads={threads} />
 
             {/* Closing */}
             {currentIssue.closing_thought && (
