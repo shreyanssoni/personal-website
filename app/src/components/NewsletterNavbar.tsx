@@ -30,13 +30,12 @@ export default function NewsletterNavbar() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 bg-[#FAFAF8] flex items-center justify-center md:hidden">
+        <div className="fixed inset-0 z-50 bg-[#0F1115] flex items-center justify-center md:hidden">
           <button
-            className="absolute top-4 right-6 text-stone-800 z-50"
+            className="absolute top-4 right-6 text-slate-300 z-50"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
           >
@@ -50,7 +49,7 @@ export default function NewsletterNavbar() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-[family-name:var(--font-display)] text-4xl tracking-wider text-stone-800 hover:text-[#4F8CFF] transition-colors"
+                    className="font-[family-name:var(--font-display)] text-4xl tracking-wider text-slate-200 hover:text-[#8B8FC7] transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     {link.label.toUpperCase()}
@@ -59,7 +58,7 @@ export default function NewsletterNavbar() {
                   <Link
                     href={link.href}
                     className={`font-[family-name:var(--font-display)] text-4xl tracking-wider transition-colors ${
-                      pathname === link.href ? "text-[#4F8CFF]" : "text-stone-800 hover:text-[#4F8CFF]"
+                      pathname === link.href ? "text-[#8B8FC7]" : "text-slate-200 hover:text-[#8B8FC7]"
                     }`}
                     onClick={() => setOpen(false)}
                   >
@@ -78,7 +77,7 @@ export default function NewsletterNavbar() {
                     if (input) { input.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => input.focus(), 400); }
                   }, 300);
                 }}
-                className="flex items-center gap-2.5 font-[family-name:var(--font-display)] text-4xl tracking-wider text-stone-800 hover:text-[#4F8CFF] transition-colors"
+                className="flex items-center gap-2.5 font-[family-name:var(--font-display)] text-4xl tracking-wider text-slate-200 hover:text-[#8B8FC7] transition-colors"
               >
                 SUBSCRIBE
               </button>
@@ -90,14 +89,14 @@ export default function NewsletterNavbar() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           scrolled
-            ? "bg-[#FAFAF8] border-b-2 border-stone-900"
+            ? "bg-[#0F1115]/90 backdrop-blur-xl border-b border-white/[0.05]"
             : "bg-transparent"
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
           <Link
             href="/news"
-            className="flex items-center gap-1 font-[family-name:var(--font-display)] text-xl tracking-widest text-stone-900 hover:text-[#4F8CFF] transition-colors"
+            className="flex items-center gap-1 font-[family-name:var(--font-display)] text-xl tracking-widest text-white hover:text-[#8B8FC7] transition-colors"
           >
             <Image
               src="/assets/img/cube_logo_dark.png"
@@ -114,8 +113,8 @@ export default function NewsletterNavbar() {
               href="/news/threads"
               className={`font-[family-name:var(--font-mono)] text-[10px] tracking-[0.2em] uppercase font-bold transition-colors ${
                 pathname.startsWith("/news/threads")
-                  ? "text-stone-900"
-                  : "text-stone-400 hover:text-stone-900"
+                  ? "text-slate-100"
+                  : "text-slate-500 hover:text-slate-200"
               }`}
             >
               Threads
@@ -124,7 +123,7 @@ export default function NewsletterNavbar() {
               href="/api/news/rss"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-[10px] tracking-[0.2em] uppercase font-bold text-stone-400 hover:text-orange-500 transition-colors"
+              className="flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-[10px] tracking-[0.2em] uppercase font-bold text-slate-500 hover:text-orange-400 transition-colors"
             >
               <Rss size={13} />
               RSS
@@ -135,7 +134,7 @@ export default function NewsletterNavbar() {
                 const input = footer?.querySelector("input[type='email']") as HTMLInputElement | null;
                 if (input) { input.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => input.focus(), 400); }
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 text-white font-[family-name:var(--font-mono)] text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-stone-700 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#8B8FC7] text-white font-[family-name:var(--font-mono)] text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-[#7A7EB8] transition-colors cursor-pointer"
             >
               <Mail size={11} />
               Get daily emails
@@ -143,7 +142,7 @@ export default function NewsletterNavbar() {
           </div>
 
           <button
-            className="md:hidden text-stone-900 transition-colors"
+            className="md:hidden text-slate-200 transition-colors"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close menu" : "Open menu"}
           >

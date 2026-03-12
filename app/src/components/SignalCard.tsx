@@ -2,36 +2,40 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Rocket, TrendingUp, Wrench, FlaskConical, DollarSign, Package, BookOpen } from "lucide-react";
+import { ChevronDown, Rocket, TrendingUp, Wrench, FlaskConical, DollarSign, Package, BookOpen } from "lucide-react";
 import type { NewsletterSignal } from "@/lib/newsletter";
 import ShareButton from "@/components/ShareButton";
 
 /* ─── Color System ─── */
 
-const SIGNAL_COLORS: Record<string, { bg: string; text: string; icon: string; dot: string; hex: string }> = {
-  launch:      { bg: "bg-[#FF6B6B]/10", text: "text-[#D94848]", icon: "text-[#FF6B6B]", dot: "bg-[#FF6B6B]", hex: "#FF6B6B" },
-  shift:       { bg: "bg-[#4F8CFF]/10", text: "text-[#3A6FD8]", icon: "text-[#4F8CFF]", dot: "bg-[#4F8CFF]", hex: "#4F8CFF" },
-  tool:        { bg: "bg-[#2ECC71]/10", text: "text-[#219A52]", icon: "text-[#2ECC71]", dot: "bg-[#2ECC71]", hex: "#2ECC71" },
-  research:    { bg: "bg-[#8E7CFF]/10", text: "text-[#6B5CD4]", icon: "text-[#8E7CFF]", dot: "bg-[#8E7CFF]", hex: "#8E7CFF" },
-  funding:     { bg: "bg-[#F4B942]/10", text: "text-[#C4942E]", icon: "text-[#F4B942]", dot: "bg-[#F4B942]", hex: "#F4B942" },
-  open_source: { bg: "bg-[#1ABC9C]/10", text: "text-[#148F76]", icon: "text-[#1ABC9C]", dot: "bg-[#1ABC9C]", hex: "#1ABC9C" },
+const SIGNAL_COLORS: Record<string, { hex: string }> = {
+  launch:      { hex: "#FF6B6B" },
+  shift:       { hex: "#4F8CFF" },
+  tool:        { hex: "#2ECC71" },
+  research:    { hex: "#8E7CFF" },
+  funding:     { hex: "#F4B942" },
+  open_source: { hex: "#1ABC9C" },
 };
 
 const SIGNAL_ICONS: Record<string, typeof Rocket> = {
-  launch: Rocket,
-  shift: TrendingUp,
-  tool: Wrench,
-  research: FlaskConical,
-  funding: DollarSign,
-  open_source: Package,
+  launch: Rocket, shift: TrendingUp, tool: Wrench,
+  research: FlaskConical, funding: DollarSign, open_source: Package,
 };
 
-const HYPE_CONFIG: Record<string, { label: string; color: string }> = {
-  "real shift":  { label: "Real",  color: "bg-emerald-100 text-emerald-700" },
-  "mostly real": { label: "Solid", color: "bg-emerald-50 text-emerald-600" },
-  "mixed":       { label: "Mixed", color: "bg-amber-50 text-amber-700" },
-  "mostly hype": { label: "Hype?", color: "bg-orange-50 text-orange-700" },
-  "pure hype":   { label: "Hype",  color: "bg-red-50 text-red-600" },
+const IMPACT_BADGES: Record<number, { label: string; classes: string }> = {
+  5: { label: "Disruptive",  classes: "bg-red-500/20 text-red-400 border-red-500/30" },
+  4: { label: "High Impact", classes: "bg-[#8B8FC7]/10 text-[#8B8FC7] border-[#8B8FC7]/30" },
+  3: { label: "Moderate",    classes: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
+  2: { label: "Low Impact",  classes: "bg-slate-500/20 text-slate-400 border-slate-500/30" },
+  1: { label: "Incremental", classes: "bg-slate-500/20 text-slate-300 border-slate-500/30" },
+};
+
+const HYPE_CONFIG: Record<string, { label: string; classes: string }> = {
+  "real shift":  { label: "Real",  classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
+  "mostly real": { label: "Solid", classes: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+  "mixed":       { label: "Mixed", classes: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
+  "mostly hype": { label: "Hype?", classes: "bg-orange-500/15 text-orange-400 border-orange-500/30" },
+  "pure hype":   { label: "Hype",  classes: "bg-red-500/15 text-red-400 border-red-500/30" },
 };
 
 function getHype(hype: string) {
@@ -39,160 +43,131 @@ function getHype(hype: string) {
   for (const [key, val] of Object.entries(HYPE_CONFIG)) {
     if (h.includes(key)) return val;
   }
-  return { label: "TBD", color: "bg-stone-100 text-stone-500" };
+  return { label: "TBD", classes: "bg-slate-500/15 text-slate-400 border-slate-500/30" };
 }
 
-function ImpactMeter({ score }: { score: number }) {
-  const labels = ["", "LOW", "MED", "MED", "HIGH", "HIGH"];
-  const colors = ["", "bg-stone-300", "bg-stone-400", "bg-amber-400", "bg-[#FF6B6B]", "bg-[#FF6B6B]"];
-  return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex gap-[3px]">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div
-            key={i}
-            className={`w-[14px] h-[5px] transition-colors ${i <= score ? colors[score] : "bg-stone-200"}`}
-          />
-        ))}
-      </div>
-      <span className="font-[family-name:var(--font-mono)] text-[8px] tracking-[0.15em] text-stone-400 font-bold uppercase">
-        {labels[score] || ""}
-      </span>
-    </div>
-  );
-}
-
-export default function SignalCard({ signal }: { signal: NewsletterSignal }) {
+export default function SignalCard({ signal, index }: { signal: NewsletterSignal; index?: number }) {
   const [expanded, setExpanded] = useState(false);
   const colors = SIGNAL_COLORS[signal.category] || SIGNAL_COLORS.tool;
   const Icon = SIGNAL_ICONS[signal.category] || Wrench;
   const hype = getHype(signal.hype_or_real);
+  const impact = IMPACT_BADGES[signal.impact_score] || IMPACT_BADGES[3];
 
   return (
-    <article
-      className="bg-white border border-stone-200 hover:border-stone-400 hover:shadow-md transition-all mb-4"
-      style={{ borderLeftWidth: "4px", borderLeftColor: colors.hex }}
-    >
-      <button
+    <article className="news-glass rounded-2xl hover:bg-white/[0.05] transition-all cursor-pointer group border border-white/[0.05]">
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left p-4 sm:p-5 cursor-pointer"
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(!expanded); } }}
+        className="p-6 sm:p-8 lg:px-12"
       >
-        {/* Top row: tags + impact + actions */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className={`inline-flex items-center gap-1 px-2 py-[3px] text-[9px] font-bold tracking-[0.12em] uppercase ${colors.bg} ${colors.text}`}>
-              <Icon size={9} strokeWidth={2.5} />
-              {signal.category.replace("_", " ")}
-            </span>
-            <span className={`px-2 py-[3px] text-[9px] font-bold tracking-[0.1em] uppercase ${hype.color}`}>
-              {hype.label}
-            </span>
-            {signal.time_horizon && signal.time_horizon !== "now" && (
-              <span className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 tracking-wider">
-                {signal.time_horizon}
+        <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6">
+          {/* Left: number + content */}
+          <div className="flex items-start gap-4 sm:gap-6 flex-1 min-w-0">
+            {/* Number */}
+            {index && (
+              <span className="text-xl sm:text-2xl font-bold text-[#8B8FC7]/30 group-hover:text-[#8B8FC7] transition-colors italic shrink-0 pt-0.5">
+                {String(index).padStart(2, "0")}
               </span>
             )}
+
+            <div className="min-w-0 flex-1">
+              {/* Category + hype tags */}
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wider uppercase" style={{ color: colors.hex }}>
+                  <Icon size={11} strokeWidth={2.5} />
+                  {signal.category.replace("_", " ")}
+                </span>
+                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase border ${hype.classes}`}>
+                  {hype.label}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white leading-snug mb-1.5">
+                {signal.title}
+              </h3>
+
+              {/* So what */}
+              <p className="text-slate-400 text-sm leading-relaxed">{signal.so_what}</p>
+
+              {/* How to use */}
+              {signal.how_to_use && (
+                <p className="mt-2 font-mono text-[11px] sm:text-xs text-[#8B8FC7] font-medium truncate">
+                  → {signal.how_to_use}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:block"><ImpactMeter score={signal.impact_score} /></span>
+
+          {/* Right: impact badge + chevron */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <span className={`hidden sm:inline-flex px-4 py-1.5 rounded-full text-xs font-bold border uppercase ${impact.classes}`}>
+              {impact.label}
+            </span>
             <ShareButton signalId={signal.id} title={signal.title} compact />
-            <ChevronRight
-              size={15}
-              className={`text-stone-400 transition-transform duration-300 ${expanded ? "rotate-90" : ""}`}
+            <ChevronDown
+              size={18}
+              className={`text-slate-500 group-hover:text-[#8B8FC7] transition-all duration-300 ${expanded ? "rotate-180" : ""}`}
             />
           </div>
         </div>
+      </div>
 
-        {/* Title */}
-        <h3 className="font-[family-name:var(--font-serif)] text-[16px] sm:text-[18px] md:text-[20px] font-bold text-stone-900 leading-snug mb-2">
-          {signal.title}
-        </h3>
-
-        {/* So What */}
-        <p className="font-[family-name:var(--font-body)] text-[13px] sm:text-[14px] text-stone-500 leading-snug">
-          {signal.so_what}
-        </p>
-
-        {/* How to use — always visible */}
-        {signal.how_to_use && (
-          <p className="mt-2 font-[family-name:var(--font-mono)] text-[11px] sm:text-[12px] text-amber-700 font-semibold tracking-wide truncate">
-            → {signal.how_to_use}
-          </p>
-        )}
-
-        {/* Impact meter mobile */}
-        <div className="mt-2.5 sm:hidden">
-          <ImpactMeter score={signal.impact_score} />
-        </div>
-      </button>
-
-      {/* Expanded */}
-      <div
-        className={`grid transition-all duration-300 ease-out overflow-hidden ${
-          expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-        }`}
-      >
+      {/* Expanded detail */}
+      <div className={`grid transition-all duration-300 ease-out overflow-hidden ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
         <div className="min-h-0">
-          <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0">
-            <div className="h-px bg-stone-100 mb-3 sm:mb-4" />
+          <div className="px-6 sm:px-8 lg:px-12 pb-6 sm:pb-8">
+            <div className="h-px bg-white/[0.05] mb-6" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-stone-50 border-l-2 border-stone-300 p-3 sm:p-4">
-                <p className="font-[family-name:var(--font-mono)] text-[8px] tracking-[0.25em] uppercase text-stone-400 mb-1.5 font-bold">
-                  What changed
-                </p>
-                <p className="font-[family-name:var(--font-body)] text-[12px] sm:text-[13px] text-stone-600 leading-relaxed">
-                  {signal.delta}
-                </p>
+            {/* Mobile impact badge */}
+            <div className="sm:hidden mb-4">
+              <span className={`inline-flex px-4 py-1.5 rounded-full text-xs font-bold border uppercase ${impact.classes}`}>
+                {impact.label}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="news-glass rounded-xl p-5">
+                <p className="font-mono text-[9px] tracking-widest uppercase text-slate-500 mb-2 font-bold">What Changed</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{signal.delta}</p>
               </div>
-              <div className="bg-stone-50 border-l-2 border-stone-300 p-3 sm:p-4">
-                <p className="font-[family-name:var(--font-mono)] text-[8px] tracking-[0.25em] uppercase text-stone-400 mb-1.5 font-bold">
-                  Build this
-                </p>
-                <p className="font-[family-name:var(--font-body)] text-[12px] sm:text-[13px] text-stone-600 leading-relaxed">
-                  {signal.builder_opportunities}
-                </p>
+              <div className="news-glass rounded-xl p-5">
+                <p className="font-mono text-[9px] tracking-widest uppercase text-slate-500 mb-2 font-bold">Build This</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{signal.builder_opportunities}</p>
               </div>
             </div>
 
             {signal.how_to_use && (
-              <div className="mt-3 bg-amber-50 border-l-2 border-amber-500 px-3 sm:px-4 py-2.5">
-                <p className="font-[family-name:var(--font-mono)] text-[11px] sm:text-[12px] text-amber-800 font-semibold">
-                  → {signal.how_to_use}
-                </p>
+              <div className="mt-4 bg-[#8B8FC7]/10 border border-[#8B8FC7]/20 rounded-xl px-5 py-4">
+                <p className="font-mono text-xs text-[#8B8FC7] font-medium">→ {signal.how_to_use}</p>
               </div>
             )}
 
-            <Link
-              href={`/news/signal/${signal.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="mt-3 sm:mt-4 flex items-center justify-center gap-2 w-full py-2.5 border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-all group"
-            >
-              <BookOpen size={13} />
-              <span className="font-[family-name:var(--font-mono)] text-[10px] font-bold tracking-[0.15em] uppercase">
-                Read Full Analysis
-              </span>
-              <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-5 border-t border-white/[0.05]">
+              <Link
+                href={`/news/signal/${signal.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#8B8FC7] text-white font-mono text-[10px] font-bold tracking-wider uppercase hover:bg-[#7A7EB8] transition-all"
+              >
+                <BookOpen size={13} /> Read Full Analysis
+              </Link>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-3 pt-3 border-t border-stone-100">
-              <span className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 font-medium">
-                {signal.who_should_care}
-              </span>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-[10px] text-slate-500">{signal.who_should_care}</span>
                 {signal.source_urls.slice(0, 2).map((url, i) => (
                   <a
                     key={i}
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-[family-name:var(--font-mono)] text-[9px] text-stone-400 hover:text-[#4F8CFF] underline underline-offset-2 transition-colors font-medium"
+                    className="font-mono text-[10px] text-slate-500 hover:text-[#8B8FC7] underline underline-offset-2 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     source {i + 1}
                   </a>
                 ))}
-                <span className="w-px h-3 bg-stone-200" />
                 <ShareButton signalId={signal.id} title={signal.title} dropUp />
               </div>
             </div>

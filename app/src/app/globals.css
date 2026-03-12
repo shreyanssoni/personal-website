@@ -202,34 +202,49 @@ html {
   background-blend-mode: overlay;
 }
 
-/* --- News Page (garden notebook) --- */
+/* --- News Page (dark glass theme) --- */
 .news-page {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 228, 225, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(219, 234, 254, 0.1) 0%, transparent 50%),
-    linear-gradient(180deg, #F7F6F2 0%, #F2F0EB 40%, #EDEAE4 100%);
+  background: #0F1115;
   min-height: 100vh;
   position: relative;
+  color: #e2e8f0;
 }
 
 .news-page::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: url('/assets/img/news-bg2.jpg') center/cover no-repeat;
-  opacity: 0.08;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(139, 143, 199, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(139, 143, 199, 0.04) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
 
+/* Glass utility for news page cards */
+.news-glass {
+  background: rgba(139, 143, 199, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 143, 199, 0.15);
+}
+
+.news-glow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.news-glow-primary {
+  box-shadow: 0 10px 40px rgba(139, 143, 199, 0.15);
+}
+
 .news-page .signal-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 8px 24px rgba(0, 0, 0, 0.03);
+  background: rgba(139, 143, 199, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 143, 199, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -239,24 +254,23 @@ html {
 
 .news-page .signal-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.06);
-  border-color: rgba(0, 0, 0, 0.06);
-  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-color: rgba(139, 143, 199, 0.25);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.news-page .garden-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #C8C4BC;
+/* News page selection */
+.news-page ::selection {
+  background-color: rgba(139, 143, 199, 0.4);
+  color: white;
 }
 
-.news-page .garden-divider::before,
-.news-page .garden-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #D5D0C8, transparent);
+/* News scrollbar */
+.news-page ::-webkit-scrollbar-track {
+  background: #0f1115;
+}
+.news-page ::-webkit-scrollbar-thumb {
+  background: #2a2d35;
 }
 
 /* Hide scrollbar for issue nav */
